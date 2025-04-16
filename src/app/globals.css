@@ -12,25 +12,25 @@
   --primary-800: #3730A3;
   --primary-900: #312E81;
 
-  --secondary-100: #FFE4E6;
-  --secondary-200: #FECDD3;
-  --secondary-300: #FDA4AF;
-  --secondary-400: #FB7185;
-  --secondary: #F43F5E;
-  --secondary-600: #E11D48;
-  --secondary-700: #BE123C;
-  --secondary-800: #9F1239;
-  --secondary-900: #881337;
+  --secondary-100: #FCE7F3;
+  --secondary-200: #FBCFE8;
+  --secondary-300: #F9A8D4;
+  --secondary-400: #F472B6;
+  --secondary: #DB2777;
+  --secondary-600: #BE185D;
+  --secondary-700: #9D174D;
+  --secondary-800: #831843;
+  --secondary-900: #500724;
 
-  --accent-100: #FEFCE8;
-  --accent-200: #FEF9C3;
-  --accent-300: #FEF08A;
-  --accent-400: #FDE047;
-  --accent: #FBBF24;
-  --accent-600: #F59E0B;
-  --accent-700: #D97706;
-  --accent-800: #B45309;
-  --accent-900: #78350F;
+  --accent-100: #FFF2ED;
+  --accent-200: #FFE0D4;
+  --accent-300: #FFC9B5;
+  --accent-400: #FFAD92;
+  --accent: #FF7A7A;
+  --accent-600: #E55F5F;
+  --accent-700: #CC4646;
+  --accent-800: #B33030;
+  --accent-900: #8A2525;
 
   --background: #F9FAFB;
   --text: #1E293B;
@@ -49,28 +49,28 @@
     --primary-800: #343962;
     --primary-900: #1B1F31;
 
-    --secondary-100: #FFEFF1;
-    --secondary-200: #FFD6DB;
-    --secondary-300: #FFBCC5;
-    --secondary-400: #FFA3AF;
-    --secondary-500: #FB7185;
-    --secondary-600: #C9576A;
-    --secondary-700: #973E4F;
-    --secondary-800: #652534;
-    --secondary-900: #33111A;
+    --secondary-100: #FDF2F8;
+    --secondary-200: #FCE8F3;
+    --secondary-300: #FAD1E8;
+    --secondary-400: #F8B4D9;
+    --secondary-500: #FF10F0;
+    --secondary-600: #D100C3;
+    --secondary-700: #A8009B;
+    --secondary-800: #800074;
+    --secondary-900: #4D0047;
 
-    --accent-100: #FFFBE6;
-    --accent-200: #FEF3C1;
-    --accent-300: #FDEB9C;
-    --accent-400: #FCE377;
-    --accent-500: #FACC15;
-    --accent-600: #C9A310;
-    --accent-700: #987B0C;
-    --accent-800: #665308;
-    --accent-900: #332A04;
+    --accent-100: #2D1E1C;
+    --accent-200: #4A302D;
+    --accent-300: #6B4440;
+    --accent-400: #8F5A55;
+    --accent: #FF6B6B;
+    --accent-600: #FF8585;
+    --accent-700: #FFA0A0;
+    --accent-800: #FFBDBD;
+    --accent-900: #FFE9E9;
 
     --background: #1E293B;
-    --text: #F9FAFB;
+    --text: #F9FAFB
   }
 }
 
