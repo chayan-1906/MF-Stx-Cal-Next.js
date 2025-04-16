@@ -1,8 +1,9 @@
 import {auth} from "@/auth";
-import {redirect} from "next/navigation";
-import routes from "@/lib/routes";
 import Image from "next/image";
 import Logout from "@/components/Logout";
+import React from "react";
+import { redirect } from "next/navigation";
+import routes from "@/lib/routes";
 
 async function Home() {
     const session = await auth();
