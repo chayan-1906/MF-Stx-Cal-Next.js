@@ -20,7 +20,7 @@ export async function POST(request: Request) {
         }
 
         const isTokenValid = user.token === token;
-        const isTokenNotExpired = new Date(user.tokenExpiry) > new Date();
+        const isTokenNotExpired = new Date(user.tokenExpiry ?? '') > new Date();
         if (user.isVerified) {
             return Response.json(<ApiResponse>{
                 code: 'alreadyVerified',

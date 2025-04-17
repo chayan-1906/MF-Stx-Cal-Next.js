@@ -29,7 +29,7 @@ It correctly bundles React in production mode and optimizes the build for the be
 The build is minified and the filenames include the hashes.
 Your app is ready to be deployed!
 
-## [Live Site (Vercel)](https://mfstxcal.vercel.app/)
+## [Live Site (Vercel)](https://mf-stx-cal.vercel.app/)
 
 # Dependencies
 
@@ -49,3 +49,9 @@ Your app is ready to be deployed!
 
 ### UseHooks - https://usehooks-ts.com/introduction
     npm i usehooks-ts
+
+### React Toastify - https://www.npmjs.com/package/react-toastify
+    npm i react-toastify
+
+### Axios - https://www.npmjs.com/package/axios
+    npm i axios

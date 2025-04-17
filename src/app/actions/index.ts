@@ -3,13 +3,13 @@
 import routes from "@/lib/routes";
 import {signIn, signOut} from "@/auth";
 
-const Providers = {Google: 'google', GitHub: 'apple', Facebook: 'facebook'} as const;
+const Providers = {Credentials: 'credentials', Google: 'google', GitHub: 'apple', Facebook: 'facebook'} as const;
 type Provider = (typeof Providers)[keyof typeof Providers];
 const validProviders = new Set<Provider>(Object.values(Providers));
 
 export async function doSocialLogin(formData: FormData): Promise<void> {
     const action = formData.get('action');
-    console.log(action);
+    console.log('action:', action);
     if (typeof action === 'string' && validProviders.has(action as Provider)) {
         await signIn(action as Provider, {redirectTo: routes.homePath()});
     } else {
