@@ -3,4 +3,5 @@ export interface ApiResponse {
     success: boolean;
     message: string;
     error?: any;   // for internal use only
+    data?: any; // likely only for success response
 }

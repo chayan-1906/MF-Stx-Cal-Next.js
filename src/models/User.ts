@@ -3,11 +3,12 @@ import mongoose, {Document, Schema} from 'mongoose';
 export interface User extends Document {
     name?: string;
     email: string;
-    password: string;
-    image?: string;
-    token: string;
-    tokenExpiry: Date;
+    password?: string;  // for credential-based auth
+    image?: string; // for oauth
+    token?: string;  // for credential-based auth
+    tokenExpiry?: Date;  // for credential-based auth
     isVerified: boolean;
+    googleId?: string; // for oauth
     createdAt: Date;
 }
 
@@ -25,20 +26,26 @@ const UserSchema: Schema<User> = new Schema({
     },
     password: {
         type: String,
-        required: [true, 'Password is required'],
+        required: false,
     },
     image: {type: String},
     token: {
         type: String,
-        required: [true, 'Token is required'],
+        required: false,
     },
     tokenExpiry: {
         type: Date,
-        required: [true, 'Token Expiry is required'],
+        required: false,
     },
     isVerified: {
         type: Boolean,
         default: false,
+    },
+    googleId: {
+        type: String,
+        required: false,
+        unique: true,
+        sparse: true,
     },
     createdAt: {
         type: Date,

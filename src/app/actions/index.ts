@@ -3,7 +3,7 @@
 import routes from "@/lib/routes";
 import {signIn, signOut} from "@/auth";
 
-const Providers = {Google: 'google', GitHub: 'github', Facebook: 'facebook'} as const;
+const Providers = {Google: 'google', GitHub: 'apple', Facebook: 'facebook'} as const;
 type Provider = (typeof Providers)[keyof typeof Providers];
 const validProviders = new Set<Provider>(Object.values(Providers));
 
