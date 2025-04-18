@@ -1,9 +1,13 @@
 import nodemailer from "nodemailer";
-import {APP_NAME, BASE_URL, EMAIL_PASS, EMAIL_USER} from "@/lib/config";
+import {APP_NAME, EMAIL_PASS, EMAIL_USER} from "@/lib/config";
 import {ApiResponse} from "@/types/ApiResponse";
+import {storeOtp} from "@/lib/db/otp-storage";
+import {Otp} from "@/models/Otp";
 
-async function sendVerificationEmail(email: string, token: string): Promise<ApiResponse> {
+async function sendVerificationEmail(otp: Otp): Promise<ApiResponse> {
     try {
+        const {email, code, codeExpiry} = otp;
+
         // Create a Nodemailer transporter using Gmail
         const transporter = nodemailer.createTransport({
             service: 'gmail',
@@ -12,9 +16,6 @@ async function sendVerificationEmail(email: string, token: string): Promise<ApiR
                 pass: EMAIL_PASS,
             },
         });
-
-        // Construct the verification URL
-        const verificationUrl = `${BASE_URL}/api/verify?token=${token}`;
 
         // Define email options
         const mailOptions = {
@@ -79,7 +80,7 @@ async function sendVerificationEmail(email: string, token: string): Promise<ApiR
                 <div class="content">
                   <p>Hello,</p>
                   <p>Thank you for joining ${APP_NAME}! Please verify your email address by clicking the button below:</p>
-                  <a href="${verificationUrl}" class="button">Verify Email</a>
+                  <a href="${code}" class="button">${code}</a>
                   <p>If you didn’t create this account, please ignore this email.</p>
                 </div>
                 <div class="footer">
@@ -94,6 +95,8 @@ async function sendVerificationEmail(email: string, token: string): Promise<ApiR
         // Send the email
         const info = await transporter.sendMail(mailOptions);
         console.log(`Verification email sent to ${email}: ${info.messageId}`);
+
+        await storeOtp(otp);
 
         return {code: 'emailSent', success: true, message: 'Verification email sent successfully!'};
     } catch (error) {

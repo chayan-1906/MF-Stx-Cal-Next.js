@@ -1,17 +1,21 @@
 'use client';
 
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {useForm} from 'react-hook-form';
 import {LoginSchema, loginSchema} from "@/lib/formValidationSchemas";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Input} from "@/components/ui/input";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form";
 import {Button} from "@/components/ui/button";
-import {useRouter} from "next/navigation";
 import {APP_NAME} from "@/lib/config";
 import {cn} from "@/lib/utils";
-import {Eye, EyeOff, Lock, Mail} from "lucide-react";
+import {Lock, Mail} from "lucide-react";
+import {toast} from "react-toastify";
+import {signIn} from "next-auth/react";
+import {useRouter, useSearchParams} from "next/navigation";
 import {doSocialLogin} from "@/app/actions";
+import { z } from "zod";
+import routes from "@/lib/routes";
 
 function LoginForm() {
     const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
@@ -19,71 +23,82 @@ function LoginForm() {
         resolver: zodResolver(loginSchema),
     });
     const {register, handleSubmit, formState: {errors}} = form;
-    const [passwordStrength, setPasswordStrength] = useState(0);
-    const [showPassword, setShowPassword] = useState(false);
     const router = useRouter();
+    const searchParams = useSearchParams(); // Get query parameters
+    const error = searchParams.get('error');
 
-    const password = form.watch('password');
-
-    const getPasswordStrengthColor = () => {
-        switch (passwordStrength) {
-            case 0:
-                return 'bg-gray-200';
-            case 1:
-                return 'bg-red-500';
-            case 2:
-                return 'bg-yellow-500';
-            case 3:
-                return 'bg-blue-500';
-            case 4:
-                return 'bg-green-500';
-            default:
-                return 'bg-gray-200';
+    /*const onSubmit = async (data: any) => {
+        const formData = new FormData();
+        formData.append('action', 'credentials');
+        formData.append('email', data.email);
+        formData.append('code', data.code);
+        if (data.name) {
+            formData.append('name', data.name);
         }
-    };
 
-    /*const onSubmit = async (data: LoginSchema) => {
         try {
-            const response = await axios.post<ApiResponse>(apis.loginApi(), {
-                username: param.username,
-                code: data.code,
-            });
-            toast(response.data.message, {type: 'success'});
-            router.replace(routes.loginPath());
-        } catch (error: any) {
-            console.error('Error in sign up', error);
-            const axiosError = error as AxiosError<ApiResponse>;
-            const errorMessage = axiosError.response?.data.message ?? 'Error registering';
-            toast(errorMessage, {type: 'error'});
+            const result = await doSocialLogin(formData);
+            if (result?.error) {
+                try {
+                    const parsedError = JSON.parse(result.error);
+                    toast.error(parsedError.message);
+                    // setError(parsedError.message || result.error);
+                } catch {
+                    // setError(result.error);
+                }
+            }
+        } catch (err: any) {
+            // setError(err.message || "Authentication failed");
         }
     }*/
 
-    // calculate password strength
-    useEffect(() => {
-        const calculateStrength = (value: string) => {
-            let score = 0;
-            if (!value) return 0;
+    const customHandleSubmit = async (e) => {
+        e.preventDefault();
+        const name = form.watch('name');
+        const email = form.watch('email');
+        const code = form.watch('code');
 
-            // Base criteria (max 3 points)
-            if (value.length > 7) score += 1; // Length > 7
-            if (/[A-Z]/.test(value)) score += 1; // Uppercase
-            if (/[a-z]/.test(value)) score += 1; // Lowercase
-            if (/[0-9]/.test(value)) score += 1; // Numbers
-
-            // Cap base score at 3
-            score = Math.min(score, 3);
-
-            // Only allow score of 4 if special character is present and base score is 3
-            const hasSpecialChar = /[^A-Za-z0-9]/.test(value);
-            if (hasSpecialChar && score === 3) {
-                score = 4;
+        await signIn("credentials", {
+            name,
+            email,
+            code,
+            redirect: false,
+        }).then((response) => {
+            if (response?.error) {
+                console.error('error in customHandleSubmit:', response.error);
+                const parsedError = JSON.parse(JSON.parse(response.error).message);
+                console.log(parsedError);
+                toast(parsedError.message); // Show toast for error
+            } else {
+                router.push("/"); // Redirect on success
             }
+        });
+    }
 
-            return score;
+    const onSubmit = useCallback(async (data: z.infer<typeof loginSchema>) => {
+        const signInResult = await signIn('credentials', {
+            redirect: false,
+            name: data.name,
+            email: data.email,
+            code: data.code,
+        });
+        if (signInResult?.error) {
+            const errorMessage = JSON.parse(JSON.parse(signInResult?.error).message).message;
+            // console.log(JSON.parse(errorMessage.message).message);
+            if (signInResult.error === 'CredentialsSignin') {
+                toast('Sign In failed');
+            } else {
+                toast(errorMessage, {type: 'error'});
+            }
+        } else {
+            toast('Sign in successful!');
         }
+        console.log(signInResult);
 
-        setPasswordStrength(calculateStrength(password));
-    }, [password]);
+        if (signInResult?.url) {
+            router.replace(routes.homePath());
+        }
+    }, [router]);
 
     return (
         <div className={'flex items-center justify-center p-4 fixed inset-0 bg-primary-200 dark:bg-primary-900'}>
@@ -113,10 +128,8 @@ function LoginForm() {
                 </div>
 
                 {/** form */}
-                {activeTab === 'login' ? (
-                    <Form {...form}>
-                        {/*<form onSubmit={form.handleSubmit(onSubmit)} className={'flex flex-col px-6 gap-5'}>*/}
-                        <form action={doSocialLogin} className={'flex flex-col px-6 gap-5'}>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className={'flex flex-col px-6 gap-5'}>
                             {/** email */}
                             <FormField control={form.control} name={'email'}
                                        render={({field}) => (
@@ -137,26 +150,17 @@ function LoginForm() {
                             />
 
                             {/** password */}
-                            <FormField control={form.control} name={'password'}
+                        <FormField control={form.control} name={'code'}
                                        render={({field}) => (
                                            <FormItem>
-                                               <FormLabel htmlFor={field.name} className={'text-text'}>Password</FormLabel>
+                                               <FormLabel htmlFor={field.name} className={'text-text'}>Verification Code</FormLabel>
                                                <FormControl>
                                                    <div className={'relative'}>
                                                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                                            <Lock className={'size-5 text-gray-400'}/>
                                                        </div>
-                                                       <Input {...field} id={field.name} value={field.value ?? ''} type={showPassword ? 'text' : 'password'} autoFocus placeholder={'••••••••'}
+                                                       <Input {...field} id={field.name} value={field.value ?? ''} type={'number'}
                                                               className={'pl-10 text-text'} onChange={(e) => field.onChange(e)}/>
-                                                       <div className={'absolute inset-y-0 right-0 pr-3 flex items-center'}>
-                                                           <button type={'button'} onClick={() => setShowPassword(!showPassword)} className={'text-gray-400 hover:text-gray-500 focus:outline-none'}>
-                                                               {showPassword ? (
-                                                                   <EyeOff className={'size-5'}/>
-                                                               ) : (
-                                                                   <Eye className={'size-5'}/>
-                                                               )}
-                                                           </button>
-                                                       </div>
                                                    </div>
                                                </FormControl>
                                                <FormMessage/>
@@ -164,96 +168,9 @@ function LoginForm() {
                                        )}
                             />
 
-                            <Button type={'submit'} name={'action'} value={'credentials'}>Sign In</Button>
+                        <Button type={'submit'} name={'action'} value={'credentials'} className={'cursor-pointer'}>Sign In</Button>
                         </form>
                     </Form>
-                ) : (
-                    <Form {...form}>
-                        {/*<form onSubmit={form.handleSubmit(onSubmit)} className={'flex flex-col px-6 gap-5'}>*/}
-                        <form action={doSocialLogin} className={'flex flex-col px-6 gap-5'}>
-                            {/** email */}
-                            <FormField control={form.control} name={'email'}
-                                       render={({field}) => (
-                                           <FormItem>
-                                               <FormLabel htmlFor={field.name} className={'text-text'}>Email address</FormLabel>
-                                               <FormControl>
-                                                   <div className={'relative'}>
-                                                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                                           <Mail className={'size-5 text-gray-400'}/>
-                                                       </div>
-                                                       <Input {...field} id={field.name} value={field.value ?? ''} type={'email'} autoFocus placeholder={'john.doe@gmail.com'}
-                                                              className={'pl-10 text-text'} onChange={(e) => field.onChange(e)}/>
-                                                   </div>
-                                               </FormControl>
-                                               <FormMessage/>
-                                           </FormItem>
-                                       )}
-                            />
-
-                            {/** email */}
-                            <FormField control={form.control} name={'email'}
-                                       render={({field}) => (
-                                           <FormItem>
-                                               <FormLabel htmlFor={field.name} className={'text-text'}>Email address</FormLabel>
-                                               <FormControl>
-                                                   <div className={'relative'}>
-                                                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                                           <Mail className={'size-5 text-gray-400'}/>
-                                                       </div>
-                                                       <Input {...field} id={field.name} value={field.value ?? ''} type={'email'} autoFocus placeholder={'john.doe@gmail.com'}
-                                                              className={'pl-10 text-text'} onChange={(e) => field.onChange(e)}/>
-                                                   </div>
-                                               </FormControl>
-                                               <FormMessage/>
-                                           </FormItem>
-                                       )}
-                            />
-
-                            {/** password */}
-                            <FormField control={form.control} name={'password'}
-                                       render={({field}) => (
-                                           <FormItem>
-                                               <FormLabel htmlFor={field.name} className={'text-text'}>Password</FormLabel>
-                                               <FormControl>
-                                                   <div className={'relative'}>
-                                                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                                           <Lock className={'size-5 text-gray-400'}/>
-                                                       </div>
-                                                       <Input {...field} id={field.name} value={field.value ?? ''} type={showPassword ? 'text' : 'password'} autoFocus placeholder={'••••••••'}
-                                                              className={'pl-10 text-text'} onChange={(e) => field.onChange(e)}/>
-                                                       <div className={'absolute inset-y-0 right-0 pr-3 flex items-center'}>
-                                                           <button type={'button'} onClick={() => setShowPassword(!showPassword)} className={'text-gray-400 hover:text-gray-500 focus:outline-none'}>
-                                                               {showPassword ? (
-                                                                   <EyeOff className={'size-5'}/>
-                                                               ) : (
-                                                                   <Eye className={'size-5'}/>
-                                                               )}
-                                                           </button>
-                                                       </div>
-                                                   </div>
-                                               </FormControl>
-                                               <FormMessage/>
-                                           </FormItem>
-                                       )}
-                            />
-                            <div>
-                                <div className={'w-full h-1 bg-gray-200 rounded-full overflow-hidden'}>
-                                    <div className={`h-full ${getPasswordStrengthColor()}`} style={{width: `${passwordStrength * 25}%`}}/>
-                                </div>
-                                <p className={'text-xs text-gray-500 mt-1'}>
-                                    {passwordStrength === 0 && 'Use at least 8 characters with uppercase, numbers, and special characters'}
-                                    {passwordStrength === 1 && 'Password is weak'}
-                                    {passwordStrength === 2 && 'Password is fair'}
-                                    {passwordStrength === 3 && 'Password is good'}
-                                    {passwordStrength === 4 && 'Password is strong'}
-                                </p>
-                            </div>
-
-                            <Button type={'submit'}>Sign In</Button>
-                        </form>
-                    </Form>
-                )}
-
 
                 {/** or continue with */}
                 <div className={'flex items-center gap-4 px-6'}>

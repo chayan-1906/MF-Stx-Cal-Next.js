@@ -1,12 +1,14 @@
-import {auth} from "@/auth";
+'use client';
+
 import Image from "next/image";
 import Logout from "@/components/Logout";
 import React from "react";
-import { redirect } from "next/navigation";
+import {redirect} from "next/navigation";
 import routes from "@/lib/routes";
+import {useSession} from "next-auth/react";
 
-async function Home() {
-    const session = await auth();
+function Home() {
+    const {data: session} = useSession();
 
     if (!session?.user) {
         redirect(routes.loginPath());

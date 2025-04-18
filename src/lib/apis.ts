@@ -1,6 +1,6 @@
 const apis = {
-    signUpApi: () => '/api/sign-up',
-    verifyTokenApi: () => '/api/verify-token',
+    signUpApi: () => '/api/send-code',
+    verifyCodeApi: () => '/api/verify-code',
 }
 
 export default apis;
