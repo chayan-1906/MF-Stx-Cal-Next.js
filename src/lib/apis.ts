@@ -1,6 +1,5 @@
 const apis = {
-    signUpApi: () => '/api/send-code',
-    verifyCodeApi: () => '/api/verify-code',
+    sendCodeApi: () => '/api/send-code',
 }
 
 export default apis;
