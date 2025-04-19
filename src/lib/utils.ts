@@ -10,3 +10,7 @@ export function generateRandomCode(): string {
   console.log('6-digit OTP generated ✅:', otp);
   return otp;
 }
+
+export function isStringInvalid(text: string | undefined | null) {
+  return !text || text.length === 0 || text === 'undefined';
+}

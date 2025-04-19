@@ -4,6 +4,7 @@ import {sendVerificationEmail} from "@/lib/email";
 import {generateRandomCode} from "@/lib/utils";
 import {TOKEN_EXPIRY} from "@/lib/config";
 import {Otp} from "@/models/Otp";
+import {NextResponse} from "next/server";
 
 /** SEND OTP/CODE */
 export async function POST(request: Request) {
@@ -13,6 +14,14 @@ export async function POST(request: Request) {
         const {email} = await request.json();
         const code = generateRandomCode();
         const codeExpiry = new Date(Date.now() + Number(TOKEN_EXPIRY ?? 0));
+
+        if (!email) {
+            return NextResponse.json({
+                code: 'missingEmail',
+                success: false,
+                message: 'Email is required',
+            } as ApiResponse);
+        }
 
         const sendVerificationEmailResponse = await sendVerificationEmail({email, code, codeExpiry} as Otp);
 

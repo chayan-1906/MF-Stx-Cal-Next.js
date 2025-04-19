@@ -1,14 +1,14 @@
-'use client';
-
+import {auth} from "@/auth";
 import Image from "next/image";
-import Logout from "@/components/Logout";
 import React from "react";
 import {redirect} from "next/navigation";
 import routes from "@/lib/routes";
-import {useSession} from "next-auth/react";
+import Logout from "@/components/Logout";
 
-function Home() {
-    const {data: session} = useSession();
+async function Home() {
+    const session = await auth();
+
+    console.log('session:', session);
 
     if (!session?.user) {
         redirect(routes.loginPath());
@@ -18,13 +18,10 @@ function Home() {
         <div className={'bg-background text-text'}>
             <h1 className={'text-4xl font-black text-primary-600'}>HOME PAGE</h1>
 
-            {session?.user?.name && session?.user?.image ? (
-                <>
-                    <h1>{session?.user?.name}</h1>
-                    <Image src={session?.user?.image || ''} alt={session?.user?.name || ''} height={72} width={72} className={'rounded-full'}/>
-                </>
-            ) : (
-                <h1>Welcome, {session?.user?.email}</h1>
+            <h1>Name - {session?.user?.name}</h1>
+            <h1>Email - {session?.user?.email}</h1>
+            {session?.user?.image && (
+                <Image src={session?.user?.image || ''} alt={session?.user?.name || ''} height={72} width={72} className={'rounded-full'}/>
             )}
 
             <Logout/>

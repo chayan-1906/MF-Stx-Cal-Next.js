@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useState} from "react";
 import {useForm} from 'react-hook-form';
 import {LoginSchema, loginSchema} from "@/lib/formValidationSchemas";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -10,12 +10,8 @@ import {Button} from "@/components/ui/button";
 import {APP_NAME} from "@/lib/config";
 import {cn} from "@/lib/utils";
 import {Lock, Mail} from "lucide-react";
-import {toast} from "react-toastify";
-import {signIn} from "next-auth/react";
-import {useRouter, useSearchParams} from "next/navigation";
-import {doSocialLogin} from "@/app/actions";
-import { z } from "zod";
-import routes from "@/lib/routes";
+import {useRouter} from "next/navigation";
+import {doCredentialLogin} from "@/app/actions";
 
 function LoginForm() {
     const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
@@ -23,82 +19,24 @@ function LoginForm() {
         resolver: zodResolver(loginSchema),
     });
     const {register, handleSubmit, formState: {errors}} = form;
+    const [globalError, setGlobalError] = useState<string>('');
     const router = useRouter();
-    const searchParams = useSearchParams(); // Get query parameters
-    const error = searchParams.get('error');
 
-    /*const onSubmit = async (data: any) => {
+    const onSubmit = async (values: LoginSchema) => {
         const formData = new FormData();
-        formData.append('action', 'credentials');
-        formData.append('email', data.email);
-        formData.append('code', data.code);
-        if (data.name) {
-            formData.append('name', data.name);
-        }
+        Object.entries(values).forEach(([key, value]) => {
+            formData.append(key, value);
+        });
 
         try {
-            const result = await doSocialLogin(formData);
-            if (result?.error) {
-                try {
-                    const parsedError = JSON.parse(result.error);
-                    toast.error(parsedError.message);
-                    // setError(parsedError.message || result.error);
-                } catch {
-                    // setError(result.error);
-                }
+            const result = await doCredentialLogin(values);
+            if (result?.message) {
+                setGlobalError(result.message);
             }
-        } catch (err: any) {
-            // setError(err.message || "Authentication failed");
+        } catch (error) {
+            console.log("An unexpected error occurred. Please try again.");
         }
-    }*/
-
-    const customHandleSubmit = async (e) => {
-        e.preventDefault();
-        const name = form.watch('name');
-        const email = form.watch('email');
-        const code = form.watch('code');
-
-        await signIn("credentials", {
-            name,
-            email,
-            code,
-            redirect: false,
-        }).then((response) => {
-            if (response?.error) {
-                console.error('error in customHandleSubmit:', response.error);
-                const parsedError = JSON.parse(JSON.parse(response.error).message);
-                console.log(parsedError);
-                toast(parsedError.message); // Show toast for error
-            } else {
-                router.push("/"); // Redirect on success
-            }
-        });
     }
-
-    const onSubmit = useCallback(async (data: z.infer<typeof loginSchema>) => {
-        const signInResult = await signIn('credentials', {
-            redirect: false,
-            name: data.name,
-            email: data.email,
-            code: data.code,
-        });
-        if (signInResult?.error) {
-            const errorMessage = JSON.parse(JSON.parse(signInResult?.error).message).message;
-            // console.log(JSON.parse(errorMessage.message).message);
-            if (signInResult.error === 'CredentialsSignin') {
-                toast('Sign In failed');
-            } else {
-                toast(errorMessage, {type: 'error'});
-            }
-        } else {
-            toast('Sign in successful!');
-        }
-        console.log(signInResult);
-
-        if (signInResult?.url) {
-            router.replace(routes.homePath());
-        }
-    }, [router]);
 
     return (
         <div className={'flex items-center justify-center p-4 fixed inset-0 bg-primary-200 dark:bg-primary-900'}>
@@ -129,27 +67,29 @@ function LoginForm() {
 
                 {/** form */}
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className={'flex flex-col px-6 gap-5'}>
-                            {/** email */}
-                            <FormField control={form.control} name={'email'}
-                                       render={({field}) => (
-                                           <FormItem>
-                                               <FormLabel htmlFor={field.name} className={'text-text'}>Email address</FormLabel>
-                                               <FormControl>
-                                                   <div className={'relative'}>
-                                                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                                           <Mail className={'size-5 text-gray-400'}/>
-                                                       </div>
-                                                       <Input {...field} id={field.name} value={field.value ?? ''} type={'email'} autoFocus placeholder={'john.doe@gmail.com'}
-                                                              className={'pl-10 text-text'} onChange={(e) => field.onChange(e)}/>
-                                                   </div>
-                                               </FormControl>
-                                               <FormMessage/>
-                                           </FormItem>
-                                       )}
-                            />
+                    <form onSubmit={handleSubmit(onSubmit)} className={'flex flex-col px-6 gap-5'}>
+                        <h1 className={'text-red-400'}>{globalError}</h1>
 
-                            {/** password */}
+                        {/** email */}
+                        <FormField control={form.control} name={'email'}
+                                   render={({field}) => (
+                                       <FormItem>
+                                           <FormLabel htmlFor={field.name} className={'text-text'}>Email address</FormLabel>
+                                           <FormControl>
+                                               <div className={'relative'}>
+                                                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                       <Mail className={'size-5 text-gray-400'}/>
+                                                   </div>
+                                                   <Input {...field} id={field.name} value={field.value ?? ''} type={'email'} autoFocus placeholder={'john.doe@gmail.com'}
+                                                          className={'pl-10 text-text'} onChange={(e) => field.onChange(e)}/>
+                                               </div>
+                                           </FormControl>
+                                           <FormMessage/>
+                                       </FormItem>
+                                   )}
+                        />
+
+                        {/** password */}
                         <FormField control={form.control} name={'code'}
                                        render={({field}) => (
                                            <FormItem>
@@ -166,11 +106,11 @@ function LoginForm() {
                                                <FormMessage/>
                                            </FormItem>
                                        )}
-                            />
+                        />
 
                         <Button type={'submit'} name={'action'} value={'credentials'} className={'cursor-pointer'}>Sign In</Button>
-                        </form>
-                    </Form>
+                    </form>
+                </Form>
 
                 {/** or continue with */}
                 <div className={'flex items-center gap-4 px-6'}>
