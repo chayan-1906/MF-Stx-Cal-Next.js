@@ -177,5 +177,5 @@ export const {handlers: {GET, POST}, auth, signIn, signOut} = NextAuth({
             return session;
         },
     },
-    debug: true,
+    // debug: true,
 });
