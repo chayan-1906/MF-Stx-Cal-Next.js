@@ -2,7 +2,7 @@
 
 import routes from "@/lib/routes";
 import {AuthError} from "next-auth";
-import {signIn, signOut} from "@/auth";
+import {auth, signIn, signOut} from "@/auth";
 import {LoginSchema} from "@/lib/formValidationSchemas";
 import {redirect} from "next/navigation";
 
@@ -50,11 +50,13 @@ export async function doCredentialLogin(loginSchema: LoginSchema): Promise<{ mes
 }
 
 export async function doLogout() {
-    try {
-        await signOut({redirect: false}); // Sign out without automatic redirect
-        redirect(routes.loginPath()); // Manually redirect to login page
-    } catch (error) {
-        console.error('Logout error:', error);
-        throw new Error('Failed to log out');
+    await signOut();
+}
+
+export async function getSession() {
+    const session = await auth();
+    if (!session || !session.user) {
+        redirect(routes.loginPath());
     }
+    return session;
 }

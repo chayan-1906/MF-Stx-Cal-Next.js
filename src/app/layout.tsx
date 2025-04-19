@@ -14,13 +14,10 @@ export const metadata: Metadata = {
 function RootLayout({children}: Readonly<{ children: React.ReactNode; }>) {
     return (
         <html lang={'en'}>
-        {/*<AuthProvider>*/}
             <body className={nunitoSans.className}>
-            {/*<Navbar/>*/}
             {children}
             <ToastContainer position={'bottom-right'} theme={'colored'}/>
             </body>
-        {/*</AuthProvider>*/}
         </html>
     );
 }

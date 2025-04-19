@@ -5,8 +5,8 @@ import {JWT} from "next-auth/jwt";
 import {dbConnect} from "@/lib/db";
 import OtpModel from "@/models/Otp";
 import bcrypt from "bcryptjs";
-import routes from "@/lib/routes";
 import {isStringInvalid} from "@/lib/utils";
+import routes from "@/lib/routes";
 
 export const {handlers: {GET, POST}, auth, signIn, signOut} = NextAuth({
     session: {
@@ -90,7 +90,7 @@ export const {handlers: {GET, POST}, auth, signIn, signOut} = NextAuth({
             return true;
         },
 
-        async authorized({request: {nextUrl}, auth}) {
+        authorized({request: {nextUrl}, auth}) {
             const isLoggedIn = !!auth?.user;
             const {pathname} = nextUrl;
             if (pathname.startsWith(routes.loginPath()) && isLoggedIn) {
