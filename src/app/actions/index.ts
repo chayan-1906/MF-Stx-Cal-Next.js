@@ -6,11 +6,6 @@ import {auth, signIn, signOut} from "@/auth";
 import {LoginSchema} from "@/lib/formValidationSchemas";
 import {redirect} from "next/navigation";
 
-// const Providers = {Credentials: 'credentials', Google: 'google', GitHub: 'apple', Facebook: 'facebook'} as const;
-// type AuthProvider = (typeof Providers)[keyof typeof Providers];
-// const validProviders = new Set<AuthProvider>(Object.values(Providers));
-const validProviders = new Set<string>(["credentials", "google", "apple"]);
-
 export async function doCredentialLogin(loginSchema: LoginSchema): Promise<{ message?: string }> {
     try {
         await signIn('credentials', {
@@ -47,6 +42,10 @@ export async function doCredentialLogin(loginSchema: LoginSchema): Promise<{ mes
         }
         throw error;
     }
+}
+
+export async function handleGoogleLogin() {
+    await signIn('google', {redirectTo: "/"});
 }
 
 export async function doLogout() {

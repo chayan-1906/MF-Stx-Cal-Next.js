@@ -11,7 +11,7 @@ import {APP_NAME} from "@/lib/config";
 import {cn} from "@/lib/utils";
 import {Lock, Mail} from "lucide-react";
 import {useRouter} from "next/navigation";
-import {doCredentialLogin} from "@/app/actions";
+import {doCredentialLogin, handleGoogleLogin} from "@/app/actions";
 
 function LoginForm() {
     const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
@@ -23,11 +23,6 @@ function LoginForm() {
     const router = useRouter();
 
     const onSubmit = async (values: LoginSchema) => {
-        const formData = new FormData();
-        Object.entries(values).forEach(([key, value]) => {
-            formData.append(key, value);
-        });
-
         try {
             const result = await doCredentialLogin(values);
             if (result?.message) {
@@ -122,7 +117,8 @@ function LoginForm() {
                 {/** oauths */}
                 <div className={'grid grid-cols-2 gap-3 px-6 pb-6'}>
                     <button type={'button'}
-                            className={'w-full inline-flex justify-center items-center py-2 px-4 border border-primary rounded-md shadow-sm shadow-primary-200 bg-white text-sm font-medium text-slate-700 cursor-pointer'}>
+                            className={'w-full inline-flex justify-center items-center py-2 px-4 border border-primary rounded-md shadow-sm shadow-primary-200 bg-white text-sm font-medium text-slate-700 cursor-pointer'}
+                            onClick={handleGoogleLogin}>
                         <svg className={'size-5 mr-2'} viewBox={'0 0 24 24'} xmlns={'http://www.w3.org/2000/svg'}>
                             <path d={'M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z'} fill={'#4285F4'}/>
                             <path d={'M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z'} fill={'#34A853'}/>

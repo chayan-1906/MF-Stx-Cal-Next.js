@@ -7,6 +7,8 @@ import OtpModel from "@/models/Otp";
 import bcrypt from "bcryptjs";
 import {isStringInvalid} from "@/lib/utils";
 import routes from "@/lib/routes";
+import Google from "@auth/core/providers/google";
+import {GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET} from "@/lib/config";
 
 export const {handlers: {GET, POST}, auth, signIn, signOut} = NextAuth({
     session: {
@@ -65,12 +67,13 @@ export const {handlers: {GET, POST}, auth, signIn, signOut} = NextAuth({
                 }
 
                 await OtpModel.deleteOne({email: credentials.email});
+                console.log('otp deleted 👈');
 
                 return user;
             },
         }),
 
-        /*GoogleProvider({
+        Google({
             clientId: GOOGLE_CLIENT_ID,
             clientSecret: GOOGLE_CLIENT_SECRET,
             authorization: {
@@ -80,13 +83,65 @@ export const {handlers: {GET, POST}, auth, signIn, signOut} = NextAuth({
                     response_type: 'code',
                 },
             },
-        }),*/
+        }),
 
         /** TODO: Add Apple OAuth */
     ],
     callbacks: {
         async signIn({user, account, profile}) {
-            console.log("signIn callback user:", JSON.stringify(user, null, 2));
+            console.log('provider:', account?.provider);
+            if (account?.provider === 'google') {
+                await dbConnect();
+                try {
+                    const email = user.email;
+                    const name = user.name;
+                    if (!email) return false;
+
+                    let dbUser = await UserModel.findOne({email});
+                    console.log('dbUser:', dbUser);
+
+                    if (!dbUser) {
+                        console.log('user not found ℹ️');
+
+                        // Create new user for Google sign-in, auto-verified
+                        dbUser = await UserModel.create({
+                            name: user.name,
+                            email: user.email,
+                            image: user.image,
+                            googleId: profile?.sub,
+                            createdAt: new Date(),
+                        });
+                    } else {
+                        // user already exists
+                        let needToUpdateDbUser = false;
+                        if (isStringInvalid(dbUser.name)) {
+                            dbUser.name = user.name || '';
+                            needToUpdateDbUser = true;
+                        }
+                        if (isStringInvalid(dbUser.image)) {
+                            dbUser.image = user.image || undefined;
+                            needToUpdateDbUser = true;
+                        }
+                        if (isStringInvalid(dbUser.googleId) && profile?.sub) {
+                            dbUser.googleId = profile.sub;
+                            needToUpdateDbUser = true;
+                        }
+
+                        if (needToUpdateDbUser) {
+                            await dbUser.save();
+                        }
+                    }
+
+                    return true; // Allow sign-in
+                } catch (error) {
+                    console.error('Error in Google signIn callback:', error);
+                    return false;
+                }
+            } else if (account?.provider === 'credentials') {
+                console.log('login with credentials');
+            }
+
+            console.log('signIn callback user:', JSON.stringify(user, null, 2));
             return true;
         },
 
