@@ -1,9 +1,16 @@
 import React from "react";
 import Image from "next/image";
 import Logout from "@/components/Logout";
+import {auth} from "@/auth";
+import {redirect} from "next/navigation";
+import routes from "@/lib/routes";
 
 async function Home() {
     // const session = await getSession();
+    const session = await auth();
+    if (!session || !session.user) {
+        redirect(routes.loginPath());
+    }
 
     return (
         <main className="flex min-h-screen flex-col items-center justify-center p-24">
