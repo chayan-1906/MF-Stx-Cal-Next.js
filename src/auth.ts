@@ -6,9 +6,9 @@ import {dbConnect} from "@/lib/db";
 import OtpModel from "@/models/Otp";
 import bcrypt from "bcryptjs";
 import {isStringInvalid} from "@/lib/utils";
-import routes from "@/lib/routes";
 import Google from "@auth/core/providers/google";
 import {GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET} from "@/lib/config";
+import routes from "./lib/routes";
 
 export const {handlers: {GET, POST}, auth, signIn, signOut} = NextAuth({
     session: {
@@ -17,11 +17,10 @@ export const {handlers: {GET, POST}, auth, signIn, signOut} = NextAuth({
     providers: [
         Credentials({
             credentials: {
-                name: {label: 'Name', type: 'text'},
                 email: {label: 'Email', type: 'email'},
                 code: {label: 'Verification Code', type: 'password'},
             },
-            async authorize(credentials: Partial<Record<'name' | 'email' | 'code', any>>, req: Request): Promise<any> {
+            async authorize(credentials: Partial<Record<'email' | 'code', any>>, req: Request): Promise<any> {
                 await dbConnect();
                 console.log('credentials:', credentials);
 
@@ -35,20 +34,13 @@ export const {handlers: {GET, POST}, auth, signIn, signOut} = NextAuth({
                 let user = await UserModel.findOne({email: credentials.email});
                 if (!user) {
                     console.log('user not found ℹ️');
-                    console.log('name:', credentials.name, !credentials.name, typeof credentials.name);
-                    if (isStringInvalid(credentials.name)) {
-                        console.error('Name missing ❌');
-                        throw new Error('missingName');
-                        // return null;
-                    } else {
-                        user = await UserModel.create({
-                            name: credentials.name,
-                            email: credentials.email,
-                            image: null,
-                            googleId: null,
-                            createdAt: new Date(),
-                        });
-                    }
+                    user = await UserModel.create({
+                        name: null,
+                        email: credentials.email,
+                        image: null,
+                        googleId: null,
+                        createdAt: new Date(),
+                    });
                 }
 
                 const storedOtp = await OtpModel.findOne({email: credentials.email});
@@ -94,7 +86,6 @@ export const {handlers: {GET, POST}, auth, signIn, signOut} = NextAuth({
                 await dbConnect();
                 try {
                     const email = user.email;
-                    const name = user.name;
                     if (!email) return false;
 
                     let dbUser = await UserModel.findOne({email});
@@ -147,6 +138,7 @@ export const {handlers: {GET, POST}, auth, signIn, signOut} = NextAuth({
 
         authorized({request: {nextUrl}, auth}) {
             const isLoggedIn = !!auth?.user;
+            console.log('isLoggedIn:', isLoggedIn);
             const {pathname} = nextUrl;
             if (pathname.startsWith(routes.loginPath()) && isLoggedIn) {
                 return Response.redirect(new URL(routes.homePath(), nextUrl));
@@ -156,9 +148,18 @@ export const {handlers: {GET, POST}, auth, signIn, signOut} = NextAuth({
 
         async jwt({token, user}: { token: JWT; user: User }) {
             if (user) {
+                // Initial token creation
                 token.id = user.id as string;
-                token.name = user.name as string || 'Default User';
+                token.name = user.name as string;
                 token.email = user.email as string;
+            } else if (token.email) {
+                // Refresh token with latest DB data
+                const dbUser = await UserModel.findOne({email: token.email});
+                if (dbUser) {
+                    token.id = dbUser.id as string;
+                    token.name = dbUser.name as string;
+                    token.email = dbUser.email as string;
+                }
             }
             console.log('token from jwt:', token);
             console.log('user from jwt:', user);
@@ -168,7 +169,7 @@ export const {handlers: {GET, POST}, auth, signIn, signOut} = NextAuth({
         async session({session, token}: { session: Session; token: JWT }) {
             if (token) {
                 session.user.id = token.id;
-                session.user.name = token.name || 'Default User';
+                session.user.name = token.name;
                 session.user.email = token.email;
             }
             console.log('session from session:', session);

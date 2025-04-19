@@ -3,41 +3,94 @@
 import routes from "@/lib/routes";
 import {AuthError} from "next-auth";
 import {auth, signIn, signOut} from "@/auth";
-import {LoginSchema} from "@/lib/formValidationSchemas";
 import {redirect} from "next/navigation";
+import {ApiResponse} from "@/types/ApiResponse";
 
-export async function doCredentialLogin(loginSchema: LoginSchema): Promise<{ message?: string }> {
+export async function doCredentialLogin({email, code}: { email: string; code: string }): Promise<{ response: ApiResponse }> {
     try {
         await signIn('credentials', {
-            name: loginSchema.name || 'default name value, todo delete',
-            email: loginSchema.email,
-            code: loginSchema.code,
-            redirectTo: routes.homePath(),
+            email,
+            code,
+            redirect: false,
+            // redirectTo: BASE_URL + routes.homePath(),
+            // callbackUrl: routes.homePath(),
         });
-        return {message: 'Signed in successfully'};
+        return {
+            response: {
+                code: 'loggedIn',
+                success: true,
+                message: 'Successfully logged in',
+            },
+        };
     } catch (error) {
         if (error instanceof AuthError) {
             console.log('error type:', error.type);
             switch (error.type) {
                 case 'CredentialsSignin':
-                    return {message: 'Invalid credentials'};
+                    return {
+                        response: {
+                            code: 'invalidCred',
+                            success: false,
+                            message: 'Invalid credentials',
+                        }
+                    };
                 case 'AccessDenied':
-                    return {message: 'Access denied'};
+                    return {
+                        response: {
+                            code: 'accessDenied',
+                            success: false,
+                            message: 'Access denied',
+                        }
+                    };
                 case 'Verification':
-                    return {message: 'Verification failed'};
+                    return {
+                        response: {
+                            code: 'verificationFailed',
+                            success: false,
+                            message: 'Verification failed',
+                        }
+                    };
                 case 'CallbackRouteError':
                     if (error.cause?.err?.message === 'missingEmailCode') {
-                        return {message: 'Email & code must be valid'};
-                    } else if (error.cause?.err?.message === 'missingName') {
-                        return {message: 'Name is required'};
+                        return {
+                            response: {
+                                code: 'missingEmailCode',
+                                success: false,
+                                message: 'Email & code must be valid',
+                            }
+                        };
                     } else if (error.cause?.err?.message === 'expiredCode') {
-                        return {message: 'Code has been expired'};
+                        return {
+                            response: {
+                                code: 'expiredCode',
+                                success: false,
+                                message: 'Code has been expired',
+                            }
+                        };
                     } else if (error.cause?.err?.message === 'invalidCode') {
-                        return {message: 'Invalid code'};
+                        return {
+                            response: {
+                                code: 'invalidCode',
+                                success: false,
+                                message: 'Invalid code',
+                            }
+                        };
                     }
-                    return {message: 'Wrong callback route'};
+                    return {
+                        response: {
+                            code: 'wrongCallbackRoute',
+                            success: false,
+                            message: 'Wrong callback route',
+                        }
+                    };
                 default:
-                    return {message: 'Something went wrong'};
+                    return {
+                        response: {
+                            code: 'unknownError',
+                            success: false,
+                            message: 'Something went wrong',
+                        }
+                    };
             }
         }
         throw error;

@@ -6,18 +6,19 @@ export const loginSchema = z.object({
     code: z.string().min(6, {message: 'Code must be of 6-digit'}).max(6, {message: 'Code must be of 6-digit'}),
 });
 
-type LoginSchema = z.infer<typeof loginSchema>;
-
-export const signUpSchema = z.object({
-    name: z.string().min(1, {message: 'Name is required!'}),
-    email: z.string().email({message: 'Invalid email address'}),
-    password: z.string().min(8, {message: 'Password must be at least 8 characters long!'}).regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/, {
-            message: 'Password must include uppercase, lowercase, number, and special character (@$!%*?&#)!'
-        },
-    ),
+export const emailSchema = z.object({
+    email: z.string().email({message: 'Please enter a valid email address'}),
 });
+type EmailFormValues = z.infer<typeof emailSchema>;
 
-type SignUpSchema = z.infer<typeof signUpSchema>;
+export const otpSchema = z.object({
+    otp: z.array(z.string().length(1, {message: 'Verification code required'})).length(6),
+});
+type OtpFormValues = z.infer<typeof otpSchema>;
 
-export type {LoginSchema, SignUpSchema}
+export const nameSchema = z.object({
+    name: z.string().trim().min(2, {message: 'Name must be at least 2 characters'}).optional().or(z.literal('')),
+});
+type NameFormValues = z.infer<typeof nameSchema>;
+
+export type {EmailFormValues, OtpFormValues, NameFormValues}

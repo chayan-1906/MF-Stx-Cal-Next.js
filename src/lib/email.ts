@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer";
-import {APP_NAME, EMAIL_PASS, EMAIL_USER} from "@/lib/config";
+import {APP_NAME, EMAIL_PASS, EMAIL_USER, NODE_ENV} from "@/lib/config";
 import {ApiResponse} from "@/types/ApiResponse";
 import {storeOtp} from "@/lib/db/otp-storage";
 import {Otp} from "@/models/Otp";
@@ -93,8 +93,10 @@ async function sendVerificationEmail(otp: Otp): Promise<ApiResponse> {
         };
 
         // Send the email
-        const info = await transporter.sendMail(mailOptions);
-        console.log(`Verification email sent to ${email}: ${info.messageId}`);
+        if (NODE_ENV !== 'development') {
+            const info = await transporter.sendMail(mailOptions);
+            console.log(`Verification email sent to ${email}: ${info.messageId}`);
+        }
 
         await storeOtp(otp);
 
