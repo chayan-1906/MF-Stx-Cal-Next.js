@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import {useForm} from 'react-hook-form';
 import {EmailFormValues, emailSchema, NameFormValues, nameSchema, OtpFormValues, otpSchema} from "@/lib/formValidationSchemas";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -28,6 +28,7 @@ function LoginForm() {
     const [authMethod, setAuthMethod] = useState<AuthMethod>('email');
     const [loading, setLoading] = useState(false);
     const [countdown, setCountdown] = useState(0);
+    const firstInputRef = useRef<HTMLInputElement>(null);
     const router = useRouter();
 
     const emailForm = useForm<EmailFormValues>({
@@ -115,7 +116,7 @@ function LoginForm() {
         }
     }
 
-    const onOtpSubmit = async () => {
+    const onOtpSubmit = useCallback(async () => {
         setLoading(true);
         try {
             const result = await doCredentialLogin({email, code});
@@ -139,7 +140,7 @@ function LoginForm() {
         } finally {
             setLoading(false);
         }
-    }
+    }, [code, email, router]);
 
     const resendVerificationCode = () => {
         setLoading(true);
@@ -167,12 +168,25 @@ function LoginForm() {
         }
     }
 
+    /** autoFocus in 1st otp input field */
+    useEffect(() => {
+        if (authMethod === 'otp') {
+            firstInputRef.current?.focus();
+        }
+    }, [authMethod]);
+
+    useEffect(() => {
+        if (code.length === 6) {
+            onOtpSubmit();
+        }
+    }, [code, onOtpSubmit]);
+
     return (
         <div className={'flex items-center justify-center p-4 fixed inset-0 bg-primary-200 dark:bg-primary-900'}>
             <div
                 className={'flex flex-col gap-4 w-full max-w-md bg-background rounded-xl overflow-hidden shadow-2xl shadow-primary-400 dark:shadow-black dark:drop-shadow-2xl drop-shadow-primary-400'}>
                 {/** header */}
-                <div className={'flex items-center justify-center mt-2 gap-1 sm:gap-2 px-3'}>
+                <div className={'flex items-center justify-center mt-2 gap-1 sm:gap-2 px-3 select-none'}>
                     <Image src={'/assets/images/logo.svg'} alt={'logo'} height={32} width={32}/>
                     <h2 className={'mt-3 text-xl font-bold text-center text-text tracking-wide'}>Welcome to {APP_NAME}</h2>
                 </div>
@@ -220,15 +234,16 @@ function LoginForm() {
                                            </div>
 
                                            <FormControl>
-                                               <div className="flex gap-2 justify-between mb-2">
+                                               <div className={'flex gap-2 justify-between mb-2'}>
                                                    {Array.from({length: 6}).map((_, index) => (
                                                        <Input
                                                            key={index}
                                                            id={`otp-${index}`}
+                                                           ref={index === 0 ? firstInputRef : null}
                                                            type={'text'}
                                                            maxLength={6}
                                                            value={field.value[index]}
-                                                           placeholder={(index + 1).toString()}
+                                                           placeholder={'•'}
                                                            onChange={(e) => handleOtpChange(index, e.target.value)}
                                                            onKeyDown={(e) => handleKeyDown(index, e)}
                                                            className={'text-center text-text text-xl font-bold p-2'}

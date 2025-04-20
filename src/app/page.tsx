@@ -4,6 +4,7 @@ import Logout from "@/components/Logout";
 import {getUserFromDb} from "@/lib/db/user-storage";
 import {redirect} from "next/navigation";
 import routes from "@/lib/routes";
+import DeleteAccount from "@/components/DeleteAccount";
 
 async function Home() {
     const user = await getUserFromDb();
@@ -37,6 +38,7 @@ async function Home() {
             </div>
 
             <Logout/>
+            <DeleteAccount/>
         </main>
     );
 }
