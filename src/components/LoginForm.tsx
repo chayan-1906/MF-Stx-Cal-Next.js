@@ -29,6 +29,7 @@ function LoginForm() {
     const [loading, setLoading] = useState(false);
     const [countdown, setCountdown] = useState(0);
     const firstInputRef = useRef<HTMLInputElement>(null);
+    const nameInputRef = useRef<HTMLInputElement>(null);
     const router = useRouter();
 
     const emailForm = useForm<EmailFormValues>({
@@ -142,18 +143,6 @@ function LoginForm() {
         }
     }, [code, email, router]);
 
-    const resendVerificationCode = () => {
-        setLoading(true);
-
-        // TODO: think
-        // Simulating API call
-        setTimeout(() => {
-            setLoading(false);
-            setCountdown(60);
-            console.log(`Resending verification code to ${email}`);
-        }, 1500);
-    }
-
     const onNameSubmit = async () => {
         setLoading(true);
         const updateUserResponse = await axios.put<ApiResponse>(apis.updateUserApi(), {name, email});
@@ -168,18 +157,21 @@ function LoginForm() {
         }
     }
 
-    /** autoFocus in 1st otp input field */
+    /** autoFocus in 1st otp input * name input field */
     useEffect(() => {
+        console.log('authMethod:', authMethod);
         if (authMethod === 'otp') {
             firstInputRef.current?.focus();
+        } else if (authMethod === 'name') {
+            nameInputRef.current?.focus();
         }
     }, [authMethod]);
 
     useEffect(() => {
-        if (code.length === 6) {
+        if (authMethod === 'otp' && code.length === 6) {
             onOtpSubmit();
         }
-    }, [code, onOtpSubmit]);
+    }, [authMethod, code, onOtpSubmit]);
 
     return (
         <div className={'flex items-center justify-center p-4 fixed inset-0 bg-primary-200 dark:bg-primary-900'}>
@@ -261,7 +253,7 @@ function LoginForm() {
                                                {countdown > 0 ? (
                                                    <p>Resend code in {countdown}s</p>
                                                ) : (
-                                                   <Button type={'button'} variant={'link'} disabled={loading} className={'p-0 h-auto'} onClick={resendVerificationCode}>Resend code</Button>
+                                                   <Button type={'button'} variant={'link'} disabled={loading} className={'p-0 h-auto'} onClick={sendVerificationCode}>Resend code</Button>
                                                )}
                                            </div>
                                        </FormItem>
@@ -290,7 +282,7 @@ function LoginForm() {
                                                    <div className={'absolute inset-y-0 left-0 pl-3 flex items-center'}>
                                                        <MdAccountCircle className={'size-5 text-gray-400'}/>
                                                    </div>
-                                                   <Input {...field} id={field.name} value={field.value ?? ''} autoFocus placeholder={'John Doe'}
+                                                   <Input {...field} id={field.name} ref={nameInputRef} value={field.value ?? ''} autoFocus placeholder={'John Doe'}
                                                           className={'pl-10 text-text'} onChange={(e) => field.onChange(e)}/>
                                                </div>
                                            </FormControl>

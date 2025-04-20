@@ -3,8 +3,6 @@ import {ApiResponse} from "@/types/ApiResponse";
 import {NextResponse} from "next/server";
 import UserModel from "@/models/User";
 import {isStringInvalid} from "@/lib/utils";
-import {getToken} from "@auth/core/jwt";
-import {NEXTAUTH_SECRET} from "@/lib/config";
 import {getEmailFromToken} from "@/lib/db/user-storage";
 
 /** UPDATE USER */
