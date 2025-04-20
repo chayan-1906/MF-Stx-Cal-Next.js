@@ -6,6 +6,8 @@ import {redirect} from "next/navigation";
 import routes from "@/lib/routes";
 import DeleteAccount from "@/components/DeleteAccount";
 
+export const dynamic = 'force-dynamic';
+
 async function Home() {
     const user = await getUserFromDb();
     if (!user) {
