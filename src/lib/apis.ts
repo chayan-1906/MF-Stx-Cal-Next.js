@@ -3,6 +3,13 @@ const apis = {
     checkUserNameApi: (email: string) => `/api/check-user-name?email=${email}`,
     updateUserApi: () => '/api/user',
     deleteAccountApi: () => '/api/delete-account',
+
+    /** SIPs */
+    addMFSIPApi: () => '/api/mf/sips',
+    getAllMFSIPsApi: () => '/api/mf/sips',
+    getMFSIPByIdApi: (sipId: string) => `/api/mf/sips?sipId=${sipId}`,
+    updateMFSIPApi: () => '/api/mf/sips',
+    deleteMFSIPByIdApi: (sipId: string) => `/api/mf/sips?sipId=${sipId}`,
 }
 
 export default apis;

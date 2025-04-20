@@ -12,7 +12,7 @@ export async function generateMetadata({params, searchParams}: MetadataProps, pa
     return {
         title,
         description,
-        icons: parentMetadata.icons,
+        // icons: parentMetadata.icons,
         openGraph: {
             title,
             description,

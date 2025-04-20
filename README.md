@@ -1,6 +1,6 @@
 # 🎓 MFStxCal
 
-**A full-stack production-ready Next.js app with authentication, investment dashboard, SIP/Lumpsum tracking, and MongoDB integration for seamless mutual fund and stock portfolio management.**
+**A full-stack production-ready Next.js app with authentication, investment dashboard, MFSIP/Lumpsum tracking, and MongoDB integration for seamless mutual fund and stock portfolio management.**
 
 ## 🚀 Tech Stack
 

@@ -56,6 +56,7 @@ function LoginForm() {
 
     const sendVerificationCode = async () => {
         setLoading(true);
+        otpForm.reset({otp: ['', '', '', '', '', '']});
         const sendCodeResponse = await axios.post<ApiResponse>(apis.sendCodeApi(), {email});
 
         setLoading(false);
@@ -165,7 +166,11 @@ function LoginForm() {
         } else if (authMethod === 'name') {
             nameInputRef.current?.focus();
         }
-    }, [authMethod]);
+
+        if (authMethod !== 'otp') {
+            otpForm.reset({otp: ['', '', '', '', '', '']});
+        }
+    }, [authMethod, otpForm]);
 
     useEffect(() => {
         if (authMethod === 'otp' && code.length === 6) {

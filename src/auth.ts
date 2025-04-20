@@ -38,7 +38,7 @@ export const {handlers: {GET, POST}, auth, signIn, signOut} = NextAuth({
                         name: null,
                         email: credentials.email,
                         image: null,
-                        googleId: null,
+                        // googleId: null,
                         createdAt: new Date(),
                     });
                 }
@@ -99,7 +99,7 @@ export const {handlers: {GET, POST}, auth, signIn, signOut} = NextAuth({
                             name: user.name,
                             email: user.email,
                             image: user.image,
-                            googleId: profile?.sub,
+                            googleId: profile?.sub ? profile.sub : null,
                             createdAt: new Date(),
                         });
                     } else {
@@ -150,14 +150,14 @@ export const {handlers: {GET, POST}, auth, signIn, signOut} = NextAuth({
             if (user) {
                 // Initial token creation
                 token.id = user.id as string;
-                token.name = user.name as string;
+                // token.name = user.name as string;
                 token.email = user.email as string;
             } else if (token.email) {
                 // Refresh token with latest DB data
                 const dbUser = await UserModel.findOne({email: token.email});
                 if (dbUser) {
                     token.id = dbUser.id as string;
-                    token.name = dbUser.name as string;
+                    // token.name = dbUser.name as string;
                     token.email = dbUser.email as string;
                 }
             }
@@ -169,7 +169,7 @@ export const {handlers: {GET, POST}, auth, signIn, signOut} = NextAuth({
         async session({session, token}: { session: Session; token: JWT }) {
             if (token) {
                 session.user.id = token.id;
-                session.user.name = token.name;
+                // session.user.name = token.name;
                 session.user.email = token.email;
             }
             console.log('session from session:', session);

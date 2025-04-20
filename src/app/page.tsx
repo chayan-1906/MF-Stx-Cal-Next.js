@@ -5,6 +5,7 @@ import {getUserFromDb} from "@/lib/db/user-storage";
 import {redirect} from "next/navigation";
 import routes from "@/lib/routes";
 import DeleteAccount from "@/components/DeleteAccount";
+import MFSIP from "@/components/MF-SIP";
 
 export const dynamic = 'force-dynamic';
 
@@ -38,6 +39,10 @@ async function Home() {
                     </p>
                 </div>
             </div>
+
+            <MFSIP/>
+
+            {/*<MFStxCalDashboard/>*/}
 
             <Logout/>
             <DeleteAccount/>

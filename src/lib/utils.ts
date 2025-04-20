@@ -12,5 +12,5 @@ export function generateRandomCode(): string {
 }
 
 export function isStringInvalid(text: string | undefined | null) {
-  return !text || text.length === 0 || text === 'undefined';
+  return !text || text.trim().length === 0 || text === 'undefined';
 }
