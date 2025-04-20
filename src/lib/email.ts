@@ -21,75 +21,108 @@ async function sendVerificationEmail(otp: Otp): Promise<ApiResponse> {
         const mailOptions = {
             from: `${APP_NAME} <${EMAIL_USER}>`,
             to: email,
-            subject: `Verify Your ${APP_NAME} Account`,
+            subject: `Your ${APP_NAME} Login Code`,
             html: `
-            <!DOCTYPE html>
-            <html lang="en">
-            <head>
-              <meta charset="UTF-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <style>
-                body {
-                  font-family: Nunito, Arial, sans-serif;
-                  background-color: #f4f4f4;
-                  margin: 0;
-                  padding: 0;
-                }
-                .container {
-                  width: 100%;
-                  max-width: 600px;
-                  margin: 0 auto;
-                  background-color: #ffffff;
-                  padding: 20px;
-                  border-radius: 8px;
-                  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-                }
-                .header {
-                  text-align: center;
-                  padding: 20px;
-                  background-color: #DB2777;
-                  color: white;
-                  border-radius: 8px 8px 0 0;
-                }
-                .content {
-                  padding: 20px;
-                  text-align: center;
-                }
-                .button {
-                  display: inline-block;
-                  padding: 10px 20px;
-                  background-color: #DB2777;
-                  color: white !important;
-                  text-decoration: none;
-                  border-radius: 5px;
-                  font-size: 16px;
-                }
-                .footer {
-                  text-align: center;
-                  font-size: 12px;
-                  color: #777;
-                  padding: 10px;
-                }
-              </style>
-            </head>
-            <body>
-              <div class="container">
-                <div class="header">
-                  <h2>Account Verification</h2>
+              <!DOCTYPE html>
+              <html lang="en">
+              <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <style>
+                  body {
+                    font-family: Nunito, Arial, sans-serif;
+                    background-color: #f4f4f4;
+                    margin: 0;
+                    padding: 0;
+                  }
+                  .container {
+                    width: 100%;
+                    max-width: 600px;
+                    margin: 0 auto;
+                    background-color: #ffffff;
+                    padding: 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                  }
+                  .header {
+                    text-align: center;
+                    padding: 20px;
+                    background-color: #DB2777;
+                    color: white;
+                    border-radius: 8px 8px 0 0;
+                  }
+                  .content {
+                    padding: 20px;
+                    text-align: center;
+                  }
+                  .code-box {
+                    display: inline-block;
+                    font-size: 24px;
+                    letter-spacing: 4px;
+                    background-color: #f3f3f3;
+                    padding: 12px 20px;
+                    border-radius: 6px;
+                    margin-top: 10px;
+                    user-select: all;
+                  }
+                  .copy-button {
+                    margin-top: 15px;
+                    padding: 10px 20px;
+                    background-color: #DB2777;
+                    color: white !important;
+                    text-decoration: none;
+                    border-radius: 5px;
+                    font-size: 16px;
+                    cursor: pointer;
+                    display: inline-block;
+                  }
+                  .copy-status {
+                    margin-top: 10px;
+                    font-size: 14px;
+                    color: green;
+                    display: none;
+                  }
+                  .footer {
+                    text-align: center;
+                    font-size: 12px;
+                    color: #777;
+                    padding: 10px;
+                  }
+                </style>
+              </head>
+              <body>
+                <div class="container">
+                  <div class="header">
+                    <h2>${APP_NAME} Code</h2>
+                  </div>
+                  <div class="content">
+                    <p>Hello,</p>
+                    <p>Use the code below to log in or register your ${APP_NAME} account:</p>
+                    <div class="code-box" id="verifyCode">${code}</div>
+                    <br/>
+                    <a class="copy-button" onclick="copyCode()">Copy Code</a>
+                    <div class="copy-status" id="copyStatus">Code copied!</div>
+                    <p>If you didn’t request this, you can safely ignore this email.</p>
+                  </div>
+                  <div class="footer">
+                    <p>© 2025 ${APP_NAME}. All rights reserved.</p>
+                  </div>
                 </div>
-                <div class="content">
-                  <p>Hello,</p>
-                  <p>Thank you for joining ${APP_NAME}! Please verify your email address by clicking the button below:</p>
-                  <a href="${code}" class="button">${code}</a>
-                  <p>If you didn’t create this account, please ignore this email.</p>
-                </div>
-                <div class="footer">
-                  <p>© 2025 ${APP_NAME}. All rights reserved.</p>
-                </div>
-              </div>
-            </body>
-            </html>
-          `,
+                <script>
+                  function copyCode() {
+                    const code = document.getElementById('verifyCode').innerText;
+                    navigator.clipboard.writeText(code).then(() => {
+                      const status = document.getElementById('copyStatus');
+                      status.style.display = 'block';
+                      setTimeout(() => {
+                        status.style.display = 'none';
+                      }, 2000);
+                    });
+                  }
+                </script>
+              </body>
+              </html>
+            `,
         };
 
         // Send the email
