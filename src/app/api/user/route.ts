@@ -4,6 +4,7 @@ import {NextResponse} from "next/server";
 import UserModel from "@/models/User";
 import {isStringInvalid} from "@/lib/utils";
 import {getToken} from "@auth/core/jwt";
+import {NEXTAUTH_SECRET} from "@/lib/config";
 
 /** UPDATE USER */
 export async function PUT(request: Request) {
@@ -21,7 +22,7 @@ export async function PUT(request: Request) {
         }
 
         // Get the JWT token
-        const token = await getToken({req: request, secret: process.env.NEXTAUTH_SECRET});
+        const token = await getToken({req: request, secret: NEXTAUTH_SECRET});
         console.log('token:', token);
 
         // Check if token exists and compare emails

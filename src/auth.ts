@@ -7,7 +7,7 @@ import OtpModel from "@/models/Otp";
 import bcrypt from "bcryptjs";
 import {isStringInvalid} from "@/lib/utils";
 import Google from "@auth/core/providers/google";
-import {GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET} from "@/lib/config";
+import {GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, NEXTAUTH_SECRET} from "@/lib/config";
 import routes from "./lib/routes";
 
 export const {handlers: {GET, POST}, auth, signIn, signOut} = NextAuth({
@@ -177,5 +177,6 @@ export const {handlers: {GET, POST}, auth, signIn, signOut} = NextAuth({
             return session;
         },
     },
+    secret: NEXTAUTH_SECRET,
     // debug: true,
 });
