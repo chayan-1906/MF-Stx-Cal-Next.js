@@ -7,7 +7,7 @@ import {NEXTAUTH_SECRET} from "@/lib/config";
 export async function getEmailFromToken() {
     const token = await getToken({req: {headers: {cookie: (await cookies()).toString()}} as any, secret: NEXTAUTH_SECRET});
     console.log('token in getEmailFromToken:', token);
-    if (!token?.email) throw new Error('Unauthorized');
+    if (!token?.email) return null;
     return token.email;
 }
 
