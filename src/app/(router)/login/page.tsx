@@ -1,12 +1,12 @@
+import {Metadata, ResolvingMetadata} from 'next';
+import {MetadataProps} from "@/types";
 import LoginForm from "@/components/LoginForm";
-import {BASE_URL} from "@/lib/config";
-import {Metadata} from 'next';
 
-export async function generateMetadata(parent: Promise<Metadata>): Promise<Metadata> {
+export async function generateMetadata({params, searchParams}: MetadataProps, parent: ResolvingMetadata): Promise<Metadata> {
     console.log('generateMetadata called');
 
     const title = 'Login';
-    const description = '';
+    const description = 'Login page';
     const parentMetadata = await parent;
 
     return {
@@ -16,7 +16,7 @@ export async function generateMetadata(parent: Promise<Metadata>): Promise<Metad
         openGraph: {
             title,
             description,
-            url: BASE_URL,
+            url: process.env.BASE_URL || 'http://localhost:3000',
             type: 'website',
         },
         twitter: {
