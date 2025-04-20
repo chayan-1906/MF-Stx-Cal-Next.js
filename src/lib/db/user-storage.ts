@@ -1,11 +1,23 @@
 import {getToken} from "@auth/core/jwt";
-import {cookies} from "next/headers";
 import {dbConnect} from "@/lib/db/index";
 import UserModel, {User} from "@/models/User";
-import {NEXTAUTH_SECRET} from "@/lib/config";
+import {headers} from "next/headers";
 
 export async function getEmailFromToken() {
-    const token = await getToken({req: {headers: {cookie: (await cookies()).toString()}} as any, secret: NEXTAUTH_SECRET});
+    // const token = await getToken({req: {headers: {cookie: (await cookies()).toString()}} as any, secret: NEXTAUTH_SECRET});
+    const cookieHeader = (await headers()).get("cookie") ?? "";
+
+    const token =
+        (await getToken({
+            req: {headers: {cookie: cookieHeader}} as any,
+            secret: process.env.NEXTAUTH_SECRET,
+            cookieName: "__Secure-authjs.session-token",
+        })) ||
+        (await getToken({
+            req: {headers: {cookie: cookieHeader}} as any,
+            secret: process.env.NEXTAUTH_SECRET,
+            cookieName: "authjs.session-token",
+        }));
     console.log('token in getEmailFromToken:', token);
     if (!token?.email) return null;
     return token.email;
