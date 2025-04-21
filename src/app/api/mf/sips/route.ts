@@ -14,7 +14,7 @@ export async function POST(request: Request) {
     await dbConnect();
 
     try {
-        const {fundName, fundCode, amount, dayOfMonth, active, startDate, endDate, notes, category} = await request.json();
+        const {fundName, fundCode, schemeName, folioNo, amount, dayOfMonth, active, startDate, endDate, notes, category} = await request.json();
 
         /** validation */
         if (isStringInvalid(fundName)) {
@@ -28,6 +28,18 @@ export async function POST(request: Request) {
                 code: 'invalidFundCode',
                 success: false,
                 message: 'Fund code must be a string',
+            }, {status: 400});
+        } else if (schemeName && typeof schemeName !== 'string') {
+            return NextResponse.json<ApiResponse>({
+                code: 'invalidSchemeName',
+                success: false,
+                message: 'Scheme name must be a string',
+            }, {status: 400});
+        } else if (folioNo && typeof folioNo !== 'string') {
+            return NextResponse.json<ApiResponse>({
+                code: 'invalidFolioNo',
+                success: false,
+                message: 'Folio no must be a string',
             }, {status: 400});
         } else if (typeof amount !== 'number' || isNaN(amount) || amount < 1) {
             return NextResponse.json(<ApiResponse>{
@@ -65,7 +77,7 @@ export async function POST(request: Request) {
                 success: false,
                 message: 'Notes must be a string',
             }, {status: 400});
-        } else if (category && !['equity', 'debt', 'liquid'].includes(category)) {
+        } else if (['equity', 'debt', 'liquid'].includes(category)) {
             return NextResponse.json<ApiResponse>({
                 code: 'invalidCategory',
                 success: false,
@@ -175,7 +187,7 @@ export async function PUT(request: Request) {
     await dbConnect();
 
     try {
-        const {mfSipId, fundName, fundCode, amount, dayOfMonth, active, startDate, endDate, notes, category} = await request.json();
+        const {mfSipId, fundName, fundCode, schemeName, folioNo, amount, dayOfMonth, active, startDate, endDate, notes, category} = await request.json();
 
         /** validation */
         if (isStringInvalid(mfSipId)) {
@@ -195,6 +207,18 @@ export async function PUT(request: Request) {
                 code: 'invalidFundCode',
                 success: false,
                 message: 'Fund code must be a string',
+            }, {status: 400});
+        } else if (schemeName !== undefined && typeof schemeName !== 'string') {
+            return NextResponse.json<ApiResponse>({
+                code: 'invalidSchemeName',
+                success: false,
+                message: 'Scheme name must be a string',
+            }, {status: 400});
+        } else if (folioNo !== undefined && typeof folioNo !== 'string') {
+            return NextResponse.json<ApiResponse>({
+                code: 'invalidFolioNo',
+                success: false,
+                message: 'Folio no must be a string',
             }, {status: 400});
         } else if (amount !== undefined && (typeof amount !== 'number' || isNaN(amount) || amount < 1)) {
             return NextResponse.json(<ApiResponse>{
@@ -281,6 +305,12 @@ export async function PUT(request: Request) {
         }
         if (fundCode !== undefined && fundCode !== existingSIP.fundCode) {
             updateFields.fundCode = fundCode;
+        }
+        if (schemeName !== undefined && schemeName !== existingSIP.schemeName) {
+            updateFields.schemeName = schemeName;
+        }
+        if (folioNo !== undefined && folioNo !== existingSIP.folioNo) {
+            updateFields.folioNo = folioNo;
         }
         if (amount !== undefined && amount !== existingSIP.amount) {
             updateFields.amount = amount;

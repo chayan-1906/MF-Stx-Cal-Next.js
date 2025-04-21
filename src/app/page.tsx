@@ -6,6 +6,7 @@ import {redirect} from "next/navigation";
 import routes from "@/lib/routes";
 import DeleteAccount from "@/components/DeleteAccount";
 import MFSIP from "@/components/MF-SIP";
+import MFSIPForm from "@/components/mutual-funds/MFSIPForm";
 
 export const dynamic = 'force-dynamic';
 
@@ -41,6 +42,7 @@ async function Home() {
             </div>
 
             <MFSIP/>
+            <MFSIPForm userId={user.id}/>
 
             {/*<MFStxCalDashboard/>*/}
 

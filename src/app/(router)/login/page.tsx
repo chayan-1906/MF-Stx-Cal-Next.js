@@ -1,6 +1,9 @@
 import {Metadata, ResolvingMetadata} from 'next';
 import {MetadataProps} from "@/types";
 import LoginForm from "@/components/LoginForm";
+import {getUserFromDb} from "@/lib/db/user-storage";
+import {redirect} from "next/navigation";
+import routes from "@/lib/routes";
 
 export async function generateMetadata({params, searchParams}: MetadataProps, parent: ResolvingMetadata): Promise<Metadata> {
     console.log('generateMetadata called');
@@ -27,7 +30,12 @@ export async function generateMetadata({params, searchParams}: MetadataProps, pa
     };
 }
 
-function LoginPage() {
+async function LoginPage() {
+    const user = await getUserFromDb();
+    if (user) {
+        redirect(routes.homePath());
+    }
+
     return (
         <div>
             <LoginForm/>

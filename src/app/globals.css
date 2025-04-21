@@ -33,7 +33,16 @@
   --accent-900: #8A2525;
 
   --background: #F9FAFB;
-  --text: #1E293B;
+
+  --text-100: #E4E9F1;
+  --text-200: #B0C4D3;
+  --text-300: #8A9DB6;
+  --text-400: #6A7F99;
+  --text: #4A5B73; /* Neutral dark text color */
+  --text-600: #2F3A49;
+  --text-700: #1E2835;
+  --text-800: #141C23;
+  --text-900: #0A1015;
 
   --radius: 0.625rem;
   --foreground: oklch(0.147 0.004 49.25);
@@ -47,8 +56,12 @@
   --muted-foreground: oklch(0.553 0.013 58.071);
   --accent-foreground: oklch(0.216 0.006 56.043);
   --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: #E4E9F1;
+  --success: oklch(70.4% 0.14 182.503);
+  --success-foreground: #E4E9F1;
   --border: oklch(0.923 0.003 48.717);
-  --input: oklch(0.923 0.003 48.717);
+  /*--input: oklch(0.923 0.003 48.717);*/
+  --input: var(--primary);
   --ring: oklch(0.709 0.01 56.259);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
@@ -99,7 +112,16 @@
     --accent-900: #FFE9E9;
 
     --background: #1E293B;
-    --text: #F9FAFB
+
+    --text-100: #0A1015;
+    --text-200: #141C23;
+    --text-300: #1E2835;
+    --text-400: #2F3A49;
+    --text: #4A5B73; /* Neutral dark text color */
+    --text-600: #6A7F99;
+    --text-700: #8A9DB6;
+    --text-800: #B0C4D3;
+    --text-900: #E4E9F1;
   }
 }
 
@@ -136,7 +158,15 @@
 
   --color-background: var(--background);
 
+  --color-text-100: var(--text-100);
+  --color-text-200: var(--text-200);
+  --color-text-300: var(--text-300);
+  --color-text-400: var(--text-400);
   --color-text: var(--text);
+  --color-text-600: var(--text-600);
+  --color-text-700: var(--text-700);
+  --color-text-800: var(--text-800);
+  --color-text-900: var(--text-900);
 
   --font-body: Inter, Helvetica, sans-serif;
 
@@ -172,6 +202,12 @@
   --color-border: var(--border);
 
   --color-destructive: var(--destructive);
+
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-success: var(--success);
+
+  --color-success-foreground: var(--success-foreground);
 
   --color-accent-foreground: var(--accent-foreground);
 
@@ -223,8 +259,12 @@ body {
   --accent: oklch(0.268 0.007 34.298);
   --accent-foreground: oklch(0.985 0.001 106.423);
   --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: #E4E9F1;
+  --success: oklch(77.7% 0.152 181.912);
+  --success-foreground: #E4E9F1;
   --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
+  /*--input: oklch(1 0 0 / 15%);*/
+  --input: var(--primary);
   --ring: oklch(0.553 0.013 58.071);
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
@@ -264,4 +304,10 @@ input[type='number']::-webkit-inner-spin-button {
 /* Firefox */
 input[type='number'] {
   -moz-appearance: textfield;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  position: absolute;
+  right: 0.75rem;
+  cursor: pointer;
 }

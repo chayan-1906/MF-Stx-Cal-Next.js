@@ -6,13 +6,15 @@ export interface MFSIP extends Document {
     externalId: string;
     fundName: string;
     fundCode?: string;
+    schemeName: string;
+    folioNo: string;
     amount: number;
     dayOfMonth: number;
     active: boolean;
     startDate: Date;
     endDate?: Date;
     notes?: string;
-    category?: 'equity' | 'debt' | 'liquid';
+    category: 'equity' | 'debt' | 'liquid';
 }
 
 const MFSIPSchema: Schema<MFSIP> = new Schema({
@@ -37,10 +39,20 @@ const MFSIPSchema: Schema<MFSIP> = new Schema({
         required: false,
         default: null,
     },
+    schemeName: {
+        type: String,
+        required: [true, 'Scheme name is required'],
+        trim: true,
+    },
+    folioNo: {
+        type: String,
+        required: [true, 'Folio no is required'],
+        trim: true,
+    },
     amount: {
         type: Number,
         required: [true, 'Amount is required'],
-        min: [1, 'Amount must be at least 1'],
+        min: [1, 'Amount must be at least ₹1'],
     },
     dayOfMonth: {
         type: Number,
@@ -70,9 +82,8 @@ const MFSIPSchema: Schema<MFSIP> = new Schema({
     },
     category: {
         type: String,
-        required: false,
+        required: [true, 'Category is required'],
         enum: ['equity', 'debt', 'liquid'],
-        default: null,
     },
 });
 
