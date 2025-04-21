@@ -7,9 +7,9 @@ const apis = {
     /** SIPs */
     addMFSIPApi: () => '/api/mf/sips',
     getAllMFSIPsApi: () => '/api/mf/sips',
-    getMFSIPByIdApi: (sipId: string) => `/api/mf/sips?sipId=${sipId}`,
+    // getMFSIPByIdApi: (sipId: string) => `/api/mf/sips?sipId=${sipId}`,
     updateMFSIPApi: () => '/api/mf/sips',
-    deleteMFSIPByIdApi: (sipId: string) => `/api/mf/sips?sipId=${sipId}`,
+    deleteMFSIPByIdApi: (mfSipId: string) => `/api/mf/sips?mfSipId=${mfSipId}`,
 }
 
 export default apis;

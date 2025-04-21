@@ -26,9 +26,9 @@ type AuthMethod = 'email' | 'otp' | 'name';
 
 function LoginForm() {
     const [authMethod, setAuthMethod] = useState<AuthMethod>('email');
-    const [loading, setLoading] = useState(false);
-    const [countdown, setCountdown] = useState(0);
+    const [isLoading, setIsLoading] = useState(false);
     const firstInputRef = useRef<HTMLInputElement>(null);
+    const [showCode, setShowCode] = useState(false);
     const nameInputRef = useRef<HTMLInputElement>(null);
     const router = useRouter();
 
@@ -55,11 +55,11 @@ function LoginForm() {
     const name = nameForm.watch('name');
 
     const sendVerificationCode = async () => {
-        setLoading(true);
+        setIsLoading(true);
         otpForm.reset({otp: ['', '', '', '', '', '']});
         const sendCodeResponse = await axios.post<ApiResponse>(apis.sendCodeApi(), {email});
 
-        setLoading(false);
+        setIsLoading(false);
         if (sendCodeResponse.data.success) {
             setAuthMethod('otp');
             toast('Code sent to your email', {type: 'success'});
@@ -119,7 +119,7 @@ function LoginForm() {
     }
 
     const onOtpSubmit = useCallback(async () => {
-        setLoading(true);
+        setIsLoading(true);
         try {
             const result = await doCredentialLogin({email, code});
             if (result.response.success) {
@@ -140,15 +140,15 @@ function LoginForm() {
             console.log('error in verifying code:', error);
             toast('Something went wrong', {type: 'error'});
         } finally {
-            setLoading(false);
+            setIsLoading(false);
         }
     }, [code, email, router]);
 
     const onNameSubmit = async () => {
-        setLoading(true);
+        setIsLoading(true);
         const updateUserResponse = await axios.put<ApiResponse>(apis.updateUserApi(), {name, email});
 
-        setLoading(false);
+        setIsLoading(false);
         if (updateUserResponse.data.success) {
             await fetch('/api/auth/session', {credentials: 'include'});
             console.log('User updated and session refreshed');
@@ -212,7 +212,7 @@ function LoginForm() {
                                    )}
                         />
 
-                        <LoadingButton variant={'default'} loading={loading} type={'submit'} className={'flex gap-2 hover:gap-4 transition-all duration-300'}>
+                        <LoadingButton variant={'default'} loading={isLoading} type={'submit'} className={'flex gap-2 hover:gap-4 transition-all duration-300'}>
                             Send Verification Code
                             <FaArrowRight/>
                         </LoadingButton>
@@ -237,7 +237,7 @@ function LoginForm() {
                                                            key={index}
                                                            id={`otp-${index}`}
                                                            ref={index === 0 ? firstInputRef : null}
-                                                           type={'text'}
+                                                           type={showCode ? 'text' : 'password'}
                                                            maxLength={6}
                                                            value={field.value[index]}
                                                            placeholder={'•'}
@@ -249,23 +249,20 @@ function LoginForm() {
                                                </div>
                                            </FormControl>
                                            {errorsOtp.otp?.length && (
-                                               <p className={'mt-1 text-sm font-medium text-destructive'}>
-                                                   {errorsOtp.otp[0]?.message}
-                                               </p>
+                                               <p className={'mt-1 text-sm font-medium text-destructive'}>{errorsOtp.otp[0]?.message}</p>
                                            )}
 
-                                           <div className={'text-sm text-gray-600 mt-2'}>
-                                               {countdown > 0 ? (
-                                                   <p>Resend code in {countdown}s</p>
-                                               ) : (
-                                                   <Button type={'button'} variant={'link'} disabled={loading} className={'p-0 h-auto'} onClick={sendVerificationCode}>Resend code</Button>
-                                               )}
+                                           <div className={'flex justify-between gap-4 mt-2'}>
+                                               <Button type={'button'} variant={'link'} disabled={isLoading} className={'p-0 h-auto'} onClick={sendVerificationCode}>Resend code</Button>
+                                               <Button type={'button'} className={'p-0 h-auto bg-transparent hover:bg-transparent text-primary shadow-none'} onClick={() => setShowCode(!showCode)}>
+                                                   {showCode ? 'Hide' : 'Show'} Code
+                                               </Button>
                                            </div>
                                        </FormItem>
                                    )}
                         />
 
-                        <LoadingButton variant={'default'} loading={loading} type={'submit'} className={'flex gap-2 hover:gap-4 transition-all duration-300'}>
+                        <LoadingButton variant={'default'} loading={isLoading} type={'submit'} className={'flex gap-2 hover:gap-4 transition-all duration-300'}>
                             Verify
                             <FaArrowRight/>
                         </LoadingButton>
@@ -296,7 +293,7 @@ function LoginForm() {
                                    )}
                         />
 
-                        <LoadingButton variant={'default'} loading={loading} type={'submit'} className={'flex gap-2 hover:gap-4 transition-all duration-300'}>
+                        <LoadingButton variant={'default'} loading={isLoading} type={'submit'} className={'flex gap-2 hover:gap-4 transition-all duration-300'}>
                             Let's get started
                             <FaArrowRight/>
                         </LoadingButton>

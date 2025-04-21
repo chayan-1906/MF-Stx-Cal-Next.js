@@ -36,6 +36,8 @@ export async function getUserDetailsFromToken() {
         await getRawToken();
     }
 
+    const authHeader = (await headers()).get('authorization') ?? '';
+    const bearerToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
     const cookieHeader = (await headers()).get('cookie') ?? '';
 
     const token =

@@ -1,9 +1,7 @@
 'use server';
 
-import routes from "@/lib/routes";
 import {AuthError} from "next-auth";
-import {auth, signIn, signOut} from "@/auth";
-import {redirect} from "next/navigation";
+import {signIn, signOut} from "@/auth";
 import {ApiResponse} from "@/types/ApiResponse";
 
 export async function doCredentialLogin({email, code}: { email: string; code: string }): Promise<{ response: ApiResponse }> {
@@ -103,12 +101,4 @@ export async function handleGoogleLogin() {
 
 export async function doLogout() {
     await signOut();
-}
-
-export async function getSession() {
-    const session = await auth();
-    if (!session || !session.user) {
-        redirect(routes.loginPath());
-    }
-    return session;
 }

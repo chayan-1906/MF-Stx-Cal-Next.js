@@ -1,8 +1,9 @@
 import {dbConnect} from "@/lib/db";
 import {ApiResponse} from "@/types/ApiResponse";
 import {NextResponse} from "next/server";
+import {getUserDetailsFromToken} from "@/lib/db/user-storage";
 import UserModel from "@/models/User";
-import {getEmailFromToken} from "@/lib/db/user-storage";
+import MFSIPModel from "@/models/MFSIP";
 
 /** DELETE ACCOUNT */
 export async function DELETE(request: Request) {
@@ -11,18 +12,39 @@ export async function DELETE(request: Request) {
     try {
         // Get the JWT token
         // const token = await getToken({req: request, secret: NEXTAUTH_SECRET});
-        const email = await getEmailFromToken();
-        console.log('email:', email);
+        const {userId} = await getUserDetailsFromToken();
+        console.log('userId:', userId);
 
-        if (!email) {
+        if (!userId) {
             return NextResponse.json<ApiResponse>({
                 code: 'unauthorized',
                 success: false,
-                message: 'Email does not match authenticated user',
+                message: 'User Id is required',
             }, {status: 401});
         }
 
-        const dbUser = await UserModel.deleteOne({email});
+        const deletedUser = await UserModel.findByIdAndDelete(userId);
+        console.log('deletedUser:', deletedUser);
+
+        if (!deletedUser) {
+            return NextResponse.json<ApiResponse>({
+                code: 'userNotFound',
+                success: false,
+                message: 'User not found',
+            }, {status: 404});
+        }
+
+        // delete user's mfsips
+        await MFSIPModel.deleteMany({_id: {$in: deletedUser.mfSIPIds}});
+
+        // TODO: delete user's mflumpsums
+        // await MFLumpsumModel.deleteMany({_id: {$in: deletedUser.mfLumpsumIds}});
+
+        // TODO: delete user's stxSips
+        // await StxSIPModel.deleteMany({_id: {$in: deletedUser.stxSIPIds}});
+
+        // TODO: delete user's stxLumpsums
+        // await StxLumpsumModel.deleteMany({_id: {$in: deletedUser.stxLumpsumIds}});
 
         return Response.json(<ApiResponse>{
             code: 'deleted',
