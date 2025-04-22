@@ -8,7 +8,7 @@ export const loginSchema = z.object({
 });
 
 export const emailSchema = z.object({
-    email: z.string().email({message: 'Please enter a valid email address'}),
+    email: z.string().email({message: 'Valid email address required'}),
 });
 type EmailFormValues = z.infer<typeof emailSchema>;
 
@@ -18,7 +18,7 @@ export const otpSchema = z.object({
 type OtpFormValues = z.infer<typeof otpSchema>;
 
 export const nameSchema = z.object({
-    name: z.string().trim().min(2, {message: 'Name must be at least 2 characters'}).optional().or(z.literal('')),
+    name: z.string().trim().min(2, {message: 'Name must contain at least 2 characters'}).optional().or(z.literal('')),
 });
 type NameFormValues = z.infer<typeof nameSchema>;
 

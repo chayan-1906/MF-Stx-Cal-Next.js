@@ -1,6 +1,6 @@
 'use client';
 
-import React from "react";
+import React, {useEffect, useMemo} from "react";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
@@ -9,29 +9,84 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {MFSIPFormValues, mfSipSchema} from "@/lib/formValidationSchemas";
 import {CalendarIcon, CheckCircle, Clock, DollarSign, FileText, PlusIcon, X} from "lucide-react";
-import {cn} from "@/lib/utils";
+import {capitalizeFirst, cn} from "@/lib/utils";
 import {BiRupee} from "react-icons/bi";
 import {MdNotes} from "react-icons/md";
 import {LoadingButton} from "@/components/loading-button";
 import {MFSIPProps} from "@/types";
+import apis from "@/lib/apis";
+import axios from "axios";
+import {ApiResponse} from "@/types/ApiResponse";
+import {toast} from "react-toastify";
 
-function MFSIPForm({userId}: MFSIPProps) {
+function MFSIPForm({userId, mfSip}: MFSIPProps) {
+    const defaultValues = useMemo(() =>
+            mfSip
+                ? mfSipSchema.parse({
+                    ...mfSip,
+                    startDate: new Date(mfSip.startDate),
+                })
+                : {userId, active: true},
+        [mfSip, userId],
+    );
+
     const mfSipForm = useForm<MFSIPFormValues>({
         resolver: zodResolver(mfSipSchema),
-        defaultValues: {
-            userId,
-            active: true,
-            // ...other defaults
-        },
+        defaultValues,
     });
-    const {register: register, handleSubmit, formState: {errors, isValid}} = mfSipForm;
-    
+    const {register: register, handleSubmit, formState: {errors, isValid, isSubmitting}, reset} = mfSipForm;
+
+    const cardWrapperClassNames = 'rounded-xl overflow-hidden shadow-lg border-3 border-primary-600 dark:border-primary-900';
     const cardHeaderClassNames = 'bg-primary-600 dark:bg-primary-900 p-4 text-primary-foreground';
     const cardBgClassNames = 'bg-card dark:bg-primary-800 p-6 space-y-5';
 
-    const createNewMfSip = () => {
+    const createNewMfSip = async () => {
         console.log('createNewMfSip:', mfSipForm.getValues());
+        const formData = mfSipForm.getValues();
+
+        // Format fields
+        formData.fundName = formData.fundName?.toUpperCase() || '';
+        formData.fundCode = formData.fundCode?.toUpperCase() || '';
+        formData.schemeName = capitalizeFirst(formData.schemeName);
+        console.log('formData:', formData);
+
+        try {
+            const addMfSipApiResponse = (await axios.post<ApiResponse>(apis.addMFSIPApi(), formData)).data;
+
+            if (addMfSipApiResponse.success) {
+                toast(addMfSipApiResponse.message, {type: 'success'});
+                reset();
+            } else {
+                toast(addMfSipApiResponse.message, {type: 'error'});
+            }
+        } catch (error) {
+            toast('Something went wrong', {type: 'error'});
+        }
     }
+
+    useEffect(() => {
+        reset(defaultValues);
+    }, [defaultValues, reset])
+
+    /*useEffect(() => {
+        if (mfSip) {
+            const {fundName, schemeName, folioNo, amount, dayOfMonth, startDate, category, fundCode, active, endDate, notes} = mfSip;
+            mfSipForm.reset({
+                userId,
+                fundName,
+                schemeName,
+                folioNo,
+                amount,
+                dayOfMonth,
+                startDate: new Date(startDate), // ensure Date type
+                category,
+                fundCode: fundCode ?? null,
+                active: active ?? true,
+                endDate: endDate ? new Date(endDate) : undefined,
+                notes: notes ?? "",
+            });
+        }
+    }, [mfSip, mfSipForm, userId]);*/
 
     return (
         <div className={'max-w-4xl bg-background mx-auto p-6'}>
@@ -47,9 +102,9 @@ function MFSIPForm({userId}: MFSIPProps) {
             <Form {...mfSipForm}>
                 <form onSubmit={handleSubmit(createNewMfSip)} className={'space-y-5'}>
                     {/** cards */}
-                    <div className={'rounded-xl shadow-lg overflow-hidden space-y-5'}>
+                    <div className={'space-y-5'}>
                         {/** Card 1: Fund Details */}
-                        <div className={'rounded-xl overflow-hidden'}>
+                        <div className={cardWrapperClassNames}>
                             <div className={cardHeaderClassNames}>
                                 <div className={'flex items-center gap-2'}>
                                     <FileText className={'size-5'}/>
@@ -76,8 +131,8 @@ function MFSIPForm({userId}: MFSIPProps) {
                                     <FormItem>
                                         <FormLabel htmlFor={field.name} className={''}>Fund name *</FormLabel>
                                         <FormControl>
-                                            <Input {...field} id={field.name} value={field.value ?? ''} type={'text'} autoFocus placeholder={'Mirae Asset Mutual Fund'}
-                                                   className={'uppercase'} onChange={(e) => field.onChange(e)}/>
+                                            <Input {...field} id={field.name} value={field.value ?? ''} type={'text'} autoFocus placeholder={'Mirae Asset Mutual Fund'} className={'uppercase'}
+                                                   onChange={(e) => field.onChange(e)}/>
                                         </FormControl>
                                         <FormMessage/>
                                     </FormItem>
@@ -88,8 +143,8 @@ function MFSIPForm({userId}: MFSIPProps) {
                                     <FormItem>
                                         <FormLabel htmlFor={field.name} className={''}>Fund code (Optional)</FormLabel>
                                         <FormControl>
-                                            <Input {...field} id={field.name} value={field.value ?? ''} type={'text'} placeholder={'INF769K01GU0'}
-                                                   className={'uppercase'} onChange={(e) => field.onChange(e)}/>
+                                            <Input {...field} id={field.name} value={field.value ?? ''} type={'text'} placeholder={'INF769K01GU0'} className={'uppercase'}
+                                                   onChange={(e) => field.onChange(e)}/>
                                         </FormControl>
                                         <FormMessage/>
                                     </FormItem>
@@ -113,7 +168,7 @@ function MFSIPForm({userId}: MFSIPProps) {
                                         <FormLabel htmlFor={field.name} className={''}>Folio no *</FormLabel>
                                         <FormControl>
                                             <Input {...field} id={field.name} value={field.value ?? ''} type={'number'} placeholder={'79943003995'}
-                                                   className={''} onChange={(e) => field.onChange(e)}/>
+                                                   className={''} onChange={(e) => field.onChange(e)} onWheel={(e) => e.currentTarget.blur()}/>
                                         </FormControl>
                                         <FormMessage/>
                                     </FormItem>
@@ -141,7 +196,7 @@ function MFSIPForm({userId}: MFSIPProps) {
                         </div>
 
                         {/** Card 2: Amount & Schedule */}
-                        <div className={'rounded-xl overflow-hidden'}>
+                        <div className={cardWrapperClassNames}>
                             <div className={cardHeaderClassNames}>
                                 <div className={'flex items-center gap-2'}>
                                     <DollarSign className={'size-5'}/>
@@ -220,7 +275,7 @@ function MFSIPForm({userId}: MFSIPProps) {
                         </div>
 
                         {/** Card 3: Dates & Notes */}
-                        <div className={'rounded-xl overflow-hidden'}>
+                        <div className={cardWrapperClassNames}>
                             <div className={cardHeaderClassNames}>
                                 <div className={'flex items-center gap-2'}>
                                     <Clock className={'size-5'}/>
@@ -282,8 +337,8 @@ function MFSIPForm({userId}: MFSIPProps) {
 
                     <div className={'flex gap-4 items-center justify-end'}>
                         <Button variant={'destructive'} type={'reset'} className={'h-10'}>Cancel</Button>
-                        <Button variant={'default'} type={'reset'} className={'h-10'}>Create/Update</Button>
-                        <LoadingButton variant={'default'} className={'flex gap-2 h-10'}>
+                        {/*<Button variant={'default'} type={'reset'} className={'h-10'}>Create/Update</Button>*/}
+                        <LoadingButton variant={'secondary'} loading={isSubmitting} className={'h-10'}>
                             <PlusIcon/>
                             Create/Update
                         </LoadingButton>

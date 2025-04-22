@@ -9,7 +9,7 @@ const buttonVariants = cva("inline-flex items-center justify-center gap-2 whites
         variants: {
             variant: {
                 default: "bg-primary dark:bg-primary-700 text-text-100 dark:text-text-900 hover:bg-primary/70 hover:text-text-100 dark:hover:text-text-900 shadow-xs",
-                destructive: "bg-destructive dark:bg-destructive/60 hover:bg-destructive/90 dark:hover:bg-destructive/80 text-text-100 dark:text-text-900 shadow-xs",
+                destructive: "bg-destructive hover:bg-destructive/80 text-text-100 dark:text-text-900 shadow-xs",
                 outline: "bg-background dark:bg-primary-700 hover:bg-primary text-text-100 dark:text-text-900 hover:text-text-100 dark:hover:text-text-900 border border-input dark:border-none shadow-xs",
                 secondary: 'bg-gradient-to-r from-secondary to-secondary-600 dark:to-secondary-700 text-text-100 dark:text-text-900 hover:bg-secondary/80',
                 ghost: 'hover:bg-accent hover:text-accent-foreground',
@@ -47,7 +47,7 @@ const LoadingButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
                 disabled={loading || disabled}
                 {...props}
             >
-                {loading && <Loader2 className={'mr-2 size-5 animate-spin text-text'}/>}
+                {loading && <Loader2 className={'size-5 animate-spin text-text-100 dark:text-text-900'}/>}
                 <Slottable>{children}</Slottable>
             </Comp>
         );

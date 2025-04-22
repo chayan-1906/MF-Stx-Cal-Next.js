@@ -147,19 +147,21 @@ export const {handlers: {GET, POST}, auth, signIn, signOut} = NextAuth({
         },
 
         async jwt({token, user}: { token: JWT; user: User }) {
-            if (user) {
-                // Initial token creation
-                token.id = user.id as string;
-                // token.name = user.name as string;
-                token.email = user.email as string;
-            } else if (token.email) {
+            if (token.email) {
                 // Refresh token with latest DB data
                 const dbUser = await UserModel.findOne({email: token.email});
                 if (dbUser) {
-                    token.id = dbUser.id as string;
+                    console.log('dbUser inside jwt:', dbUser);
+                    token.userId = dbUser.id as string;
                     // token.name = dbUser.name as string;
                     token.email = dbUser.email as string;
                 }
+            } else if (user) {
+                console.log('user inside jwt:', user);
+                // Initial token creation
+                token.userId = user.id as string;
+                // token.name = user.name as string;
+                token.email = user.email as string;
             }
             console.log('token from jwt:', token);
             console.log('user from jwt:', user);
@@ -168,7 +170,7 @@ export const {handlers: {GET, POST}, auth, signIn, signOut} = NextAuth({
 
         async session({session, token}: { session: Session; token: JWT }) {
             if (token) {
-                session.user.id = token.id;
+                session.user.userId = token.userId;
                 // session.user.name = token.name;
                 session.user.email = token.email;
             }

@@ -46,7 +46,7 @@ const MFSIPSchema: Schema<MFSIP> = new Schema({
     },
     folioNo: {
         type: String,
-        required: [true, 'Folio no is required'],
+        required: [true, 'Folio no is requireddd'],
         trim: true,
     },
     amount: {

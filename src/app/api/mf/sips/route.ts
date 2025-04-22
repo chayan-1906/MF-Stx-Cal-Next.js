@@ -29,13 +29,13 @@ export async function POST(request: Request) {
                 success: false,
                 message: 'Fund code must be a string',
             }, {status: 400});
-        } else if (schemeName && typeof schemeName !== 'string') {
+        } else if (isStringInvalid(schemeName)) {
             return NextResponse.json<ApiResponse>({
                 code: 'invalidSchemeName',
                 success: false,
                 message: 'Scheme name must be a string',
             }, {status: 400});
-        } else if (folioNo && typeof folioNo !== 'string') {
+        } else if (isStringInvalid(folioNo)) {
             return NextResponse.json<ApiResponse>({
                 code: 'invalidFolioNo',
                 success: false,
@@ -77,7 +77,7 @@ export async function POST(request: Request) {
                 success: false,
                 message: 'Notes must be a string',
             }, {status: 400});
-        } else if (['equity', 'debt', 'liquid'].includes(category)) {
+        } else if (!['equity', 'debt', 'liquid'].includes(category)) {
             return NextResponse.json<ApiResponse>({
                 code: 'invalidCategory',
                 success: false,
@@ -98,7 +98,7 @@ export async function POST(request: Request) {
         }
 
         const addedSIP = await MFSIPModel.create({
-            userId, fundName, fundCode, amount, dayOfMonth, active,
+            userId, fundName, fundCode, schemeName, folioNo, amount, dayOfMonth, active,
             startDate: new Date(startDate),
             endDate: endDate ? new Date(endDate) : undefined,
             notes, category,
@@ -111,7 +111,7 @@ export async function POST(request: Request) {
         return NextResponse.json(<ApiResponse>{
             code: 'added',
             success: true,
-            message: 'MFSIP added successfully',
+            message: 'SIP added successfully',
             data: {
                 sip: addedSIP,
             },
@@ -361,7 +361,7 @@ export async function PUT(request: Request) {
         return NextResponse.json(<ApiResponse>{
             code: 'updated',
             success: true,
-            message: 'MFSIP updated successfully',
+            message: 'SIP updated successfully',
             data: {
                 sip: updatedSIP,
             },

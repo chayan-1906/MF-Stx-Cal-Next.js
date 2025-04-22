@@ -41,7 +41,7 @@ async function Home() {
                 </div>
             </div>
 
-            <MFSIP/>
+            <MFSIP userId={user.id}/>
             <MFSIPForm userId={user.id}/>
 
             {/*<MFStxCalDashboard/>*/}

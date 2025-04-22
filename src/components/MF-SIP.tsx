@@ -7,14 +7,19 @@ import apis from "@/lib/apis";
 import type {MFSIP} from "@/models/MFSIP";
 import {ApiResponse} from "@/types/ApiResponse";
 import {toast} from "react-toastify";
+import {PencilIcon} from "lucide-react";
+import MFSIPForm from "@/components/mutual-funds/MFSIPForm";
 
-function MFSIP() {
+function MFSIP({userId}: { userId: string }) {
     const [mfSips, setMfSips] = useState<MFSIP[]>([]);
+    const [mfSipToBeEdited, setMfSipToBeEdited] = useState<MFSIP | null>(null);
 
     const addMFSIP = useCallback(async () => {
         await axios.post(apis.addMFSIPApi(), {
             "fundName": "Fund Name 4",
             "fundCode": "fundName4",
+            "schemeName": "Fund Scheme 4",
+            "folioNo": "1234",
             "amount": 2300,
             "dayOfMonth": 3,
             "active": true,
@@ -39,13 +44,23 @@ function MFSIP() {
     }, [getAllMFSIPs]);
 
     return (
-        <div className={'mt-6 p-6 bg-secondary-800 rounded-lg space-y-5'}>
+        <div className={'mt-6 p-6 bg-secondary-900 rounded-lg space-y-5'}>
             <Button onClick={addMFSIP}>Add MFSIP</Button>
             {mfSips.map((mfSip) => (
                 <div key={mfSip.externalId} className={'px-3 rounded-md'}>
-                    <h1>{mfSip.fundName} ({mfSip.fundCode}) -- ₹{mfSip.amount} {new Intl.DateTimeFormat('en-GB').format(new Date(mfSip.startDate))}</h1>
+                    <div className={'flex justify-between gap-4'}>
+                        <div>
+                            <h1 className={'text-success font-bold text-xl'}>{mfSip.fundName}</h1>
+                            <p className={'text-primary'}>({mfSip.schemeName}) -- ₹{mfSip.amount} {new Intl.DateTimeFormat('en-GB').format(new Date(mfSip.startDate))}</p>
+                        </div>
+                        <PencilIcon className={'text-primary-foreground'} onClick={() => setMfSipToBeEdited(mfSip)}/>
+                    </div>
                 </div>
             ))}
+
+            {mfSipToBeEdited && (
+                <MFSIPForm userId={userId} mfSip={mfSipToBeEdited}/>
+            )}
         </div>
     );
 }

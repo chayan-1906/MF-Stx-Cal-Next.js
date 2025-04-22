@@ -203,8 +203,8 @@ function LoginForm() {
                                                    <div className={'absolute inset-y-0 left-0 pl-3 flex items-center'}>
                                                        <Mail className={'size-5 text-gray-400'}/>
                                                    </div>
-                                                   <Input {...field} id={field.name} value={field.value ?? ''} type={'email'} autoFocus placeholder={'john.doe@gmail.com'}
-                                                          className={'pl-10'} onChange={(e) => field.onChange(e)}/>
+                                                   <Input {...field} id={field.name} value={field.value ?? ''} type={'email'} autoFocus placeholder={'john.doe@gmail.com'} className={'pl-10'}
+                                                          onChange={(e) => field.onChange(e)}/>
                                                </div>
                                            </FormControl>
                                            <FormMessage/>
@@ -240,7 +240,7 @@ function LoginForm() {
                                                            type={showCode ? 'text' : 'password'}
                                                            maxLength={6}
                                                            value={field.value[index]}
-                                                           placeholder={'•'}
+                                                           placeholder={showCode ? '•' : (index + 1).toString()}
                                                            onChange={(e) => handleOtpChange(index, e.target.value)}
                                                            onKeyDown={(e) => handleKeyDown(index, e)}
                                                            className={'text-center text-xl font-bold p-2'}
@@ -249,12 +249,15 @@ function LoginForm() {
                                                </div>
                                            </FormControl>
                                            {errorsOtp.otp?.length && (
-                                               <p className={'mt-1 text-sm font-medium text-destructive'}>{errorsOtp.otp[0]?.message}</p>
+                                               <p className={'mt-1 text-sm font-medium text-accent'}>{errorsOtp.otp[0]?.message}</p>
                                            )}
 
                                            <div className={'flex justify-between gap-4 mt-2'}>
-                                               <Button type={'button'} variant={'link'} disabled={isLoading} className={'p-0 h-auto'} onClick={sendVerificationCode}>Resend code</Button>
-                                               <Button type={'button'} className={'p-0 h-auto bg-transparent hover:bg-transparent text-primary shadow-none'} onClick={() => setShowCode(!showCode)}>
+                                               <Button type={'button'} variant={'link'} disabled={isLoading} className={'p-0 h-auto'} onClick={sendVerificationCode}>
+                                                   Resend code
+                                               </Button>
+                                               <Button type={'button'} variant={'link'} className={'p-0 h-auto hover:no-underline'}
+                                                       onClick={() => setShowCode(!showCode)}>
                                                    {showCode ? 'Hide' : 'Show'} Code
                                                </Button>
                                            </div>
