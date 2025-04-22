@@ -185,7 +185,7 @@ function LoginForm() {
                 {/** header */}
                 <div className={'flex items-center justify-center mt-2 gap-1 sm:gap-2 px-3 select-none'}>
                     <Image src={'/assets/images/logo.svg'} alt={'logo'} height={32} width={32}/>
-                    <h2 className={'mt-3 text-xl font-bold text-center text-text tracking-wide'}>Welcome to {APP_NAME}</h2>
+                    <h2 className={'mt-3 text-xl font-bold text-center text-text-900 tracking-wide'}>Welcome to {APP_NAME}</h2>
                 </div>
 
                 <hr className={'flex-1 border-slate-200 dark:border-slate-700'}/>
@@ -197,14 +197,14 @@ function LoginForm() {
                         <FormField control={emailForm.control} name={'email'}
                                    render={({field}) => (
                                        <FormItem>
-                                           <FormLabel htmlFor={field.name} className={'text-text'}>Email address</FormLabel>
+                                           <FormLabel htmlFor={field.name} className={''}>Email address</FormLabel>
                                            <FormControl>
                                                <div className={'relative'}>
                                                    <div className={'absolute inset-y-0 left-0 pl-3 flex items-center'}>
                                                        <Mail className={'size-5 text-gray-400'}/>
                                                    </div>
                                                    <Input {...field} id={field.name} value={field.value ?? ''} type={'email'} autoFocus placeholder={'john.doe@gmail.com'}
-                                                          className={'pl-10 text-text'} onChange={(e) => field.onChange(e)}/>
+                                                          className={'pl-10'} onChange={(e) => field.onChange(e)}/>
                                                </div>
                                            </FormControl>
                                            <FormMessage/>
@@ -243,7 +243,7 @@ function LoginForm() {
                                                            placeholder={'•'}
                                                            onChange={(e) => handleOtpChange(index, e.target.value)}
                                                            onKeyDown={(e) => handleKeyDown(index, e)}
-                                                           className={'text-center text-text text-xl font-bold p-2'}
+                                                           className={'text-center text-xl font-bold p-2'}
                                                        />
                                                    ))}
                                                </div>
@@ -278,14 +278,14 @@ function LoginForm() {
                         <FormField control={nameForm.control} name={'name'}
                                    render={({field}) => (
                                        <FormItem>
-                                           <FormLabel htmlFor={field.name} className={'text-text'}>Name</FormLabel>
+                                           <FormLabel htmlFor={field.name} className={''}>Name</FormLabel>
                                            <FormControl>
                                                <div className={'relative'}>
                                                    <div className={'absolute inset-y-0 left-0 pl-3 flex items-center'}>
                                                        <MdAccountCircle className={'size-5 text-gray-400'}/>
                                                    </div>
                                                    <Input {...field} id={field.name} ref={nameInputRef} value={field.value ?? ''} autoFocus placeholder={'John Doe'}
-                                                          className={'pl-10 text-text'} onChange={(e) => field.onChange(e)}/>
+                                                          className={'pl-10'} onChange={(e) => field.onChange(e)}/>
                                                </div>
                                            </FormControl>
                                            <FormMessage/>
@@ -305,7 +305,7 @@ function LoginForm() {
                 {/** or continue with */}
                 <div className={'flex items-center gap-4 px-6'}>
                     <hr className={'flex-1 border-text'}/>
-                    <p className={'text-text'}>Or continue with</p>
+                    <p className={'text-text-800'}>Or continue with</p>
                     <hr className={'flex-1 border-text'}/>
                 </div>
 

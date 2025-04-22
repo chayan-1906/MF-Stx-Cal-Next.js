@@ -25,6 +25,9 @@ function MFSIPForm({userId}: MFSIPProps) {
         },
     });
     const {register: register, handleSubmit, formState: {errors, isValid}} = mfSipForm;
+    
+    const cardHeaderClassNames = 'bg-primary-600 dark:bg-primary-900 p-4 text-primary-foreground';
+    const cardBgClassNames = 'bg-card dark:bg-primary-800 p-6 space-y-5';
 
     const createNewMfSip = () => {
         console.log('createNewMfSip:', mfSipForm.getValues());
@@ -47,7 +50,7 @@ function MFSIPForm({userId}: MFSIPProps) {
                     <div className={'rounded-xl shadow-lg overflow-hidden space-y-5'}>
                         {/** Card 1: Fund Details */}
                         <div className={'rounded-xl overflow-hidden'}>
-                            <div className={'bg-primary-600 p-4 text-primary-foreground'}>
+                            <div className={cardHeaderClassNames}>
                                 <div className={'flex items-center gap-2'}>
                                     <FileText className={'size-5'}/>
                                     <h3>Fund Information</h3>
@@ -55,11 +58,11 @@ function MFSIPForm({userId}: MFSIPProps) {
                             </div>
 
                             {/** form - Fund Information */}
-                            <div className={'bg-card p-6 space-y-5'}>
+                            <div className={cardBgClassNames}>
                                 {/** userId */}
                                 <FormField control={mfSipForm.control} name={'userId'} render={({field}) => (
                                     <FormItem className={''}>
-                                        <FormLabel htmlFor={field.name} className={'text-text'}>UserId *</FormLabel>
+                                        <FormLabel htmlFor={field.name} className={''}>UserId *</FormLabel>
                                         <FormControl>
                                             <Input {...field} id={field.name} value={field.value ?? ''} type={'text'} disabled placeholder={'UserId...'}
                                                    className={''} onChange={(e) => field.onChange(e)}/>
@@ -71,7 +74,7 @@ function MFSIPForm({userId}: MFSIPProps) {
                                 {/** fund name */}
                                 <FormField control={mfSipForm.control} name={'fundName'} render={({field}) => (
                                     <FormItem>
-                                        <FormLabel htmlFor={field.name} className={'text-text'}>Fund name *</FormLabel>
+                                        <FormLabel htmlFor={field.name} className={''}>Fund name *</FormLabel>
                                         <FormControl>
                                             <Input {...field} id={field.name} value={field.value ?? ''} type={'text'} autoFocus placeholder={'Mirae Asset Mutual Fund'}
                                                    className={'uppercase'} onChange={(e) => field.onChange(e)}/>
@@ -83,7 +86,7 @@ function MFSIPForm({userId}: MFSIPProps) {
                                 {/** fund code */}
                                 <FormField control={mfSipForm.control} name={'fundCode'} render={({field}) => (
                                     <FormItem>
-                                        <FormLabel htmlFor={field.name} className={'text-text'}>Fund code (Optional)</FormLabel>
+                                        <FormLabel htmlFor={field.name} className={''}>Fund code (Optional)</FormLabel>
                                         <FormControl>
                                             <Input {...field} id={field.name} value={field.value ?? ''} type={'text'} placeholder={'INF769K01GU0'}
                                                    className={'uppercase'} onChange={(e) => field.onChange(e)}/>
@@ -95,7 +98,7 @@ function MFSIPForm({userId}: MFSIPProps) {
                                 {/** scheme name */}
                                 <FormField control={mfSipForm.control} name={'schemeName'} render={({field}) => (
                                     <FormItem>
-                                        <FormLabel htmlFor={field.name} className={'text-text'}>Scheme name *</FormLabel>
+                                        <FormLabel htmlFor={field.name} className={''}>Scheme name *</FormLabel>
                                         <FormControl>
                                             <Input {...field} id={field.name} value={field.value ?? ''} type={'text'} placeholder={'Mirae Asset Large Cap Fund - Direct Plan - Growth'}
                                                    className={'capitalize'} onChange={(e) => field.onChange(e)}/>
@@ -107,7 +110,7 @@ function MFSIPForm({userId}: MFSIPProps) {
                                 {/** folio no */}
                                 <FormField control={mfSipForm.control} name={'folioNo'} render={({field}) => (
                                     <FormItem>
-                                        <FormLabel htmlFor={field.name} className={'text-text'}>Folio no *</FormLabel>
+                                        <FormLabel htmlFor={field.name} className={''}>Folio no *</FormLabel>
                                         <FormControl>
                                             <Input {...field} id={field.name} value={field.value ?? ''} type={'number'} placeholder={'79943003995'}
                                                    className={''} onChange={(e) => field.onChange(e)}/>
@@ -119,12 +122,13 @@ function MFSIPForm({userId}: MFSIPProps) {
                                 {/** category */}
                                 <FormField control={mfSipForm.control} name={'category'} render={({field}) => (
                                     <FormItem>
-                                        <FormLabel htmlFor={field.name} className={'text-text'}>Category *</FormLabel>
+                                        <FormLabel htmlFor={field.name} className={''}>Category *</FormLabel>
                                         <FormControl>
                                             <div className={'flex flex-wrap gap-4'}>
                                                 {['equity', 'debt', 'liquid'].map(category => (
-                                                    <Button key={category} type={'button'} onClick={() => field.onChange(category)}
-                                                            className={cn('flex flex-1 justify-center items-center bg-card text-text hover:text-text-900 border border-input capitalize', field.value === category && 'bg-primary text-text-900')}>
+                                                    <Button key={category} variant={'outline'} type={'button'} onClick={() => field.onChange(category)}
+                                                            // className={cn('flex flex-1 justify-center items-center border dark:border-none border-input capitalize', field.value === category && 'bg-primary dark:bg-primary text-text-100')}>
+                                                            className={cn('flex flex-1 justify-center items-center capitalize', field.value === category && 'bg-primary dark:bg-primary text-text-100 dark:text-text-900')}>
                                                         {category}
                                                     </Button>
                                                 ))}
@@ -138,7 +142,7 @@ function MFSIPForm({userId}: MFSIPProps) {
 
                         {/** Card 2: Amount & Schedule */}
                         <div className={'rounded-xl overflow-hidden'}>
-                            <div className={'bg-primary-600 p-4 text-primary-foreground'}>
+                            <div className={cardHeaderClassNames}>
                                 <div className={'flex items-center gap-2'}>
                                     <DollarSign className={'size-5'}/>
                                     <h3>Investment Details</h3>
@@ -146,11 +150,11 @@ function MFSIPForm({userId}: MFSIPProps) {
                             </div>
 
                             {/** form - Investment Details */}
-                            <div className={'bg-card p-6 space-y-5'}>
+                            <div className={cardBgClassNames}>
                                 {/** amount */}
                                 <FormField control={mfSipForm.control} name={'amount'} render={({field}) => (
                                     <FormItem>
-                                        <FormLabel htmlFor={field.name} className={'text-text'}>Monthly amount (₹) *</FormLabel>
+                                        <FormLabel htmlFor={field.name} className={''}>Monthly amount (₹) *</FormLabel>
                                         <FormControl>
                                             <div className={'relative'}>
                                                 <div className={'absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'}>
@@ -170,7 +174,7 @@ function MFSIPForm({userId}: MFSIPProps) {
                                 {/** day */}
                                 <FormField control={mfSipForm.control} name={'dayOfMonth'} render={({field}) => (
                                     <FormItem>
-                                        <FormLabel htmlFor={field.name} className={'text-text'}>Day of month *</FormLabel>
+                                        <FormLabel htmlFor={field.name} className={''}>Day of month *</FormLabel>
                                         <p className={'text-xs text-text-600'}>Between 1 & 31</p>
                                         <FormControl>
                                             <div className={'relative'}>
@@ -193,17 +197,17 @@ function MFSIPForm({userId}: MFSIPProps) {
 
                                 {/** active */}
                                 <FormField control={mfSipForm.control} name={'active'} render={({field}) => (
-                                    <FormItem className={'flex justify-between rounded-md px-3 py-2 bg-primary-100'}>
-                                        <FormLabel htmlFor={field.name} className={'text-text'}>SIP Status</FormLabel>
+                                    <FormItem>
+                                        <FormLabel htmlFor={field.name} className={''}>SIP Status</FormLabel>
                                         <FormControl>
                                             <div className={'flex items-center'}>
-                                                <Button type={'button'} onClick={() => field.onChange(true)}
-                                                        className={cn('px-3 py-1 rounded-r-none text-sm hover:text-success-foreground hover:bg-success/80', field.value === true ? 'bg-success' : 'bg-muted-foreground/10 text-text')}>
+                                                <Button variant={'outline'} type={'button'} onClick={() => field.onChange(true)}
+                                                        className={cn('rounded-r-none hover:bg-success border-none', field.value === true ? 'bg-success dark:bg-success' : 'bg-muted-foreground/10 text-text')}>
                                                     <CheckCircle className={'size-4 inline mr-1'}/>
                                                     Active
                                                 </Button>
-                                                <Button type={'button'} onClick={() => field.onChange(false)}
-                                                        className={cn('px-3 py-1 rounded-l-none text-sm hover:text-destructive-foreground hover:bg-destructive/80', field.value === false ? 'bg-destructive' : 'bg-muted-foreground/10 text-text')}>
+                                                <Button variant={'outline'} type={'button'} onClick={() => field.onChange(false)}
+                                                        className={cn('rounded-l-none hover:bg-destructive border-none', field.value === false ? 'bg-destructive dark:bg-destructive ' : 'bg-muted-foreground/10 text-text')}>
                                                     <X className={'size-4 inline mr-1'}/>
                                                     Inactive
                                                 </Button>
@@ -217,7 +221,7 @@ function MFSIPForm({userId}: MFSIPProps) {
 
                         {/** Card 3: Dates & Notes */}
                         <div className={'rounded-xl overflow-hidden'}>
-                            <div className={'bg-primary-600 p-4 text-primary-foreground'}>
+                            <div className={cardHeaderClassNames}>
                                 <div className={'flex items-center gap-2'}>
                                     <Clock className={'size-5'}/>
                                     <h3>Timeline & Notes</h3>
@@ -225,11 +229,11 @@ function MFSIPForm({userId}: MFSIPProps) {
                             </div>
 
                             {/** form - Timeline & Notes */}
-                            <div className={'bg-card p-6 space-y-5'}>
+                            <div className={cardBgClassNames}>
                                 {/** start date */}
                                 <FormField control={mfSipForm.control} name={'startDate'} render={({field}) => (
                                     <FormItem>
-                                        <FormLabel htmlFor={field.name} className={'text-text'}>Start date *</FormLabel>
+                                        <FormLabel htmlFor={field.name} className={''}>Start date *</FormLabel>
                                         <FormControl>
                                             <div className={'relative'}>
                                                 <Input{...field} id={field.name} type={'date'} className={''} value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
@@ -243,7 +247,7 @@ function MFSIPForm({userId}: MFSIPProps) {
                                 {/** end date */}
                                 <FormField control={mfSipForm.control} name={'endDate'} render={({field}) => (
                                     <FormItem>
-                                        <FormLabel htmlFor={field.name} className={'text-text'}>End date (Optional)</FormLabel>
+                                        <FormLabel htmlFor={field.name} className={''}>End date (Optional)</FormLabel>
                                         <FormControl>
                                             <div className={'relative'}>
                                                 <Input{...field} id={field.name} type={'date'} className={''} value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
@@ -258,7 +262,7 @@ function MFSIPForm({userId}: MFSIPProps) {
                                 {/** notes */}
                                 <FormField control={mfSipForm.control} name={'notes'} render={({field}) => (
                                     <FormItem>
-                                        <FormLabel htmlFor={field.name} className={'text-text'}>Notes (Optional)</FormLabel>
+                                        <FormLabel htmlFor={field.name} className={''}>Notes (Optional)</FormLabel>
                                         <FormControl>
                                             <div className={'relative'}>
                                                 <div className={'absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'}>
@@ -278,7 +282,8 @@ function MFSIPForm({userId}: MFSIPProps) {
 
                     <div className={'flex gap-4 items-center justify-end'}>
                         <Button variant={'destructive'} type={'reset'} className={'h-10'}>Cancel</Button>
-                        <LoadingButton className={'flex gap-2 h-10'}>
+                        <Button variant={'default'} type={'reset'} className={'h-10'}>Create/Update</Button>
+                        <LoadingButton variant={'default'} className={'flex gap-2 h-10'}>
                             <PlusIcon/>
                             Create/Update
                         </LoadingButton>
