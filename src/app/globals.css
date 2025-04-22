@@ -124,6 +124,10 @@
 
     --success: oklch(77.7% 0.152 181.912);
     --destructive: var(--accent-400);
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(1); /* white for dark mode */
+    }
   }
 }
 

@@ -1,36 +1,15 @@
 'use client';
 
-import {Button} from "@/components/ui/button";
-import {useCallback, useEffect, useState} from "react";
-import axios from "axios";
-import apis from "@/lib/apis";
+import {useState} from "react";
 import type {MFSIP} from "@/models/MFSIP";
-import {ApiResponse} from "@/types/ApiResponse";
-import {toast} from "react-toastify";
-import {PencilIcon} from "lucide-react";
 import MFSIPForm from "@/components/mutual-funds/MFSIPForm";
+import {PencilIcon} from "lucide-react";
 
-function MFSIP({userId}: { userId: string }) {
-    const [mfSips, setMfSips] = useState<MFSIP[]>([]);
+function MFSIP({userId, mfSips}: { userId: string; mfSips: MFSIP[] }) {
+    // const [mfSips, setMfSips] = useState<MFSIP[]>([]);
     const [mfSipToBeEdited, setMfSipToBeEdited] = useState<MFSIP | null>(null);
 
-    const addMFSIP = useCallback(async () => {
-        await axios.post(apis.addMFSIPApi(), {
-            "fundName": "Fund Name 4",
-            "fundCode": "fundName4",
-            "schemeName": "Fund Scheme 4",
-            "folioNo": "1234",
-            "amount": 2300,
-            "dayOfMonth": 3,
-            "active": true,
-            "startDate": "2022-03-11T00:00:00",
-            "endDate": "2024-02-01T00:00:00",
-            "notes": "Sample note for Fund 4...",
-            "category": "equity",
-        });
-    }, []);
-
-    const getAllMFSIPs = useCallback(async () => {
+    /*const getAllMFSIPs = useCallback(async () => {
         const getAllMFSIPsResponse = (await axios.get<ApiResponse>(apis.getAllMFSIPsApi())).data;
         if (getAllMFSIPsResponse.success) {
             setMfSips(getAllMFSIPsResponse.data.mfSips);
@@ -41,11 +20,10 @@ function MFSIP({userId}: { userId: string }) {
 
     useEffect(() => {
         getAllMFSIPs();
-    }, [getAllMFSIPs]);
+    }, [getAllMFSIPs]);*/
 
     return (
         <div className={'mt-6 p-6 bg-secondary-900 rounded-lg space-y-5'}>
-            <Button onClick={addMFSIP}>Add MFSIP</Button>
             {mfSips.map((mfSip) => (
                 <div key={mfSip.externalId} className={'px-3 rounded-md'}>
                     <div className={'flex justify-between gap-4'}>
@@ -53,7 +31,10 @@ function MFSIP({userId}: { userId: string }) {
                             <h1 className={'text-success font-bold text-xl'}>{mfSip.fundName}</h1>
                             <p className={'text-primary'}>({mfSip.schemeName}) -- ₹{mfSip.amount} {new Intl.DateTimeFormat('en-GB').format(new Date(mfSip.startDate))}</p>
                         </div>
-                        <PencilIcon className={'text-primary-foreground'} onClick={() => setMfSipToBeEdited(mfSip)}/>
+                        <PencilIcon className={'text-primary-foreground'} onClick={() => {
+                            console.log(mfSip);
+                            setMfSipToBeEdited(mfSip);
+                        }}/>
                     </div>
                 </div>
             ))}

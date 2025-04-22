@@ -4,8 +4,8 @@ import UserModel, {User} from "@/models/User";
 import {cookies, headers} from "next/headers";
 import {NODE_ENV} from "@/lib/config";
 
-const localhostCookieName = 'authjs.session-token';
-const deployedCookieName = '__Secure-authjs.session-token';
+export const localhostCookieName = 'authjs.session-token';
+export const deployedCookieName = '__Secure-authjs.session-token';
 
 export async function getEmailFromToken() {
     if (NODE_ENV === 'development') {

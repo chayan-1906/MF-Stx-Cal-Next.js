@@ -26,6 +26,7 @@ type NameFormValues = z.infer<typeof nameSchema>;
 /** MF SIP */
 export const mfSipSchema = z.object({
     userId: z.string().min(1, {message: 'Invalid User ID'}),
+    mfSipId: z.string().optional(),
     fundName: z.string().trim().min(2, {message: 'Fund Name must be at least 2 characters'}),
     fundCode: z.string().trim().nullable().optional(),
     schemeName: z.string().trim().min(1, {message: 'Scheme name is required'}),

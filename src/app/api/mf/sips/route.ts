@@ -6,6 +6,8 @@ import MFSIPModel from "@/models/MFSIP";
 import UserModel from "@/models/User";
 import {isStringInvalid} from "@/lib/utils";
 import mongoose from "mongoose";
+import {revalidatePath} from "next/cache";
+import routes from "@/lib/routes";
 
 /** ADD MFSIP */
 export async function POST(request: Request) {
@@ -107,6 +109,7 @@ export async function POST(request: Request) {
         await UserModel.findByIdAndUpdate(userId, {
             $push: {mfSIPIds: addedSIP._id},
         });
+        revalidatePath(routes.homePath());
 
         return NextResponse.json(<ApiResponse>{
             code: 'added',
@@ -170,7 +173,7 @@ export async function GET(request: Request) {
             },
         }, {status: 201});
     } catch (error: any) {
-        console.error('error in adding sip:', error);
+        console.error('error in fetching mfsips:', error);
         return NextResponse.json<ApiResponse>({
             code: 'unknownError',
             success: false,
@@ -357,6 +360,8 @@ export async function PUT(request: Request) {
                 message: 'Failed to update SIP',
             }, {status: 500});
         }
+
+        revalidatePath(routes.homePath());
 
         return NextResponse.json(<ApiResponse>{
             code: 'updated',

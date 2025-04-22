@@ -240,7 +240,7 @@ function LoginForm() {
                                                            type={showCode ? 'text' : 'password'}
                                                            maxLength={6}
                                                            value={field.value[index]}
-                                                           placeholder={showCode ? '•' : (index + 1).toString()}
+                                                           placeholder={!showCode ? '•' : (index + 1).toString()}
                                                            onChange={(e) => handleOtpChange(index, e.target.value)}
                                                            onKeyDown={(e) => handleKeyDown(index, e)}
                                                            className={'text-center text-xl font-bold p-2'}

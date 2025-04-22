@@ -1,14 +1,14 @@
 'use client';
 
 import React, {useEffect, useMemo} from "react";
-import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
+import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {MFSIPFormValues, mfSipSchema} from "@/lib/formValidationSchemas";
-import {CalendarIcon, CheckCircle, Clock, DollarSign, FileText, PlusIcon, X} from "lucide-react";
+import {CalendarIcon, CheckCircle, Clock, DollarSign, FileText, PencilIcon, PlusIcon, X} from "lucide-react";
 import {capitalizeFirst, cn} from "@/lib/utils";
 import {BiRupee} from "react-icons/bi";
 import {MdNotes} from "react-icons/md";
@@ -20,13 +20,13 @@ import {ApiResponse} from "@/types/ApiResponse";
 import {toast} from "react-toastify";
 
 function MFSIPForm({userId, mfSip}: MFSIPProps) {
-    const defaultValues = useMemo(() =>
-            mfSip
+    const defaultValues = useMemo(() => mfSip
                 ? mfSipSchema.parse({
                     ...mfSip,
                     startDate: new Date(mfSip.startDate),
+                endDate: mfSip.endDate ? new Date(mfSip.endDate) : null,
                 })
-                : {userId, active: true},
+            : {userId, active: true},
         [mfSip, userId],
     );
 
@@ -64,43 +64,45 @@ function MFSIPForm({userId, mfSip}: MFSIPProps) {
         }
     }
 
+    const updateExistingMfSip = async () => {
+        console.log('updateExistingMfSip:', mfSipForm.getValues());
+        const formData = mfSipForm.getValues();
+
+        // Format fields
+        formData.fundName = formData.fundName?.toUpperCase() || '';
+        formData.fundCode = formData.fundCode?.toUpperCase() || '';
+        formData.schemeName = capitalizeFirst(formData.schemeName);
+        console.log('formData:', formData);
+
+        try {
+            const updateMfSipApiResponse = (await axios.put<ApiResponse>(apis.updateMFSIPApi(), formData)).data;
+
+            if (updateMfSipApiResponse.success) {
+                toast(updateMfSipApiResponse.message, {type: 'success'});
+                reset();
+            } else {
+                toast(updateMfSipApiResponse.message, {type: 'error'});
+            }
+        } catch (error) {
+            toast('Something went wrong', {type: 'error'});
+        }
+    }
+
     useEffect(() => {
         reset(defaultValues);
-    }, [defaultValues, reset])
-
-    /*useEffect(() => {
-        if (mfSip) {
-            const {fundName, schemeName, folioNo, amount, dayOfMonth, startDate, category, fundCode, active, endDate, notes} = mfSip;
-            mfSipForm.reset({
-                userId,
-                fundName,
-                schemeName,
-                folioNo,
-                amount,
-                dayOfMonth,
-                startDate: new Date(startDate), // ensure Date type
-                category,
-                fundCode: fundCode ?? null,
-                active: active ?? true,
-                endDate: endDate ? new Date(endDate) : undefined,
-                notes: notes ?? "",
-            });
-        }
-    }, [mfSip, mfSipForm, userId]);*/
+    }, [defaultValues, reset]);
 
     return (
         <div className={'max-w-4xl bg-background mx-auto p-6'}>
             <div className={'mb-8 text-center'}>
-                <h2 className={'mb-2 text-2xl font-bold text-text-900 tracking-wide'}>Create New SIP/Update SIP</h2>
+                <h2 className={'mb-2 text-2xl font-bold text-text-900 tracking-wide'}>{mfSip ? 'Update SIP' : 'Create New SIP'}</h2>
                 <p className={'text-text-800'}>
-                    Set up a systematic investment plan to grow your wealth consistently
-                    <br/>
-                    Update your systematic investment plan details below
+                    {mfSip ? 'Update your systematic investment plan details below' : 'Set up a systematic investment plan to grow your wealth consistently'}
                 </p>
             </div>
 
             <Form {...mfSipForm}>
-                <form onSubmit={handleSubmit(createNewMfSip)} className={'space-y-5'}>
+                <form onSubmit={handleSubmit(mfSip ? updateExistingMfSip : createNewMfSip)} className={'space-y-5'}>
                     {/** cards */}
                     <div className={'space-y-5'}>
                         {/** Card 1: Fund Details */}
@@ -120,6 +122,18 @@ function MFSIPForm({userId, mfSip}: MFSIPProps) {
                                         <FormLabel htmlFor={field.name} className={''}>UserId *</FormLabel>
                                         <FormControl>
                                             <Input {...field} id={field.name} value={field.value ?? ''} type={'text'} disabled placeholder={'UserId...'}
+                                                   className={''} onChange={(e) => field.onChange(e)}/>
+                                        </FormControl>
+                                        <FormMessage/>
+                                    </FormItem>
+                                )}/>
+
+                                {/** sipId */}
+                                <FormField control={mfSipForm.control} name={'mfSipId'} render={({field}) => (
+                                    <FormItem className={cn('', mfSip ? 'block' : 'hidden')}>
+                                        <FormLabel htmlFor={field.name} className={''}>MfSipId *</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} id={field.name} value={field.value ?? ''} type={'text'} disabled placeholder={'MfSipId...'}
                                                    className={''} onChange={(e) => field.onChange(e)}/>
                                         </FormControl>
                                         <FormMessage/>
@@ -230,7 +244,7 @@ function MFSIPForm({userId, mfSip}: MFSIPProps) {
                                 <FormField control={mfSipForm.control} name={'dayOfMonth'} render={({field}) => (
                                     <FormItem>
                                         <FormLabel htmlFor={field.name} className={''}>Day of month *</FormLabel>
-                                        <p className={'text-xs text-text-600'}>Between 1 & 31</p>
+                                        <FormDescription className={'text-xs text-text-600'}>Between 1 & 31</FormDescription>
                                         <FormControl>
                                             <div className={'relative'}>
                                                 <div className={'absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'}>
@@ -243,7 +257,7 @@ function MFSIPForm({userId, mfSip}: MFSIPProps) {
                                                     } else if (e.target.value === '') {
                                                         field.onChange('');
                                                     }
-                                                }}/>
+                                                }} onWheel={(e) => e.currentTarget.blur()}/>
                                             </div>
                                         </FormControl>
                                         <FormMessage/>
@@ -257,12 +271,12 @@ function MFSIPForm({userId, mfSip}: MFSIPProps) {
                                         <FormControl>
                                             <div className={'flex items-center'}>
                                                 <Button variant={'outline'} type={'button'} onClick={() => field.onChange(true)}
-                                                        className={cn('rounded-r-none hover:bg-success border-none', field.value === true ? 'bg-success dark:bg-success' : 'bg-muted-foreground/10 text-text')}>
+                                                        className={cn('rounded-r-none hover:bg-success border-none', field.value === true ? 'bg-success dark:bg-success text-text-100 dark:text-text-900' : 'bg-muted-foreground/10 dark:text-text-900')}>
                                                     <CheckCircle className={'size-4 inline mr-1'}/>
                                                     Active
                                                 </Button>
                                                 <Button variant={'outline'} type={'button'} onClick={() => field.onChange(false)}
-                                                        className={cn('rounded-l-none hover:bg-destructive border-none', field.value === false ? 'bg-destructive dark:bg-destructive ' : 'bg-muted-foreground/10 text-text')}>
+                                                        className={cn('rounded-l-none hover:bg-destructive border-none', field.value === false ? 'bg-destructive dark:bg-destructive text-text-100 dark:text-text-900' : 'bg-muted-foreground/10 dark:text-text-900')}>
                                                     <X className={'size-4 inline mr-1'}/>
                                                     Inactive
                                                 </Button>
@@ -339,8 +353,8 @@ function MFSIPForm({userId, mfSip}: MFSIPProps) {
                         <Button variant={'destructive'} type={'reset'} className={'h-10'}>Cancel</Button>
                         {/*<Button variant={'default'} type={'reset'} className={'h-10'}>Create/Update</Button>*/}
                         <LoadingButton variant={'secondary'} loading={isSubmitting} className={'h-10'}>
-                            <PlusIcon/>
-                            Create/Update
+                            {mfSip ? <PencilIcon/> : <PlusIcon/>}
+                            {mfSip ? 'Update' : 'Create'}
                         </LoadingButton>
                     </div>
                 </form>

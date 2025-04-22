@@ -3,6 +3,7 @@ import crypto from 'crypto';
 
 export interface MFSIP extends Document {
     userId: mongoose.Schema.Types.ObjectId;
+    mfSipId?: string;
     externalId: string;
     fundName: string;
     fundCode?: string;
@@ -22,6 +23,11 @@ const MFSIPSchema: Schema<MFSIP> = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         required: [true, 'User Id is required'],
         ref: 'User',
+    },
+    mfSipId: {
+        type: String,
+        required: false,
+        default: null,
     },
     externalId: {
         type: String,
@@ -84,6 +90,16 @@ const MFSIPSchema: Schema<MFSIP> = new Schema({
         type: String,
         required: [true, 'Category is required'],
         enum: ['equity', 'debt', 'liquid'],
+    },
+});
+
+MFSIPSchema.set('toJSON', {
+    transform: (doc, ret) => {
+        ret.mfSipId = ret._id.toString(); // Convert _id to string
+        ret.userId = ret.userId.toString(); // Convert userId to string
+        delete ret._id;
+        delete ret.__v;
+        return ret;
     },
 });
 
