@@ -16,7 +16,7 @@ async function AppWrapperLayout({children, className}: AppWrapperLayoutProps) {
             <main>
                 {Children.map(children, (child) => {
                     if (isValidElement<AppWrapperLayoutChildProps>(child) && typeof child.type !== 'string') {
-                        return cloneElement(child, {isLoggedIn});
+                        return cloneElement(child, {isLoggedIn, userId, email});
                     }
                     return child;
                 })}

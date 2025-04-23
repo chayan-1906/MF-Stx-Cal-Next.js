@@ -1,14 +1,16 @@
-import DashboardHeader from "@/components/dashboard/DashboardHeader";
-import MonthlyOverview from "@/components/dashboard/MonthlyOverview";
-import Logout from "@/components/Logout";
-import DeleteAccount from "@/components/DeleteAccount";
 import React from "react";
-import {getMfSipsByToken} from "@/lib/db/mf-sips-storage";
 import {redirect} from "next/navigation";
 import routes from "@/lib/routes";
 import {ServerDashboardProps} from "@/types";
+import DashboardHeader from "@/components/dashboard/DashboardHeader";
+import MonthlyOverview from "@/components/dashboard/MonthlyOverview";
+import MFSIP from "@/components/MF-SIP";
+import MFSIPForm from "@/components/mutual-funds/MFSIPForm";
+import Logout from "@/components/Logout";
+import DeleteAccount from "@/components/DeleteAccount";
+import {getMfSipsByToken} from "@/lib/db/mf-sips-storage";
 
-async function ServerDashboard({isLoggedIn}: ServerDashboardProps) {
+async function ServerDashboard({isLoggedIn, userId, email}: ServerDashboardProps) {
     console.log('ServerDashboard isLoggedIn:', isLoggedIn);
     if (!isLoggedIn) {
         redirect(routes.loginPath());
@@ -44,8 +46,8 @@ async function ServerDashboard({isLoggedIn}: ServerDashboardProps) {
             </div>*/}
 
             {/*<MFSIP userId={user.id} mfSips={getMfSipsResponse.data.mfSips}/>*/}
-            {/*<MFSIP userId={user.id} mfSips={getMfSipsResponse.data.mfSips}/>
-            <MFSIPForm userId={user.id}/>*/}
+            <MFSIP userId={userId ?? ''} mfSips={getMfSipsResponse.data.mfSips}/>
+            <MFSIPForm userId={userId ?? ''}/>
 
             {/*<MFStxCalDashboard/>*/}
 

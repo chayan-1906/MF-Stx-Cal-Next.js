@@ -1,13 +1,15 @@
 import {MFSIP} from "@/models/MFSIP";
 import React from "react";
 
-export type MetadataProps = {
+export interface MetadataProps {
     params: Promise<{ id: string }>;
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 export interface AppWrapperLayoutChildProps {
     isLoggedIn?: boolean;
+    userId: string | undefined;
+    email: string | undefined;
 }
 
 export interface AppWrapperLayoutProps {
@@ -27,6 +29,8 @@ export interface ServerLoginProps {
 
 export interface ServerDashboardProps {
     isLoggedIn?: boolean;
+    userId?: string | undefined;
+    email?: string | undefined;
 }
 
 export interface MFSIPProps {
