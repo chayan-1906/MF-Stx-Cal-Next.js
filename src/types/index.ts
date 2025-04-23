@@ -38,10 +38,10 @@ export interface CustomResponsiveModalFooterProps {
 
 export interface MFSIPFormModalProps {
     userId: string;
-    mfSipId?: string;
-    mfSip?: MFSIP | null;
-    setMfSip?: Dispatch<SetStateAction<MFSIP | null>>;
     openModalKey: string;
+    // isOpen: boolean;
+    // onOpenChange: (open: boolean) => void;
+    mfSip?: MFSIP | null;
 }
 
 export interface AppWrapperLayoutChildProps {
