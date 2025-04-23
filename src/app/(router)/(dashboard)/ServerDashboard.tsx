@@ -5,7 +5,6 @@ import {ServerDashboardProps} from "@/types";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import MonthlyOverview from "@/components/dashboard/MonthlyOverview";
 import MFSIP from "@/components/MF-SIP";
-import MFSIPForm from "@/components/mutual-funds/MFSIPForm";
 import Logout from "@/components/Logout";
 import DeleteAccount from "@/components/DeleteAccount";
 import {getMfSipsByToken} from "@/lib/db/mf-sips-storage";
@@ -25,7 +24,7 @@ async function ServerDashboard({isLoggedIn, userId, email}: ServerDashboardProps
         <div className={'flex min-h-screen flex-col items-center justify-center'}>
             <h1>isLoggedIn: {isLoggedIn?.toString()}</h1>
             <main className={'flex-1 py-6 w-full space-y-4'}>
-                <DashboardHeader/>
+                <DashboardHeader userId={userId || null}/>
                 <MonthlyOverview/>
             </main>
 
@@ -47,7 +46,6 @@ async function ServerDashboard({isLoggedIn, userId, email}: ServerDashboardProps
 
             {/*<MFSIP userId={user.id} mfSips={getMfSipsResponse.data.mfSips}/>*/}
             <MFSIP userId={userId ?? ''} mfSips={getMfSipsResponse.data.mfSips}/>
-            <MFSIPForm userId={userId ?? ''}/>
 
             {/*<MFStxCalDashboard/>*/}
 

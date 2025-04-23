@@ -8,11 +8,10 @@ import {Button} from "@/components/ui/button";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {MFSIPFormValues, mfSipSchema} from "@/lib/formValidationSchemas";
-import {CalendarIcon, CheckCircle, Clock, DollarSign, FileText, PencilIcon, PlusIcon, X} from "lucide-react";
+import {CalendarIcon, CheckCircle, Clock, DollarSign, FileText, X} from "lucide-react";
 import {capitalizeFirst, cn} from "@/lib/utils";
 import {BiRupee} from "react-icons/bi";
 import {MdNotes} from "react-icons/md";
-import {LoadingButton} from "@/components/loading-button";
 import {MFSIPProps} from "@/types";
 import apis from "@/lib/apis";
 import axios from "axios";
@@ -351,14 +350,14 @@ function MFSIPForm({userId, mfSip}: MFSIPProps) {
                         </div>
                     </div>
 
-                    <div className={'flex gap-4 items-center justify-end'}>
+                    {/*<div className={'flex gap-4 items-center justify-end'}>
                         <Button variant={'destructive'} type={'reset'} className={'h-10'}>Cancel</Button>
-                        {/*<Button variant={'default'} type={'reset'} className={'h-10'}>Create/Update</Button>*/}
+                        <Button variant={'default'} type={'reset'} className={'h-10'}>Create/Update</Button>
                         <LoadingButton variant={'secondary'} loading={isSubmitting} className={'h-10'}>
                             {mfSip ? <PencilIcon/> : <PlusIcon/>}
                             {mfSip ? 'Update' : 'Create'}
                         </LoadingButton>
-                    </div>
+                    </div>*/}
                 </form>
             </Form>
         </div>

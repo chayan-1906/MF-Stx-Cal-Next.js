@@ -4,6 +4,7 @@ import {Nunito_Sans} from "next/font/google";
 import "./globals.css";
 import {ToastContainer} from "react-toastify";
 import {APP_LOGO_URL, APP_NAME, APP_TAGLINE, BASE_URL} from "@/lib/config";
+import {ModalProvider} from "@/components/ui/responsive-modal";
 
 const nunitoSans = Nunito_Sans({subsets: ['latin']});
 
@@ -42,10 +43,12 @@ async function RootLayout({children}: Readonly<{ children: React.ReactNode; }>) 
     return (
         <html lang={'en'}>
             <body className={nunitoSans.className}>
-            <div className={'container mx-auto'}>
-                {children}
-            </div>
-            <ToastContainer position={'bottom-right'} theme={'colored'}/>
+            <ModalProvider>
+                <div className={'container mx-auto'}>
+                    {children}
+                </div>
+                <ToastContainer position={'bottom-right'} theme={'colored'}/>
+            </ModalProvider>
             </body>
         </html>
     );
