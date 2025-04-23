@@ -1,4 +1,4 @@
-import React from "react";
+import React, {ReactNode} from "react";
 import {Metadata} from 'next';
 import {Nunito_Sans} from "next/font/google";
 import "./globals.css";
@@ -38,15 +38,21 @@ export const metadata: Metadata = {
     },
 };
 
-function RootLayout({children}: Readonly<{ children: React.ReactNode; }>) {
+async function RootLayout({children}: Readonly<{ children: React.ReactNode; }>) {
     return (
         <html lang={'en'}>
             <body className={nunitoSans.className}>
-            {children}
+            <div className={'container mx-auto'}>
+                {children}
+            </div>
             <ToastContainer position={'bottom-right'} theme={'colored'}/>
             </body>
         </html>
     );
+}
+
+function ChildrenWrapper({children, isLoggedIn}: { children: ReactNode; isLoggedIn: boolean }) {
+    return <>{children}</>;
 }
 
 export default RootLayout;

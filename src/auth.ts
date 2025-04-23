@@ -138,7 +138,7 @@ export const {handlers: {GET, POST}, auth, signIn, signOut} = NextAuth({
 
         authorized({request: {nextUrl}, auth}) {
             const isLoggedIn = !!auth?.user;
-            console.log('isLoggedIn:', isLoggedIn);
+            console.log('isLoggedIn in authorized:', isLoggedIn);
             const {pathname} = nextUrl;
             if (pathname.startsWith(routes.loginPath()) && isLoggedIn) {
                 return Response.redirect(new URL(routes.homePath(), nextUrl));

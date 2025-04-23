@@ -3,6 +3,8 @@
 import {AuthError} from "next-auth";
 import {signIn, signOut} from "@/auth";
 import {ApiResponse} from "@/types/ApiResponse";
+import {isStringInvalid} from "@/lib/utils";
+import routes from "@/lib/routes";
 
 export async function doCredentialLogin({email, code}: { email: string; code: string }): Promise<{ response: ApiResponse }> {
     try {
@@ -10,7 +12,7 @@ export async function doCredentialLogin({email, code}: { email: string; code: st
             email,
             code,
             redirect: false,
-            // redirectTo: BASE_URL + routes.homePath(),
+            // redirectTo: routes.homePath(),
             // callbackUrl: routes.homePath(),
         });
         return {
@@ -96,9 +98,16 @@ export async function doCredentialLogin({email, code}: { email: string; code: st
 }
 
 export async function handleGoogleLogin() {
-    await signIn('google', {redirectTo: "/"});
+    await signIn('google', {redirectTo: routes.homePath()});
 }
 
 export async function doLogout() {
     await signOut();
+}
+
+export async function getIsLoggedIn(userId: string | undefined, email: string | undefined) {
+    console.log('getIsLoggedIn:', userId, email);
+    const loggedIn = !isStringInvalid(userId) && !isStringInvalid(email);
+    console.log('getIsLoggedIn loggedIn:', loggedIn)
+    return loggedIn;
 }

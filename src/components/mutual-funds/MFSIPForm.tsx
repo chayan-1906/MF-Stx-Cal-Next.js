@@ -18,6 +18,7 @@ import apis from "@/lib/apis";
 import axios from "axios";
 import {ApiResponse} from "@/types/ApiResponse";
 import {toast} from "react-toastify";
+import {useRouter} from "next/navigation";
 
 function MFSIPForm({userId, mfSip}: MFSIPProps) {
     const defaultValues = useMemo(() => mfSip
@@ -35,6 +36,7 @@ function MFSIPForm({userId, mfSip}: MFSIPProps) {
         defaultValues,
     });
     const {register: register, handleSubmit, formState: {errors, isValid, isSubmitting}, reset} = mfSipForm;
+    const router = useRouter();
 
     const cardWrapperClassNames = 'rounded-xl overflow-hidden shadow-lg border-3 border-primary-600 dark:border-primary-900';
     const cardHeaderClassNames = 'bg-primary-600 dark:bg-primary-900 p-4 text-primary-foreground';
@@ -56,6 +58,7 @@ function MFSIPForm({userId, mfSip}: MFSIPProps) {
             if (addMfSipApiResponse.success) {
                 toast(addMfSipApiResponse.message, {type: 'success'});
                 reset();
+                router.refresh();
             } else {
                 toast(addMfSipApiResponse.message, {type: 'error'});
             }
@@ -195,9 +198,8 @@ function MFSIPForm({userId, mfSip}: MFSIPProps) {
                                         <FormControl>
                                             <div className={'flex flex-wrap gap-4'}>
                                                 {['equity', 'debt', 'liquid'].map(category => (
-                                                    <Button key={category} variant={'outline'} type={'button'} onClick={() => field.onChange(category)}
-                                                            // className={cn('flex flex-1 justify-center items-center border dark:border-none border-input capitalize', field.value === category && 'bg-primary dark:bg-primary text-text-100')}>
-                                                            className={cn('flex flex-1 justify-center items-center capitalize', field.value === category && 'bg-primary dark:bg-primary text-text-100 dark:text-text-900')}>
+                                                    <Button key={category} type={'button'} onClick={() => field.onChange(category)}
+                                                            className={cn('flex flex-1 justify-center items-center capitalize bg-transparent dark:bg-primary-700 border dark:border-none border-primary text-text-900', field.value === category && 'bg-primary dark:bg-primary text-text-100 dark:text-text-900')}>
                                                         {category}
                                                     </Button>
                                                 ))}
@@ -270,13 +272,13 @@ function MFSIPForm({userId, mfSip}: MFSIPProps) {
                                         <FormLabel htmlFor={field.name} className={''}>SIP Status</FormLabel>
                                         <FormControl>
                                             <div className={'flex items-center'}>
-                                                <Button variant={'outline'} type={'button'} onClick={() => field.onChange(true)}
-                                                        className={cn('rounded-r-none hover:bg-success border-none', field.value === true ? 'bg-success dark:bg-success text-text-100 dark:text-text-900' : 'bg-muted-foreground/10 dark:text-text-900')}>
+                                                <Button type={'button'} onClick={() => field.onChange(true)}
+                                                        className={cn('rounded-r-none hover:bg-success border-none', field.value === true ? 'bg-success dark:bg-success text-text-100 dark:text-text-900' : 'bg-primary dark:text-text-900')}>
                                                     <CheckCircle className={'size-4 inline mr-1'}/>
                                                     Active
                                                 </Button>
-                                                <Button variant={'outline'} type={'button'} onClick={() => field.onChange(false)}
-                                                        className={cn('rounded-l-none hover:bg-destructive border-none', field.value === false ? 'bg-destructive dark:bg-destructive text-text-100 dark:text-text-900' : 'bg-muted-foreground/10 dark:text-text-900')}>
+                                                <Button type={'button'} onClick={() => field.onChange(false)}
+                                                        className={cn('rounded-l-none hover:bg-destructive border-none', field.value === false ? 'bg-destructive dark:bg-destructive text-text-100 dark:text-text-900' : 'bg-primary dark:text-text-900')}>
                                                     <X className={'size-4 inline mr-1'}/>
                                                     Inactive
                                                 </Button>

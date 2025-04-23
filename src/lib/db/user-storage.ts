@@ -7,6 +7,13 @@ import {NODE_ENV} from "@/lib/config";
 export const localhostCookieName = 'authjs.session-token';
 export const deployedCookieName = '__Secure-authjs.session-token';
 
+export async function getRawToken() {
+    const cookieStore = await cookies();
+    const token = cookieStore.get(deployedCookieName)?.value || cookieStore.get(localhostCookieName)?.value;
+    console.log('rawToken:', token);
+    return token;
+}
+
 export async function getEmailFromToken() {
     if (NODE_ENV === 'development') {
         await getRawToken();
@@ -54,18 +61,11 @@ export async function getUserDetailsFromToken() {
     return {userId: token?.userId, email: token?.email};
 }
 
-export async function getRawToken() {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(deployedCookieName)?.value || cookieStore.get(localhostCookieName)?.value;
-    console.log('rawToken:', token);
-    return token;
-}
-
 async function getUserFromDb(): Promise<User | null> {
     await dbConnect();
 
     try {
-        const email = await getEmailFromToken();
+        const {email} = await getUserDetailsFromToken();
         if (!email) {
             return null;
         }

@@ -1,30 +1,33 @@
-import React from "react";
-import Image from "next/image";
+import DashboardHeader from "@/components/dashboard/DashboardHeader";
+import MonthlyOverview from "@/components/dashboard/MonthlyOverview";
 import Logout from "@/components/Logout";
-import {getUserFromDb} from "@/lib/db/user-storage";
+import DeleteAccount from "@/components/DeleteAccount";
+import React from "react";
+import {getMfSipsByToken} from "@/lib/db/mf-sips-storage";
 import {redirect} from "next/navigation";
 import routes from "@/lib/routes";
-import DeleteAccount from "@/components/DeleteAccount";
-import MFSIPForm from "@/components/mutual-funds/MFSIPForm";
-import {getMfSipsByToken} from "@/lib/db/mf-sips-storage";
-import MFSIP from "@/components/MF-SIP";
+import {ServerDashboardProps} from "@/types";
 
-export const dynamic = 'force-dynamic';
-
-async function Home() {
-    const user = await getUserFromDb();
-    if (!user) {
+async function ServerDashboard({isLoggedIn}: ServerDashboardProps) {
+    console.log('ServerDashboard isLoggedIn:', isLoggedIn);
+    if (!isLoggedIn) {
         redirect(routes.loginPath());
     }
 
     const getMfSipsResponse = await getMfSipsByToken();
     if (!getMfSipsResponse.success) {
-
+        // TODO: Something went wrong - need to copy
     }
 
     return (
-        <main className="flex min-h-screen flex-col items-center justify-center p-24">
-            <div className="max-w-sm">
+        <div className={'flex min-h-screen flex-col items-center justify-center'}>
+            <h1>isLoggedIn: {isLoggedIn?.toString()}</h1>
+            <main className={'flex-1 py-6 w-full space-y-4'}>
+                <DashboardHeader/>
+                <MonthlyOverview/>
+            </main>
+
+            {/*<div className="max-w-sm">
                 <div className={'flex gap-4 items-center'}>
                     <Image
                         src={user?.image || "https://images.pexels.com/photos/1374510/pexels-photo-1374510.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"}
@@ -38,18 +41,18 @@ async function Home() {
                         <h1 className="mb-2 text-2xl font-bold">{user.email}</h1>
                     </div>
                 </div>
-            </div>
+            </div>*/}
 
             {/*<MFSIP userId={user.id} mfSips={getMfSipsResponse.data.mfSips}/>*/}
-            <MFSIP userId={user.id} mfSips={getMfSipsResponse.data.mfSips}/>
-            <MFSIPForm userId={user.id}/>
+            {/*<MFSIP userId={user.id} mfSips={getMfSipsResponse.data.mfSips}/>
+            <MFSIPForm userId={user.id}/>*/}
 
             {/*<MFStxCalDashboard/>*/}
 
             <Logout/>
             <DeleteAccount/>
-        </main>
+        </div>
     );
 }
 
-export default Home;
+export default ServerDashboard;
