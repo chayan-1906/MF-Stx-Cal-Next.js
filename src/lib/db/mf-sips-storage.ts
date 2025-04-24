@@ -5,8 +5,9 @@ import {deployedCookieName, getRawToken, localhostCookieName} from "@/lib/db/use
 import UserModel from "@/models/User";
 import {ApiResponse} from "@/types/ApiResponse";
 import MFSIPModel, {MFSIP} from "@/models/MFSIP";
+import {dbConnect} from "@/lib/db/index";
 
-export async function getMfSipsByToken(): Promise<ApiResponse> {
+/*export async function getMfSipsByToken(): Promise<ApiResponse> {
     try {
         if (NODE_ENV === 'development') {
             await getRawToken();
@@ -45,9 +46,9 @@ export async function getMfSipsByToken(): Promise<ApiResponse> {
         }
 
         // both are same
-        /*const mfSips = await MFSIPModel.find({
+        /!*const mfSips = await MFSIPModel.find({
             userId: new mongoose.Types.ObjectId(userId),
-        });*/
+        });*!/
         // const mfSips = await MFSIPModel.where('userId').equals(userId);
         const mfSips = await MFSIPModel.find<MFSIP>({_id: {$in: dbUser.mfSIPIds}})
             .lean()
@@ -71,6 +72,97 @@ export async function getMfSipsByToken(): Promise<ApiResponse> {
         };
     } catch (error: any) {
         console.error('error in fetching mfsips:', error);
+        return {
+            code: 'unknownError',
+            success: false,
+            message: 'Something went wrong',
+            error,
+        };
+    }
+}*/
+
+export async function getMfSipsByToken(): Promise<ApiResponse> {
+    console.log('Function invoked at ⏰:', new Date().toISOString());
+    console.time('getMfSipsByToken ⏰');
+
+    try {
+        console.time('dbConnect ⏰');
+        await dbConnect();
+        console.timeEnd('dbConnect ⏰');
+
+        console.time('tokenValidation ⏰');
+        const cookieHeader = (await headers()).get('cookie') ?? '';
+        const token =
+            (await getToken({
+                req: {headers: {cookie: cookieHeader}} as any,
+                secret: process.env.NEXTAUTH_SECRET,
+                cookieName: deployedCookieName,
+            })) ||
+            (await getToken({
+                req: {headers: {cookie: cookieHeader}} as any,
+                secret: process.env.NEXTAUTH_SECRET,
+                cookieName: localhostCookieName,
+            }));
+        console.timeEnd('tokenValidation ⏰');
+
+        if (!token?.userId) {
+            return {
+                code: 'unauthorized',
+                success: false,
+                message: 'Invalid or missing token',
+            };
+        }
+
+        console.time('databaseOperations ⏰');
+        const dbUser = await UserModel.findById(token.userId)
+            .select('mfSIPIds')
+            .lean()
+            .exec();
+
+        if (!dbUser) {
+            console.timeEnd('databaseOperations ⏰');
+            return {
+                code: 'userNotFound',
+                success: false,
+                message: 'User not found',
+            };
+        }
+
+        if (!dbUser.mfSIPIds || dbUser.mfSIPIds.length === 0) {
+            console.timeEnd('databaseOperations ⏰');
+            return {
+                code: 'noSIPs',
+                success: true,
+                message: 'No SIPs found for this user',
+            };
+        }
+
+        const mfSips = await MFSIPModel.find<MFSIP>({_id: {$in: dbUser.mfSIPIds}})
+            .lean()
+            .exec();
+        console.timeEnd('databaseOperations ⏰');
+        console.log('mfSips:', mfSips.length);
+
+        console.timeEnd('getMfSipsByToken ⏰');
+        return {
+            code: 'fetched',
+            success: true,
+            message: 'MFSIPs fetched',
+            data: {
+                mfSips: mfSips.map((mfSip) => ({
+                    ...mfSip,
+                    mfSipId: mfSip?._id?.toString(),
+                    userId: mfSip.userId.toString(),
+                    // startDate: mfSip.startDate.toISOString(),
+                    // endDate: mfSip.endDate ? mfSip.endDate.toISOString() : null,
+                    _id: undefined,
+                    __v: undefined,
+                })),
+            },
+        };
+    } catch (error) {
+        console.error('Error in fetching MFSIPs:', error);
+        console.timeEnd('getMfSipsByToken ⏰');
         return {
             code: 'unknownError',
             success: false,

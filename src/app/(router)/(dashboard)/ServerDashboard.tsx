@@ -18,6 +18,12 @@ async function ServerDashboard({isLoggedIn, userId, email}: ServerDashboardProps
     const getMfSipsResponse = await getMfSipsByToken();
     if (!getMfSipsResponse.success) {
         // TODO: Something went wrong - need to copy
+
+        return (
+            <div className={'bg-rose-400'}>
+                Something went wrong - {JSON.stringify(getMfSipsResponse.data)}
+            </div>
+        )
     }
 
     return (
