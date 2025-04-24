@@ -8,7 +8,7 @@ import {isStringInvalid} from "@/lib/utils";
 import mongoose from "mongoose";
 
 /** ADD MFSIP */
-export async function POST(request: Request) {
+/*export async function POST(request: Request) {
     console.log('addMFSIP called');
 
     await dbConnect();
@@ -16,7 +16,7 @@ export async function POST(request: Request) {
     try {
         const {fundName, fundCode, schemeName, folioNo, amount, dayOfMonth, active, startDate, endDate, notes, category} = await request.json();
 
-        /** validation */
+        /!** validation *!/
         if (isStringInvalid(fundName)) {
             return NextResponse.json(<ApiResponse>{
                 code: 'missingFundName',
@@ -124,6 +124,171 @@ export async function POST(request: Request) {
             message: 'Something went wrong',
             error,
         }, {status: 500});
+    }
+}*/
+
+export async function POST(request: Request) {
+    console.time('addMFSIP ⏰'); // Log total execution time
+    await dbConnect();
+
+    try {
+        console.time('parseInput');
+        const {
+            fundName,
+            fundCode,
+            schemeName,
+            folioNo,
+            amount,
+            dayOfMonth,
+            active,
+            startDate,
+            endDate,
+            notes,
+            category,
+        } = await request.json();
+        console.timeEnd('parseInput ⏰');
+
+        // Validation
+        if (isStringInvalid(fundName)) {
+            return NextResponse.json(
+                {code: 'missingFundName', success: false, message: 'Fund Name is required'},
+                {status: 400}
+            );
+        }
+        if (fundCode && typeof fundCode !== 'string') {
+            return NextResponse.json(
+                {code: 'invalidFundCode', success: false, message: 'Fund code must be a string'},
+                {status: 400}
+            );
+        }
+        if (isStringInvalid(schemeName)) {
+            return NextResponse.json(
+                {code: 'invalidSchemeName', success: false, message: 'Scheme name must be a string'},
+                {status: 400}
+            );
+        }
+        if (isStringInvalid(folioNo)) {
+            return NextResponse.json(
+                {code: 'invalidFolioNo', success: false, message: 'Folio no must be a string'},
+                {status: 400}
+            );
+        }
+        if (typeof amount !== 'number' || isNaN(amount) || amount < 1) {
+            return NextResponse.json(
+                {code: 'invalidAmount', success: false, message: 'Amount is required and must be at least ₹1'},
+                {status: 400}
+            );
+        }
+        if (typeof dayOfMonth !== 'number' || isNaN(dayOfMonth) || dayOfMonth < 1 || dayOfMonth > 31) {
+            return NextResponse.json(
+                {
+                    code: 'invalidDayOfMonth',
+                    success: false,
+                    message: 'Day of month must be between 1 and 31',
+                },
+                {status: 400}
+            );
+        }
+        if (typeof active !== 'boolean') {
+            return NextResponse.json(
+                {code: 'invalidActive', success: false, message: 'Active status must be true or false'},
+                {status: 400}
+            );
+        }
+        if (!startDate || isNaN(Date.parse(startDate))) {
+            return NextResponse.json(
+                {code: 'missingStartDate', success: false, message: 'Start date must be a valid date'},
+                {status: 400}
+            );
+        }
+        if (endDate && (isNaN(Date.parse(endDate)) || Date.parse(endDate) <= Date.parse(startDate))) {
+            return NextResponse.json(
+                {
+                    code: 'invalidEndDate',
+                    success: false,
+                    message: 'End date must be a valid date and after the start date',
+                },
+                {status: 400}
+            );
+        }
+        if (notes && typeof notes !== 'string') {
+            return NextResponse.json(
+                {code: 'invalidNotes', success: false, message: 'Notes must be a string'},
+                {status: 400}
+            );
+        }
+        if (!['equity', 'debt', 'liquid'].includes(category)) {
+            return NextResponse.json(
+                {code: 'invalidCategory', success: false, message: 'Category must be equity, debt, or liquid'},
+                {status: 400}
+            );
+        }
+
+        console.time('tokenValidation ⏰');
+        const {userId} = await getUserDetailsFromToken();
+        console.timeEnd('tokenValidation ⏰');
+        if (!userId) {
+            return NextResponse.json(
+                {code: 'unauthorized', success: false, message: 'Invalid token'},
+                {status: 401}
+            );
+        }
+
+        console.time('databaseOperations ⏰');
+        // Combine user check and update
+        const user = await UserModel.findOneAndUpdate(
+            {_id: userId},
+            {$push: {mfSIPIds: {$each: []}}}, // Placeholder to verify user exists
+            {lean: true, select: '_id'}
+        );
+        if (!user) {
+            console.timeEnd('databaseOperations ⏰');
+            return NextResponse.json(
+                {code: 'userNotFound', success: false, message: 'User not found'},
+                {status: 404}
+            );
+        }
+
+        // Create SIP
+        const addedSIP = await MFSIPModel.create({
+            userId,
+            fundName,
+            fundCode,
+            schemeName,
+            folioNo,
+            amount,
+            dayOfMonth,
+            active,
+            startDate: new Date(startDate),
+            endDate: endDate ? new Date(endDate) : undefined,
+            notes,
+            category,
+        });
+
+        // Update user with SIP ID
+        await UserModel.updateOne(
+            {_id: userId},
+            {$push: {mfSIPIds: addedSIP._id}}
+        );
+        console.timeEnd('databaseOperations ⏰');
+
+        console.timeEnd('addMFSIP ⏰');
+        return NextResponse.json(
+            {
+                code: 'added',
+                success: true,
+                message: 'SIP added successfully',
+                data: {sip: addedSIP},
+            },
+            {status: 201}
+        );
+    } catch (error) {
+        console.error('Error in adding SIP:', error);
+        console.timeEnd('addMFSIP ⏰');
+        return NextResponse.json(
+            {code: 'unknownError', success: false, message: 'Something went wrong', error},
+            {status: 500}
+        );
     }
 }
 
