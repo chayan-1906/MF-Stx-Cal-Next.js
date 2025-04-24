@@ -43,6 +43,7 @@ const MFSIPSchema: Schema<MFSIP> = new Schema({
     fundCode: {
         type: String,
         required: false,
+        trim: true,
         default: null,
     },
     schemeName: {
@@ -52,7 +53,7 @@ const MFSIPSchema: Schema<MFSIP> = new Schema({
     },
     folioNo: {
         type: String,
-        required: [true, 'Folio no is requireddd'],
+        required: [true, 'Folio no is required'],
         trim: true,
     },
     amount: {

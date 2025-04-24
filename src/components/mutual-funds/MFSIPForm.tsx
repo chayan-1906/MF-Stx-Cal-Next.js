@@ -3,7 +3,6 @@
 import React, {useEffect, useMemo} from "react";
 import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
-import {Textarea} from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -20,6 +19,7 @@ import {toast} from "react-toastify";
 import {useRouter} from "next/navigation";
 import {LoadingButton} from "../loading-button";
 import routes from "@/lib/routes";
+import {Textarea} from "@/components/ui/textarea";
 
 function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
     const defaultValues = useMemo(() => mfSip
@@ -77,20 +77,21 @@ function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
         formData.fundName = formData.fundName?.toUpperCase() || '';
         formData.fundCode = formData.fundCode?.toUpperCase() || '';
         formData.schemeName = capitalizeFirst(formData.schemeName);
+        // formData.notes = formData.notes || '';
         console.log('formData:', formData);
 
         try {
-            const updateMfSipApiResponse = (await axios.put<ApiResponse>(apis.updateMFSIPApi(), formData)).data;
+            const updateMfSipApiResponse = await axios.put<ApiResponse>(apis.updateMFSIPApi(), formData);
 
-            if (updateMfSipApiResponse.success) {
-                toast(updateMfSipApiResponse.message, {type: 'success'});
+            if (updateMfSipApiResponse.data.success) {
+                toast(updateMfSipApiResponse.data.message, {type: 'success'});
                 reset();
                 router.refresh();
                 router.push(routes.homePath());
             } else {
-                toast(updateMfSipApiResponse.message, {type: 'error'});
+                toast(updateMfSipApiResponse.data.message, {type: 'error'});
             }
-        } catch (error) {
+        } catch (error: any) {
             toast('Something went wrong', {type: 'error'});
         }
     }

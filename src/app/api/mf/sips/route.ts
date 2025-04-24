@@ -421,7 +421,7 @@ export async function PUT(request: Request) {
                 success: false,
                 message: 'End date must be after the start date',
             }, {status: 400});
-        } else if (notes !== undefined && isStringInvalid(notes)) {
+        } else if (notes !== undefined && notes !== null && typeof notes !== 'string') {
             return NextResponse.json<ApiResponse>({
                 code: 'invalidNotes',
                 success: false,
