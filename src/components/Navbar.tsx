@@ -9,21 +9,19 @@ import {APP_NAME} from "@/lib/config";
 
 async function Navbar({isLoggedIn}: NavbarProps) {
     return (
-        <nav className={'shadow-sm sticky top-0 bg-background'}>
+        <nav className={'shadow-sm fixed top-0 left-0 right-0 z-50 bg-background'}>
             <div className={'flex justify-between items-center py-3 container mx-auto'}>
                 <Link href={routes.homePath()} className={'flex items-center gap-2 select-none'}>
                     <Image src={'/assets/images/logo.svg'} alt={'logo'} height={32} width={32}/>
                     <h2 className={'mt-3 text-xl font-bold text-center text-primary tracking-wide'}>{APP_NAME}</h2>
                 </Link>
                 {!isLoggedIn ? (
-                    <Link href={routes.loginPath()}>
-                        <Button variant={'default'}>Sign In</Button>
-                    </Link>
+                    <Button variant={'default'} asChild>
+                        <Link href={routes.loginPath()}>Sign In</Link>
+                    </Button>
                 ) : (
                     <form action={doLogout}>
-                        <Button variant={'destructive'}>
-                            Sign Out
-                        </Button>
+                        <Button variant={'destructive'}>Sign Out</Button>
                     </form>
                 )}
             </div>

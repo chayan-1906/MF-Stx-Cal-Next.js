@@ -1,5 +1,5 @@
 import {MFSIP} from "@/models/MFSIP";
-import React, {Dispatch, SetStateAction} from "react";
+import React from "react";
 
 /** metadata */
 export interface MetadataProps {
@@ -62,6 +62,17 @@ export interface NavbarProps {
 }
 
 
+/** custom components */
+export interface MFSIPFormProps {
+    userId: string;
+    mfSip?: MFSIP | null;
+}
+
+export interface DashboardHeaderProps {
+    userId: string | null;
+}
+
+
 /** page components */
 export interface ServerLoginProps {
     isLoggedIn?: boolean;
@@ -73,11 +84,18 @@ export interface ServerDashboardProps {
     email?: string | undefined;
 }
 
-export interface DashboardHeaderProps {
-    userId: string | null;
+export interface ServerAddMfSipProps {
+    isLoggedIn?: boolean;
+    userId?: string;
 }
 
-export interface MFSIPProps {
-    userId: string;
-    mfSip?: MFSIP | null;
+export interface EditMFSIPsPageProps {
+    params: Promise<{ mfSipExternalId: string }>;
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+export interface ServerEditMfSipProps {
+    isLoggedIn?: boolean;
+    userId?: string;
+    mfSipExternalId: string;
 }

@@ -6,7 +6,7 @@ interface AddUpdateMFSIPFormModalProps {
     mfSipId: string;
 }
 
-function AddUpdateMFSIPFormModal({userId, mfSipId, mfSip}: AddUpdateMFSIPFormModalProps) {
+function AddUpdateMFSIPFormModal({mfSipId}: AddUpdateMFSIPFormModalProps) {
     const {isOpen, close} = useAddUpdateMFSIPModal(mfSipId);
 
     return (

@@ -4,7 +4,7 @@ import routes from "@/lib/routes";
 import {ServerDashboardProps} from "@/types";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import MonthlyOverview from "@/components/dashboard/MonthlyOverview";
-import MFSIP from "@/components/MF-SIP";
+import MFSIPTemporary from "@/components/MFSIPTemporary";
 import Logout from "@/components/Logout";
 import DeleteAccount from "@/components/DeleteAccount";
 import {getMfSipsByToken} from "@/lib/db/mf-sips-storage";
@@ -45,9 +45,10 @@ async function ServerDashboard({isLoggedIn, userId, email}: ServerDashboardProps
             </div>*/}
 
             {/*<MFSIP userId={user.id} mfSips={getMfSipsResponse.data.mfSips}/>*/}
-            <MFSIP userId={userId ?? ''} mfSips={getMfSipsResponse.data.mfSips}/>
+            <MFSIPTemporary userId={userId ?? ''} mfSips={getMfSipsResponse.data.mfSips}/>
 
             {/*<MFStxCalDashboard/>*/}
+            {/*<Neumorphic/>*/}
 
             <Logout/>
             <DeleteAccount/>

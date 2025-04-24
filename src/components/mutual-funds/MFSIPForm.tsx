@@ -12,15 +12,16 @@ import {CalendarIcon, CheckCircle, Clock, DollarSign, FileText, PencilIcon, Plus
 import {capitalizeFirst, cn} from "@/lib/utils";
 import {BiRupee} from "react-icons/bi";
 import {MdNotes} from "react-icons/md";
-import {MFSIPProps} from "@/types";
+import {MFSIPFormProps} from "@/types";
 import apis from "@/lib/apis";
 import axios from "axios";
 import {ApiResponse} from "@/types/ApiResponse";
 import {toast} from "react-toastify";
 import {useRouter} from "next/navigation";
 import {LoadingButton} from "../loading-button";
+import routes from "@/lib/routes";
 
-function MFSIPForm({userId, mfSip}: MFSIPProps) {
+function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
     const defaultValues = useMemo(() => mfSip
                 ? mfSipSchema.parse({
                     ...mfSip,
@@ -38,7 +39,7 @@ function MFSIPForm({userId, mfSip}: MFSIPProps) {
     const {register: register, handleSubmit, formState: {errors, isValid, isSubmitting}, reset} = mfSipForm;
     const router = useRouter();
 
-    const cardWrapperClassNames = 'rounded-xl overflow-hidden shadow-lg border-3 border-primary-600 dark:border-primary-900';
+    const cardWrapperClassNames = 'h-fit rounded-xl overflow-hidden shadow-lg border-3 border-primary-600 dark:border-primary-900';
     const cardHeaderClassNames = 'bg-primary-600 dark:bg-primary-900 p-4 text-primary-foreground';
     const cardBgClassNames = 'bg-card dark:bg-primary-800 p-6 space-y-5';
 
@@ -59,6 +60,7 @@ function MFSIPForm({userId, mfSip}: MFSIPProps) {
                 toast(addMfSipApiResponse.message, {type: 'success'});
                 reset();
                 router.refresh();
+                router.push(routes.homePath());
             } else {
                 toast(addMfSipApiResponse.message, {type: 'error'});
             }
@@ -83,6 +85,8 @@ function MFSIPForm({userId, mfSip}: MFSIPProps) {
             if (updateMfSipApiResponse.success) {
                 toast(updateMfSipApiResponse.message, {type: 'success'});
                 reset();
+                router.refresh();
+                router.push(routes.homePath());
             } else {
                 toast(updateMfSipApiResponse.message, {type: 'error'});
             }
@@ -96,7 +100,7 @@ function MFSIPForm({userId, mfSip}: MFSIPProps) {
     }, [defaultValues, reset]);
 
     return (
-        <div className={'max-w-4xl bg-background mx-auto p-6'}>
+        <div className={'bg-background mx-auto p-6'}>
             <div className={'mb-8 text-center'}>
                 <h2 className={'mb-2 text-2xl font-bold text-text-900 tracking-wide'}>{mfSip ? 'Update SIP' : 'Create New SIP'}</h2>
                 <p className={'text-text-800'}>
@@ -107,9 +111,9 @@ function MFSIPForm({userId, mfSip}: MFSIPProps) {
             <Form {...mfSipForm}>
                 <form onSubmit={handleSubmit(mfSip ? updateExistingMfSip : createNewMfSip)} className={'relative space-y-5 overflow-auto'}>
                     {/** cards */}
-                    <div className={'space-y-5 h-48'}>
+                    <div className={'flex flex-col md:flex-row gap-5'}>
                         {/** Card 1: Fund Details */}
-                        <div className={cardWrapperClassNames}>
+                        <div className={cn(cardWrapperClassNames, 'flex-1')}>
                             <div className={cardHeaderClassNames}>
                                 <div className={'flex items-center gap-2'}>
                                     <FileText className={'size-5'}/>
@@ -211,147 +215,151 @@ function MFSIPForm({userId, mfSip}: MFSIPProps) {
                             </div>
                         </div>
 
-                        {/** Card 2: Amount & Schedule */}
-                        <div className={cardWrapperClassNames}>
-                            <div className={cardHeaderClassNames}>
-                                <div className={'flex items-center gap-2'}>
-                                    <DollarSign className={'size-5'}/>
-                                    <h3>Investment Details</h3>
+                        {/** Card 2: Amount & Schedule & Card 3: Dates & Notes */}
+                        <div className={'flex flex-col flex-1 gap-4'}>
+                            {/** Card 2: Amount & Schedule */}
+                            <div className={cardWrapperClassNames}>
+                                <div className={cardHeaderClassNames}>
+                                    <div className={'flex items-center gap-2'}>
+                                        <DollarSign className={'size-5'}/>
+                                        <h3>Investment Details</h3>
+                                    </div>
+                                </div>
+
+                                {/** form - Investment Details */}
+                                <div className={cardBgClassNames}>
+                                    {/** amount */}
+                                    <FormField control={mfSipForm.control} name={'amount'} render={({field}) => (
+                                        <FormItem>
+                                            <FormLabel htmlFor={field.name} className={''}>Monthly amount (₹) *</FormLabel>
+                                            <FormControl>
+                                                <div className={'relative'}>
+                                                    <div className={'absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'}>
+                                                        <BiRupee size={18} className={'text-text-700'}/>
+                                                    </div>
+                                                    <Input {...field} id={field.name} value={field.value ?? ''} type={'number'} placeholder={'3000'} className={'pl-8'}
+                                                           onChange={(e) => {
+                                                               const val = e.target.value;
+                                                               field.onChange(val === '' ? '' : Number(val));
+                                                           }} onWheel={(e) => e.currentTarget.blur()}/>
+                                                </div>
+                                            </FormControl>
+                                            <FormMessage/>
+                                        </FormItem>
+                                    )}/>
+
+                                    {/** day */}
+                                    <FormField control={mfSipForm.control} name={'dayOfMonth'} render={({field}) => (
+                                        <FormItem>
+                                            <FormLabel htmlFor={field.name} className={''}>Day of month *</FormLabel>
+                                            <FormDescription className={'text-xs text-text-600'}>Between 1 & 31</FormDescription>
+                                            <FormControl>
+                                                <div className={'relative'}>
+                                                    <div className={'absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'}>
+                                                        <CalendarIcon size={18} className={'text-text-700'}/>
+                                                    </div>
+                                                    <Input {...field} id={field.name} value={field.value ?? ''} type={'number'} placeholder={'12'} className={'pl-10'} onChange={(e) => {
+                                                        const val = parseInt(e.target.value, 10);
+                                                        if (val >= 1 && val <= 31) {
+                                                            field.onChange(val);
+                                                        } else if (e.target.value === '') {
+                                                            field.onChange('');
+                                                        }
+                                                    }} onWheel={(e) => e.currentTarget.blur()}/>
+                                                </div>
+                                            </FormControl>
+                                            <FormMessage/>
+                                        </FormItem>
+                                    )}/>
+
+                                    {/** active */}
+                                    <FormField control={mfSipForm.control} name={'active'} render={({field}) => (
+                                        <FormItem>
+                                            <FormLabel htmlFor={field.name} className={''}>SIP Status</FormLabel>
+                                            <FormControl>
+                                                <div className={'flex items-center'}>
+                                                    <Button type={'button'} onClick={() => field.onChange(true)}
+                                                            className={cn('rounded-r-none hover:bg-success border-none', field.value === true ? 'bg-success dark:bg-success text-text-100 dark:text-text-900' : 'bg-primary dark:text-text-900')}>
+                                                        <CheckCircle className={'size-4 inline mr-1'}/>
+                                                        Active
+                                                    </Button>
+                                                    <Button type={'button'} onClick={() => field.onChange(false)}
+                                                            className={cn('rounded-l-none hover:bg-destructive border-none', field.value === false ? 'bg-destructive dark:bg-destructive text-text-100 dark:text-text-900' : 'bg-primary dark:text-text-900')}>
+                                                        <X className={'size-4 inline mr-1'}/>
+                                                        Inactive
+                                                    </Button>
+                                                </div>
+                                            </FormControl>
+                                            <FormMessage/>
+                                        </FormItem>
+                                    )}/>
                                 </div>
                             </div>
 
-                            {/** form - Investment Details */}
-                            <div className={cardBgClassNames}>
-                                {/** amount */}
-                                <FormField control={mfSipForm.control} name={'amount'} render={({field}) => (
-                                    <FormItem>
-                                        <FormLabel htmlFor={field.name} className={''}>Monthly amount (₹) *</FormLabel>
-                                        <FormControl>
-                                            <div className={'relative'}>
-                                                <div className={'absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'}>
-                                                    <BiRupee size={18} className={'text-text-700'}/>
+                            {/** Card 3: Dates & Notes */}
+                            <div className={cardWrapperClassNames}>
+                                <div className={cardHeaderClassNames}>
+                                    <div className={'flex items-center gap-2'}>
+                                        <Clock className={'size-5'}/>
+                                        <h3>Timeline & Notes</h3>
+                                    </div>
+                                </div>
+
+                                {/** form - Timeline & Notes */}
+                                <div className={cardBgClassNames}>
+                                    {/** start date */}
+                                    <FormField control={mfSipForm.control} name={'startDate'} render={({field}) => (
+                                        <FormItem>
+                                            <FormLabel htmlFor={field.name} className={''}>Start date *</FormLabel>
+                                            <FormControl>
+                                                <div className={'relative'}>
+                                                    <Input{...field} id={field.name} type={'date'} className={''} value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
+                                                          onChange={(e) => field.onChange(e.target.value ? new Date(e.target.value) : null)}/>
                                                 </div>
-                                                <Input {...field} id={field.name} value={field.value ?? ''} type={'number'} placeholder={'3000'} className={'pl-8'}
-                                                       onChange={(e) => {
-                                                           const val = e.target.value;
-                                                           field.onChange(val === '' ? '' : Number(val));
-                                                       }} onWheel={(e) => e.currentTarget.blur()}/>
-                                            </div>
-                                        </FormControl>
-                                        <FormMessage/>
-                                    </FormItem>
-                                )}/>
+                                            </FormControl>
+                                            <FormMessage/>
+                                        </FormItem>
+                                    )}/>
 
-                                {/** day */}
-                                <FormField control={mfSipForm.control} name={'dayOfMonth'} render={({field}) => (
-                                    <FormItem>
-                                        <FormLabel htmlFor={field.name} className={''}>Day of month *</FormLabel>
-                                        <FormDescription className={'text-xs text-text-600'}>Between 1 & 31</FormDescription>
-                                        <FormControl>
-                                            <div className={'relative'}>
-                                                <div className={'absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'}>
-                                                    <CalendarIcon size={18} className={'text-text-700'}/>
+                                    {/** end date */}
+                                    <FormField control={mfSipForm.control} name={'endDate'} render={({field}) => (
+                                        <FormItem>
+                                            <FormLabel htmlFor={field.name} className={''}>End date (Optional)</FormLabel>
+                                            <FormControl>
+                                                <div className={'relative'}>
+                                                    <Input{...field} id={field.name} type={'date'} className={''} value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
+                                                          onChange={(e) => field.onChange(e.target.value ? new Date(e.target.value) : null)}/>
+                                                    <p className={'mt-0.5 text-xs text-text-600'}>Leave blank for an ongoing SIP with no end date</p>
                                                 </div>
-                                                <Input {...field} id={field.name} value={field.value ?? ''} type={'number'} placeholder={'12'} className={'pl-10'} onChange={(e) => {
-                                                    const val = parseInt(e.target.value, 10);
-                                                    if (val >= 1 && val <= 31) {
-                                                        field.onChange(val);
-                                                    } else if (e.target.value === '') {
-                                                        field.onChange('');
-                                                    }
-                                                }} onWheel={(e) => e.currentTarget.blur()}/>
-                                            </div>
-                                        </FormControl>
-                                        <FormMessage/>
-                                    </FormItem>
-                                )}/>
+                                            </FormControl>
+                                            <FormMessage/>
+                                        </FormItem>
+                                    )}/>
 
-                                {/** active */}
-                                <FormField control={mfSipForm.control} name={'active'} render={({field}) => (
-                                    <FormItem>
-                                        <FormLabel htmlFor={field.name} className={''}>SIP Status</FormLabel>
-                                        <FormControl>
-                                            <div className={'flex items-center'}>
-                                                <Button type={'button'} onClick={() => field.onChange(true)}
-                                                        className={cn('rounded-r-none hover:bg-success border-none', field.value === true ? 'bg-success dark:bg-success text-text-100 dark:text-text-900' : 'bg-primary dark:text-text-900')}>
-                                                    <CheckCircle className={'size-4 inline mr-1'}/>
-                                                    Active
-                                                </Button>
-                                                <Button type={'button'} onClick={() => field.onChange(false)}
-                                                        className={cn('rounded-l-none hover:bg-destructive border-none', field.value === false ? 'bg-destructive dark:bg-destructive text-text-100 dark:text-text-900' : 'bg-primary dark:text-text-900')}>
-                                                    <X className={'size-4 inline mr-1'}/>
-                                                    Inactive
-                                                </Button>
-                                            </div>
-                                        </FormControl>
-                                        <FormMessage/>
-                                    </FormItem>
-                                )}/>
-                            </div>
-                        </div>
-
-                        {/** Card 3: Dates & Notes */}
-                        <div className={cardWrapperClassNames}>
-                            <div className={cardHeaderClassNames}>
-                                <div className={'flex items-center gap-2'}>
-                                    <Clock className={'size-5'}/>
-                                    <h3>Timeline & Notes</h3>
+                                    {/** notes */}
+                                    <FormField control={mfSipForm.control} name={'notes'} render={({field}) => (
+                                        <FormItem>
+                                            <FormLabel htmlFor={field.name} className={''}>Notes (Optional)</FormLabel>
+                                            <FormControl>
+                                                <div className={'relative'}>
+                                                    <div className={'absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'}>
+                                                        <MdNotes size={18} className={'text-text-700'}/>
+                                                    </div>
+                                                    <Textarea {...field} id={field.name} value={field.value ?? ''}
+                                                              placeholder={'E.g. SIP started via app in Jan 2023 for long-term goals.\nLinked bank account changed in March 2024.'}
+                                                              className={'pl-10 max-h-40'} onChange={(e) => field.onChange(e)}/>
+                                                </div>
+                                            </FormControl>
+                                            <FormMessage/>
+                                        </FormItem>
+                                    )}/>
                                 </div>
                             </div>
-
-                            {/** form - Timeline & Notes */}
-                            <div className={cardBgClassNames}>
-                                {/** start date */}
-                                <FormField control={mfSipForm.control} name={'startDate'} render={({field}) => (
-                                    <FormItem>
-                                        <FormLabel htmlFor={field.name} className={''}>Start date *</FormLabel>
-                                        <FormControl>
-                                            <div className={'relative'}>
-                                                <Input{...field} id={field.name} type={'date'} className={''} value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
-                                                      onChange={(e) => field.onChange(e.target.value ? new Date(e.target.value) : null)}/>
-                                            </div>
-                                        </FormControl>
-                                        <FormMessage/>
-                                    </FormItem>
-                                )}/>
-
-                                {/** end date */}
-                                <FormField control={mfSipForm.control} name={'endDate'} render={({field}) => (
-                                    <FormItem>
-                                        <FormLabel htmlFor={field.name} className={''}>End date (Optional)</FormLabel>
-                                        <FormControl>
-                                            <div className={'relative'}>
-                                                <Input{...field} id={field.name} type={'date'} className={''} value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
-                                                      onChange={(e) => field.onChange(e.target.value ? new Date(e.target.value) : null)}/>
-                                                <p className={'mt-0.5 text-xs text-text-600'}>Leave blank for an ongoing SIP with no end date</p>
-                                            </div>
-                                        </FormControl>
-                                        <FormMessage/>
-                                    </FormItem>
-                                )}/>
-
-                                {/** notes */}
-                                <FormField control={mfSipForm.control} name={'notes'} render={({field}) => (
-                                    <FormItem>
-                                        <FormLabel htmlFor={field.name} className={''}>Notes (Optional)</FormLabel>
-                                        <FormControl>
-                                            <div className={'relative'}>
-                                                <div className={'absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'}>
-                                                    <MdNotes size={18} className={'text-text-700'}/>
-                                                </div>
-                                                <Textarea {...field} id={field.name} value={field.value ?? ''}
-                                                          placeholder={'E.g. SIP started via app in Jan 2023 for long-term goals.\nLinked bank account changed in March 2024.'}
-                                                          className={'pl-10 max-h-40'} onChange={(e) => field.onChange(e)}/>
-                                            </div>
-                                        </FormControl>
-                                        <FormMessage/>
-                                    </FormItem>
-                                )}/>
-                            </div>
                         </div>
+
                     </div>
 
-                    <div className={'flex gap-4 items-center fixed'}>
+                    <div className={'flex gap-4 items-center justify-end'}>
                         <Button variant={'destructive'} type={'reset'} className={'h-10'}>Cancel</Button>
                         <LoadingButton variant={'secondary'} loading={isSubmitting} className={'h-10'}>
                             {mfSip ? <PencilIcon/> : <PlusIcon/>}
