@@ -105,9 +105,9 @@ function MFSIPForm({userId, mfSip}: MFSIPProps) {
             </div>
 
             <Form {...mfSipForm}>
-                <form onSubmit={handleSubmit(mfSip ? updateExistingMfSip : createNewMfSip)} className={'space-y-5 overflow-auto'}>
+                <form onSubmit={handleSubmit(mfSip ? updateExistingMfSip : createNewMfSip)} className={'relative space-y-5 overflow-auto'}>
                     {/** cards */}
-                    <div className={'space-y-5 h-72'}>
+                    <div className={'space-y-5 h-48'}>
                         {/** Card 1: Fund Details */}
                         <div className={cardWrapperClassNames}>
                             <div className={cardHeaderClassNames}>
@@ -351,9 +351,8 @@ function MFSIPForm({userId, mfSip}: MFSIPProps) {
                         </div>
                     </div>
 
-                    <div className={'flex gap-4 items-center justify-end fixed'}>
+                    <div className={'flex gap-4 items-center fixed'}>
                         <Button variant={'destructive'} type={'reset'} className={'h-10'}>Cancel</Button>
-                        <Button variant={'default'} type={'reset'} className={'h-10'}>Create/Update</Button>
                         <LoadingButton variant={'secondary'} loading={isSubmitting} className={'h-10'}>
                             {mfSip ? <PencilIcon/> : <PlusIcon/>}
                             {mfSip ? 'Update' : 'Create'}

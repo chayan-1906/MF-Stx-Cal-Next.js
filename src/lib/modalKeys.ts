@@ -2,4 +2,8 @@ const modalKeys = {
     addUpdateMFSIP: 'add-update-mfsip',
 }
 
-export default modalKeys;
+const nuqsModalKeys = {
+    addUpdateMFSIP: 'add-update-mfsip',
+}
+
+export {modalKeys, nuqsModalKeys};

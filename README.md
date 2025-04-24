@@ -55,3 +55,9 @@ Your app is ready to be deployed!
 
 ### Axios - https://www.npmjs.com/package/axios
     npm i axios
+
+### Nuqs - https://www.npmjs.com/package/nuqs
+    npm i nuqs
+
+### Framer Motion - https://www.npmjs.com/package/framer-motion
+    npm i framer-motion
