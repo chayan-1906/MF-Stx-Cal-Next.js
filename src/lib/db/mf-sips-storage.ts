@@ -173,7 +173,14 @@ export async function getMfSipsByToken(): Promise<ApiResponse> {
 }
 
 export async function getMfSipByExternalId(mfSipExternalId: string): Promise<ApiResponse> {
+    console.log('Function invoked at ⏰:', new Date().toISOString());
+    console.time('getMfSipByExternalId ⏰');
     try {
+        console.time('dbConnect ⏰');
+        await dbConnect();
+        console.timeEnd('dbConnect ⏰');
+
+        console.time('tokenValidation ⏰');
         if (NODE_ENV === 'development') {
             await getRawToken();
         }
@@ -192,9 +199,20 @@ export async function getMfSipByExternalId(mfSipExternalId: string): Promise<Api
                 cookieName: localhostCookieName,
             }));
         console.log('token in getUserIdFromToken:', token);
+        console.timeEnd('tokenValidation ⏰');
 
+        if (!token?.userId) {
+            return {
+                code: 'unauthorized',
+                success: false,
+                message: 'Invalid or missing token',
+            };
+        }
+
+        console.time('databaseOperations ⏰');
         const mfSip = await MFSIPModel.findOne({externalId: mfSipExternalId}).lean().exec() as MFSIP | null;
         console.log('mfSip:', mfSip);
+        console.timeEnd('databaseOperations ⏰');
 
         if (!mfSip) {
             return {
@@ -212,6 +230,7 @@ export async function getMfSipByExternalId(mfSipExternalId: string): Promise<Api
             };
         }
 
+        console.timeEnd('getMfSipByExternalId ⏰');
         return {
             code: 'fetched',
             success: true,
@@ -230,6 +249,7 @@ export async function getMfSipByExternalId(mfSipExternalId: string): Promise<Api
         };
     } catch (error: any) {
         console.error('error in fetching mfsip:', error);
+        console.timeEnd('getMfSipByExternalId ⏰');
         return {
             code: 'unknownError',
             success: false,
