@@ -33,7 +33,7 @@ const MFSIPSchema: Schema<MFSIP> = new Schema({
         type: String,
         required: true,
         unique: true,
-        default: () => crypto.randomBytes(16).toString('hex'),
+        default: () => crypto.randomUUID(),
     },
     fundName: {
         type: String,
@@ -96,8 +96,8 @@ const MFSIPSchema: Schema<MFSIP> = new Schema({
 
 MFSIPSchema.set('toJSON', {
     transform: (doc, ret) => {
-        ret.mfSipId = ret._id.toString(); // Convert _id to string
-        ret.userId = ret.userId.toString(); // Convert userId to string
+        ret.mfSipId = ret._id.toString();
+        ret.userId = ret.userId.toString();
         delete ret._id;
         delete ret.__v;
         return ret;

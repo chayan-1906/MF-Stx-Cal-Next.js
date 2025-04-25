@@ -1,5 +1,7 @@
 import {MFSIP} from "@/models/MFSIP";
 import React from "react";
+import type {VariantProps} from "class-variance-authority";
+import {buttonVariants} from "@/components/ui/button";
 
 /** metadata */
 export interface MetadataProps {
@@ -8,6 +10,11 @@ export interface MetadataProps {
 }
 
 /** reusable components */
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
+    asChild?: boolean;
+    loading?: boolean;
+}
+
 export interface CustomResponsiveModalProps {
     id?: string;
     modalKey: string;

@@ -1,0 +1,237 @@
+@import "tailwindcss";
+
+/** light theme colors */
+:root {
+	--primary-100: #EDEBFE;
+	--primary-200: #C7D2FE;
+	--primary-300: #A5B4FC;
+	--primary-400: #818CF8;
+	--primary: #6366F1;
+	--primary-600: #4F46E5;
+	--primary-700: #4338CA;
+	--primary-800: #3730A3;
+	--primary-900: #312E81;
+
+	--secondary-100: #FCE7F3;
+	--secondary-200: #FBCFE8;
+	--secondary-300: #F9A8D4;
+	--secondary-400: #F472B6;
+	--secondary: #DB2777;
+	--secondary-600: #BE185D;
+	--secondary-700: #9D174D;
+	--secondary-800: #831843;
+	--secondary-900: #500724;
+
+	--accent-100: #FFF2ED;
+	--accent-200: #FFE0D4;
+	--accent-300: #FFC9B5;
+	--accent-400: #FFAD92;
+	--accent: #FF7A7A;
+	--accent-600: #E55F5F;
+	--accent-700: #CC4646;
+	--accent-800: #B33030;
+	--accent-900: #8A2525;
+
+	--background: var(--primary-100);
+
+	--text-100: #E4E9F1;
+	--text-200: #B0C4D3;
+	--text-300: #8A9DB6;
+	--text-400: #6A7F99;
+	--text: #4A5B73;
+	--text-600: #2F3A49;
+	--text-700: #1E2835;
+	--text-800: #141C23;
+	--text-900: #0A1015;
+
+	--success: oklch(52.7% 0.154 150.069);
+	--success-foreground: var(--text-100);
+	--destructive: oklch(50.5% 0.213 27.518);
+	--destructive-text: oklch(50.5% 0.213 27.518);
+	--destructive-foreground: var(--text-100);
+	--primary-foreground: var(--text-100);
+	--secondary-foreground: var(--text-100);
+	--muted: var(--text-200);
+	--muted-foreground: var(--text-700);
+
+	--card: var(--primary-200);
+	--card-foreground: var(--primary-foreground);
+	--card-header: var(--primary-600);
+
+	--input: var(--primary);
+
+	--shadow: var(--primary-300);
+	--separator: oklch(70.4% 0.04 256.788);
+
+	--form-shadow: 5px 5px 10px #D1D5DB, -5px -5px 10px #FFFFFF;
+}
+
+/** dark theme colors */
+.dark, [data-theme='dark'] {
+	--primary-100: #EEF0FE;
+	--primary-200: #D6D9FC;
+	--primary-300: #BDC2FA;
+	--primary-400: #A5AAF9;
+	--primary-500: #8D93F8;
+	--primary-600: #6D74C6;
+	--primary-700: #4F5694;
+	--primary-800: #343962;
+	--primary-900: #1B1F31;
+
+	--secondary-100: #FDF2F8;
+	--secondary-200: #FCE8F3;
+	--secondary-300: #FAD1E8;
+	--secondary-400: #F8B4D9;
+	--secondary-500: #FF10F0;
+	--secondary-600: #D100C3;
+	--secondary-700: #A8009B;
+	--secondary-800: #800074;
+	--secondary-900: #4D0047;
+
+	--accent-100: #2C0C0C;
+	--accent-200: #521818;
+	--accent-300: #793030;
+	--accent-400: #A54848;
+	--accent: #FF6B6B;
+	--accent-600: #FF8585;
+	--accent-700: #FFA0A0;
+	--accent-800: #FFBDBD;
+	--accent-900: #FFE9E9;
+
+	--background: var(--primary-900);
+
+	--text-100: #0A1015;
+	--text-200: #141C23;
+	--text-300: #1E2835;
+	--text-400: #2F3A49;
+	--text: #4A5B73;
+	--text-600: #6A7F99;
+	--text-700: #8A9DB6;
+	--text-800: #B0C4D3;
+	--text-900: #E4E9F1;
+
+	--success: oklch(52.7% 0.154 150.069);
+	--success-foreground: var(--text-900);
+	--destructive: oklch(39.6% 0.141 25.723);
+	--destructive-text: oklch(64.5% 0.246 16.439);
+	--destructive-foreground: var(--text-900);
+	--primary-foreground: var(--text-900);
+	--secondary-foreground: var(--text-900);
+	--muted: var(--text-700);
+	--muted-foreground: var(--text-300);
+
+	--card: var(--primary-800);
+	--card-foreground: var(--primary-foreground);
+	--card-header: var(--primary-900);
+
+	--input: var(--primary-400);
+
+	--shadow: black;
+	--separator: var(--text);
+
+	--form-shadow: 5px 5px 10px #1f2937, -5px -5px 10px #374151;
+
+	input[type='date']::-webkit-calendar-picker-indicator {
+		filter: invert(1); /* white for dark mode */
+	}
+}
+
+@theme inline {
+	--color-primary-100: var(--primary-100);
+	--color-primary-200: var(--primary-200);
+	--color-primary-300: var(--primary-300);
+	--color-primary-400: var(--primary-400);
+	--color-primary: var(--primary);
+	--color-primary-600: var(--primary-600);
+	--color-primary-700: var(--primary-700);
+	--color-primary-800: var(--primary-800);
+	--color-primary-900: var(--primary-900);
+
+	--color-secondary-100: var(--secondary-100);
+	--color-secondary-200: var(--secondary-200);
+	--color-secondary-300: var(--secondary-300);
+	--color-secondary-400: var(--secondary-400);
+	--color-secondary: var(--secondary);
+	--color-secondary-600: var(--secondary-600);
+	--color-secondary-700: var(--secondary-700);
+	--color-secondary-800: var(--secondary-800);
+	--color-secondary-900: var(--secondary-900);
+
+	--color-accent-100: var(--accent-100);
+	--color-accent-200: var(--accent-200);
+	--color-accent-300: var(--accent-300);
+	--color-accent-400: var(--accent-400);
+	--color-accent: var(--accent);
+	--color-accent-600: var(--accent-600);
+	--color-accent-700: var(--accent-700);
+	--color-accent-800: var(--accent-800);
+	--color-accent-900: var(--accent-900);
+
+	--color-background: var(--background);
+
+	--color-text-100: var(--text-100);
+	--color-text-200: var(--text-200);
+	--color-text-300: var(--text-300);
+	--color-text-400: var(--text-400);
+	--color-text: var(--text);
+	--color-text-600: var(--text-600);
+	--color-text-700: var(--text-700);
+	--color-text-800: var(--text-800);
+	--color-text-900: var(--text-900);
+
+	--font-body: Inter, Helvetica, sans-serif;
+
+	--color-input: var(--input);
+	--color-border: var(--border);
+	--color-destructive: var(--destructive);
+	--color-destructive-text: var(--destructive-text);
+	--color-destructive-foreground: var(--destructive-foreground);
+	--color-success: var(--success);
+	--color-success-foreground: var(--success-foreground);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-muted: var(--muted);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+	--color-card-header: var(--card-header);
+
+	--color-shadow: var(--shadow);
+	--color-separator: var(--separator);
+
+	--color-form-shadow: var(--form-shadow);
+}
+
+body {
+	font-family: NunitoSans, Helvetica, sans-serif;
+}
+
+@layer base {
+	body {
+		@apply bg-background text-primary-foreground;
+	}
+
+	::selection {
+		background: var(--primary);
+		color: var(--primary-foreground);
+	}
+}
+
+/** hide number input indicator */
+/* Chrome, Safari, Edge, Opera */
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+/* Firefox */
+input[type='number'] {
+	-moz-appearance: textfield;
+}
+
+input[type='date']::-webkit-calendar-picker-indicator {
+	position: absolute;
+	right: 0.75rem;
+	cursor: pointer;
+}

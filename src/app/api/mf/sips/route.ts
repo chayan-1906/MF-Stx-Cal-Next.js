@@ -238,7 +238,7 @@ export async function POST(request: Request) {
         // Combine user check and update
         const user = await UserModel.findOneAndUpdate(
             {_id: userId},
-            {$push: {mfSIPIds: {$each: []}}}, // Placeholder to verify user exists
+            {$push: {mfSIPIds: {$each: []}}},
             {lean: true, select: '_id'}
         );
         if (!user) {

@@ -6,6 +6,7 @@ import {Button} from "@/components/ui/button";
 import routes from "@/lib/routes";
 import {doLogout} from "@/app/actions";
 import {APP_NAME} from "@/lib/config";
+import ThemeSwitcher from "@/components/ThemeSwitcher";
 
 async function Navbar({isLoggedIn}: NavbarProps) {
     return (
@@ -24,6 +25,8 @@ async function Navbar({isLoggedIn}: NavbarProps) {
                         <Button variant={'destructive'}>Sign Out</Button>
                     </form>
                 )}
+
+                <ThemeSwitcher/>
             </div>
         </nav>
     );

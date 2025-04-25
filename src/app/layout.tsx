@@ -1,10 +1,12 @@
 import React from "react";
 import {Metadata} from 'next';
 import {Nunito_Sans} from "next/font/google";
-import "./globals.css";
+// import "./globals.css";
+import "./styles/theme.css";
 import {ToastContainer} from "react-toastify";
 import {APP_LOGO_URL, APP_NAME, APP_TAGLINE, BASE_URL} from "@/lib/config";
 import {NuqsAdapter} from "nuqs/adapters/react";
+import {ThemeProvider} from "next-themes";
 
 const nunitoSans = Nunito_Sans({subsets: ['latin']});
 
@@ -41,11 +43,13 @@ export const metadata: Metadata = {
 
 async function RootLayout({children}: Readonly<{ children: React.ReactNode; }>) {
     return (
-        <html lang={'en'}>
-        <body suppressHydrationWarning className={nunitoSans.className}>
+        <html lang={'en'} suppressHydrationWarning>
+        <body className={nunitoSans.className}>
         <NuqsAdapter>
             <div className={'container mx-auto'}>
-                {children}
+                <ThemeProvider attribute={'class'} defaultTheme={'system'} enableSystem={false} disableTransitionOnChange>
+                    {children}
+                </ThemeProvider>
             </div>
             <ToastContainer position={'bottom-right'} theme={'colored'}/>
         </NuqsAdapter>

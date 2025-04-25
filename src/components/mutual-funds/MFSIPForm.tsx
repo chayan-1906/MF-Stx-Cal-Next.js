@@ -39,9 +39,9 @@ function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
     const {register: register, handleSubmit, formState: {errors, isValid, isSubmitting}, reset} = mfSipForm;
     const router = useRouter();
 
-    const cardWrapperClassNames = 'h-fit rounded-xl overflow-hidden shadow-lg border-3 border-primary-600 dark:border-primary-900';
-    const cardHeaderClassNames = 'bg-primary-600 dark:bg-primary-900 p-4 text-primary-foreground';
-    const cardBgClassNames = 'bg-card dark:bg-primary-800 p-6 space-y-5';
+    const cardWrapperClassNames = 'h-fit rounded-xl overflow-hidden shadow-lg border-3 border-primary-600';
+    const cardHeaderClassNames = 'bg-card-header p-4 text-primary-foreground';
+    const cardBgClassNames = 'bg-card p-6 space-y-5';
 
     const createNewMfSip = async () => {
         console.log('createNewMfSip:', mfSipForm.getValues());
@@ -77,7 +77,6 @@ function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
         formData.fundName = formData.fundName?.toUpperCase() || '';
         formData.fundCode = formData.fundCode?.toUpperCase() || '';
         formData.schemeName = capitalizeFirst(formData.schemeName);
-        // formData.notes = formData.notes || '';
         console.log('formData:', formData);
 
         try {
@@ -116,7 +115,7 @@ function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
                         {/** Card 1: Fund Details */}
                         <div className={cn(cardWrapperClassNames, 'flex-1')}>
                             <div className={cardHeaderClassNames}>
-                                <div className={'flex items-center gap-2'}>
+                                <div className={'flex items-center gap-2 text-primary-foreground'}>
                                     <FileText className={'size-5'}/>
                                     <h3>Fund Information</h3>
                                 </div>
@@ -204,7 +203,7 @@ function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
                                             <div className={'flex flex-wrap gap-4'}>
                                                 {['equity', 'debt', 'liquid'].map(category => (
                                                     <Button key={category} type={'button'} onClick={() => field.onChange(category)}
-                                                            className={cn('flex flex-1 justify-center items-center capitalize bg-transparent dark:bg-primary-700 border dark:border-none border-primary text-text-900', field.value === category && 'bg-primary dark:bg-primary text-text-100 dark:text-text-900')}>
+                                                            className={cn('flex flex-1 justify-center items-center capitalize bg-transparent border border-input text-text-900', field.value === category && 'bg-primary border-none text-primary-foreground')}>
                                                         {category}
                                                     </Button>
                                                 ))}
@@ -221,7 +220,7 @@ function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
                             {/** Card 2: Amount & Schedule */}
                             <div className={cardWrapperClassNames}>
                                 <div className={cardHeaderClassNames}>
-                                    <div className={'flex items-center gap-2'}>
+                                    <div className={'flex items-center gap-2 text-primary-foreground'}>
                                         <DollarSign className={'size-5'}/>
                                         <h3>Investment Details</h3>
                                     </div>
@@ -280,12 +279,12 @@ function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
                                             <FormControl>
                                                 <div className={'flex items-center'}>
                                                     <Button type={'button'} onClick={() => field.onChange(true)}
-                                                            className={cn('rounded-r-none hover:bg-success border-none', field.value === true ? 'bg-success dark:bg-success text-text-100 dark:text-text-900' : 'bg-primary dark:text-text-900')}>
+                                                            className={cn('rounded-r-none hover:bg-success border-none bg-primary text-primary-foreground', field.value === true && 'bg-success')}>
                                                         <CheckCircle className={'size-4 inline mr-1'}/>
                                                         Active
                                                     </Button>
                                                     <Button type={'button'} onClick={() => field.onChange(false)}
-                                                            className={cn('rounded-l-none hover:bg-destructive border-none', field.value === false ? 'bg-destructive dark:bg-destructive text-text-100 dark:text-text-900' : 'bg-primary dark:text-text-900')}>
+                                                            className={cn('rounded-l-none hover:bg-destructive border-none bg-primary text-primary-foreground', field.value === false && 'bg-destructive')}>
                                                         <X className={'size-4 inline mr-1'}/>
                                                         Inactive
                                                     </Button>
@@ -300,7 +299,7 @@ function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
                             {/** Card 3: Dates & Notes */}
                             <div className={cardWrapperClassNames}>
                                 <div className={cardHeaderClassNames}>
-                                    <div className={'flex items-center gap-2'}>
+                                    <div className={'flex items-center gap-2 text-primary-foreground'}>
                                         <Clock className={'size-5'}/>
                                         <h3>Timeline & Notes</h3>
                                     </div>

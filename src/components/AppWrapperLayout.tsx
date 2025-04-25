@@ -15,9 +15,11 @@ async function AppWrapperLayout({children, className}: AppWrapperLayoutProps) {
 
     return (
         <div>
-            <header>
-                <Navbar isLoggedIn={isLoggedIn}/>
-            </header>
+            {isLoggedIn && (
+                <header>
+                    <Navbar isLoggedIn={isLoggedIn}/>
+                </header>
+            )}
             <main className={'mt-24'}>
                 {Children.map(children, (child) => {
                     if (isValidElement<AppWrapperLayoutChildProps>(child) && typeof child.type !== 'string') {

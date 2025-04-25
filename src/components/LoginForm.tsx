@@ -179,16 +179,16 @@ function LoginForm() {
     }, [authMethod, code, onOtpSubmit]);
 
     return (
-        <div className={'flex items-center justify-center p-4 fixed inset-0 bg-primary-200 dark:bg-primary-900'}>
+        <div className={'flex items-center justify-center p-4 fixed inset-0 bg-background'}>
             <div
-                className={'flex flex-col gap-4 w-full max-w-md bg-background rounded-xl overflow-hidden shadow-2xl shadow-primary-400 dark:shadow-black dark:drop-shadow-2xl drop-shadow-primary-400'}>
+                className={'flex flex-col gap-4 w-full max-w-md bg-card rounded-xl overflow-hidden shadow-2xl shadow-shadow'}>
                 {/** header */}
                 <div className={'flex items-center justify-center mt-2 gap-1 sm:gap-2 px-3 select-none'}>
                     <Image src={'/assets/images/logo.svg'} alt={'logo'} height={32} width={32}/>
                     <h2 className={'mt-3 text-xl font-bold text-center text-text-900 tracking-wide'}>Welcome to {APP_NAME}</h2>
                 </div>
 
-                <hr className={'flex-1 border-slate-200 dark:border-slate-700'}/>
+                <hr className={'flex-1 border-separator'}/>
 
                 {/** email form */}
                 <Form {...emailForm}>
@@ -225,7 +225,7 @@ function LoginForm() {
                         <FormField control={otpForm.control} name={'otp'}
                                    render={({field}) => (
                                        <FormItem>
-                                           <div className={'flex justify-between mb-2 text-text text-sm'}>
+                                           <div className={'flex justify-between mb-2 text-sm'}>
                                                <FormLabel>Verification code</FormLabel>
                                                <FormLabel>Sent to {email}</FormLabel>
                                            </div>
@@ -249,7 +249,7 @@ function LoginForm() {
                                                </div>
                                            </FormControl>
                                            {errorsOtp.otp?.length && (
-                                               <p className={'mt-1 text-sm font-medium text-accent'}>{errorsOtp.otp[0]?.message}</p>
+                                               <p className={'mt-1 text-sm font-medium text-destructive-text'}>{errorsOtp.otp[0]?.message}</p>
                                            )}
 
                                            <div className={'flex justify-between gap-4 mt-2'}>
@@ -285,7 +285,7 @@ function LoginForm() {
                                            <FormControl>
                                                <div className={'relative'}>
                                                    <div className={'absolute inset-y-0 left-0 pl-3 flex items-center'}>
-                                                       <MdAccountCircle className={'size-5 text-gray-400'}/>
+                                                       <MdAccountCircle className={'size-5 text-text'}/>
                                                    </div>
                                                    <Input {...field} id={field.name} ref={nameInputRef} value={field.value ?? ''} autoFocus placeholder={'John Doe'}
                                                           className={'pl-10'} onChange={(e) => field.onChange(e)}/>
@@ -307,9 +307,9 @@ function LoginForm() {
 
                 {/** or continue with */}
                 <div className={'flex items-center gap-4 px-6'}>
-                    <hr className={'flex-1 border-text'}/>
+                    <hr className={'flex-1 border-separator'}/>
                     <p className={'text-text-800'}>Or continue with</p>
-                    <hr className={'flex-1 border-text'}/>
+                    <hr className={'flex-1 border-separator'}/>
                 </div>
 
                 {/** oauths */}
