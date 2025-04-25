@@ -62,8 +62,6 @@
 
 	--shadow: var(--primary-300);
 	--separator: oklch(70.4% 0.04 256.788);
-
-	--form-shadow: 5px 5px 10px #D1D5DB, -5px -5px 10px #FFFFFF;
 }
 
 /** dark theme colors */
@@ -129,10 +127,8 @@
 	--shadow: black;
 	--separator: var(--text);
 
-	--form-shadow: 5px 5px 10px #1f2937, -5px -5px 10px #374151;
-
 	input[type='date']::-webkit-calendar-picker-indicator {
-		filter: invert(1); /* white for dark mode */
+		filter: invert(0);
 	}
 }
 
@@ -198,8 +194,6 @@
 
 	--color-shadow: var(--shadow);
 	--color-separator: var(--separator);
-
-	--color-form-shadow: var(--form-shadow);
 }
 
 body {

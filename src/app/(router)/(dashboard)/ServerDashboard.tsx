@@ -11,6 +11,7 @@ import {getMfSipsByToken} from "@/lib/db/mf-sips-storage";
 
 async function ServerDashboard({isLoggedIn, userId, email}: ServerDashboardProps) {
     console.log('ServerDashboard isLoggedIn:', isLoggedIn);
+    console.log('Rendered on:', typeof window === 'undefined' ? 'server' : 'client');
     if (!isLoggedIn) {
         redirect(routes.loginPath());
     }

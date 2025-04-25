@@ -6,7 +6,7 @@ import "./styles/theme.css";
 import {ToastContainer} from "react-toastify";
 import {APP_LOGO_URL, APP_NAME, APP_TAGLINE, BASE_URL} from "@/lib/config";
 import {NuqsAdapter} from "nuqs/adapters/react";
-import {ThemeProvider} from "next-themes";
+import ThemeWrapper from "@/components/ThemeWrapper";
 
 const nunitoSans = Nunito_Sans({subsets: ['latin']});
 
@@ -47,9 +47,9 @@ async function RootLayout({children}: Readonly<{ children: React.ReactNode; }>) 
         <body className={nunitoSans.className}>
         <NuqsAdapter>
             <div className={'container mx-auto'}>
-                <ThemeProvider attribute={'class'} defaultTheme={'system'} enableSystem={false} disableTransitionOnChange>
+                <ThemeWrapper>
                     {children}
-                </ThemeProvider>
+                </ThemeWrapper>
             </div>
             <ToastContainer position={'bottom-right'} theme={'colored'}/>
         </NuqsAdapter>
