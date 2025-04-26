@@ -106,3 +106,12 @@ export interface ServerEditMfSipProps {
     userId?: string;
     mfSipExternalId: string;
 }
+
+/** dashboard components */
+export interface SIPCalenderProps {
+    investments: {
+        dayOfMonth: number;
+        count: number;
+        sips: MFSIP[];
+    }[];
+}

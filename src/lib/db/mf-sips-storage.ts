@@ -2,7 +2,6 @@ import {NODE_ENV} from "@/lib/config";
 import {headers} from "next/headers";
 import {getToken} from "@auth/core/jwt";
 import {deployedCookieName, getRawToken, localhostCookieName} from "@/lib/db/user-storage";
-import UserModel from "@/models/User";
 import {ApiResponse} from "@/types/ApiResponse";
 import MFSIPModel, {MFSIP} from "@/models/MFSIP";
 import {dbConnect} from "@/lib/db/index";
@@ -258,6 +257,124 @@ export async function getMfSipByExternalId(mfSipExternalId: string): Promise<Api
     } catch (error: any) {
         console.error('error in fetching mfsip:', error);
         console.timeEnd('getMfSipByExternalId ⏰');
+        return {
+            code: 'unknownError',
+            success: false,
+            message: 'Something went wrong',
+            error,
+        };
+    }
+}
+
+export async function getMFSIPsByDayOfMonth(year: number, month: number): Promise<ApiResponse> {
+    console.log('Function invoked at ⏰:', new Date().toISOString());
+    console.time('getMFSIPsByDayOfMonth ⏰');
+    try {
+        console.time('dbConnect ⏰');
+        await dbConnect();
+        console.timeEnd('dbConnect ⏰');
+
+        console.time('tokenValidation ⏰');
+        const cookieHeader = (await headers()).get('cookie') ?? '';
+        const token =
+            (await getToken({
+                req: {headers: {cookie: cookieHeader}} as any,
+                secret: process.env.NEXTAUTH_SECRET,
+                cookieName: deployedCookieName,
+            })) ||
+            (await getToken({
+                req: {headers: {cookie: cookieHeader}} as any,
+                secret: process.env.NEXTAUTH_SECRET,
+                cookieName: localhostCookieName,
+            }));
+        console.timeEnd('tokenValidation ⏰');
+
+        if (!token?.userId) {
+            return {
+                code: 'unauthorized',
+                success: false,
+                message: 'Invalid or missing token',
+            };
+        }
+
+        const today = new Date();
+        // const startOfMonth = new Date(year, month - 1, 1);
+        // const endOfMonth = new Date(year, month, 0);
+
+        console.time('databaseOperations ⏰');
+        const mfSipsByDates = await MFSIPModel.aggregate([
+            {
+                $match: {
+                    active: true,
+                    // startDate: {$lte: endOfMonth},
+                    $or: [
+                        {endDate: {$gte: today}},
+                        {endDate: null},
+                    ],
+                    userId: new mongoose.Types.ObjectId(token?.userId),
+                },
+            },
+            {
+                $group: {
+                    _id: '$dayOfMonth',
+                    count: {$sum: 1},
+                    sips: {$push: '$$ROOT'},
+                },
+            },
+            {$unwind: '$sips'},
+            {
+                $addFields: {
+                    'sips.mfSipId': {$toString: '$sips._id'},
+                    'sips.userId': {$toString: '$sips.userId'},
+                },
+            },
+            {
+                $unset: ['sips._id', 'sips.__v'],
+            },
+            {
+                $group: {
+                    _id: '$_id',
+                    count: {$first: '$count'},
+                    sips: {$push: '$sips'},
+                },
+            },
+            {$sort: {_id: 1}},
+            {
+                $project: {
+                    dayOfMonth: '$_id',
+                    count: 1,
+                    sips: 1,
+                    _id: 0,
+                },
+            },
+        ]).exec();
+        console.timeEnd('databaseOperations ⏰');
+
+        // Initialize array for all days (1-31)
+        const daysInMonth = Array.from({length: 31}, (_, i) => ({
+            dayOfMonth: i + 1,
+            count: 0,
+            mfSips: [] as MFSIP[],
+        }));
+
+        // Merge results
+        mfSipsByDates.forEach(mfSip => {
+            daysInMonth[mfSip.dayOfMonth - 1] = mfSip;
+        });
+        console.log('daysInMonth:', daysInMonth);
+
+        console.timeEnd('getMFSIPsByDayOfMonth ⏰');
+        return {
+            code: 'fetched',
+            success: true,
+            message: 'MFSIP fetched',
+            data: {
+                mfSips: daysInMonth,
+            },
+        };
+    } catch (error: any) {
+        console.error('error in fetching mfSipsByDayOfMonth:', error);
+        console.timeEnd('getMFSIPsByDayOfMonth ⏰');
         return {
             code: 'unknownError',
             success: false,

@@ -29,3 +29,21 @@ export function capitalizeFirst(text: string | undefined | null) {
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
 }
+
+export function isListEmpty(list: any) {
+  return !list || list.length === 0;
+}
+
+export function getOrdinal(n: number | null | undefined): string {
+  if (!n) return '';
+  if (n <= 0 || n > 31) throw new Error('Number out of range (1-31)');
+  if (n % 100 >= 11 && n % 100 <= 13) return `${n}th`;
+  const suffix = (n % 10 === 1) ? 'st' :
+      (n % 10 === 2) ? 'nd' :
+          (n % 10 === 3) ? 'rd' : 'th';
+  return `${n}${suffix}`;
+}
+
+export function formatNumber(n: number): string {
+  return n.toLocaleString('en-US');
+}

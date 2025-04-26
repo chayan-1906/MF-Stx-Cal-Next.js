@@ -7,7 +7,9 @@ import MonthlyOverview from "@/components/dashboard/MonthlyOverview";
 import MFSIPTemporary from "@/components/MFSIPTemporary";
 import Logout from "@/components/Logout";
 import DeleteAccount from "@/components/DeleteAccount";
-import {getMfSipsByToken} from "@/lib/db/mf-sips-storage";
+import {getMFSIPsByDayOfMonth, getMfSipsByToken} from "@/lib/db/mf-sips-storage";
+import SIPCalendar from "@/components/dashboard/SIPCalendar";
+import TestComp from "@/components/test-comp";
 
 async function ServerDashboard({isLoggedIn, userId, email}: ServerDashboardProps) {
     console.log('ServerDashboard isLoggedIn:', isLoggedIn);
@@ -27,35 +29,32 @@ async function ServerDashboard({isLoggedIn, userId, email}: ServerDashboardProps
         )
     }
 
+    const today = new Date();
+    const getMfSipsByDayOfMonthResponse = await getMFSIPsByDayOfMonth(today.getFullYear(), today.getMonth());
+    if (!getMfSipsByDayOfMonthResponse.success) {
+        // TODO: Something went wrong - need to copy
+
+        return (
+            <div className={'bg-rose-400'}>
+                Something went wrong - {JSON.stringify(getMfSipsResponse.data)}
+            </div>
+        )
+    }
+
     return (
         <div className={'flex min-h-screen flex-col items-center justify-center'}>
-            <h1>isLoggedIn: {isLoggedIn?.toString()}</h1>
             <main className={'flex-1 py-6 w-full space-y-4'}>
                 <DashboardHeader userId={userId || null}/>
                 <MonthlyOverview/>
+                <SIPCalendar investments={getMfSipsByDayOfMonthResponse.data.mfSips}/>
             </main>
 
-            {/*<div className="max-w-sm">
-                <div className={'flex gap-4 items-center'}>
-                    <Image
-                        src={user?.image || "https://images.pexels.com/photos/1374510/pexels-photo-1374510.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"}
-                        // src={"https://images.pexels.com/photos/1374510/pexels-photo-1374510.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"}
-                        alt="img"
-                        width={90}
-                        height={20}
-                    />
-                    <div className={'text-text-900'}>
-                        <h1 className="mb-2 text-2xl font-bold">Welcome! {user.name}</h1>
-                        <h1 className="mb-2 text-2xl font-bold">{user.email}</h1>
-                    </div>
-                </div>
-            </div>*/}
-
+            <div className={'mb-96'}/>
+            <div className={'mb-96'}/>
             {/*<MFSIP userId={user.id} mfSips={getMfSipsResponse.data.mfSips}/>*/}
             <MFSIPTemporary userId={userId ?? ''} mfSips={getMfSipsResponse.data.mfSips}/>
 
             {/*<MFStxCalDashboard/>*/}
-            {/*<Neumorphic/>*/}
 
             <Logout/>
             <DeleteAccount/>
