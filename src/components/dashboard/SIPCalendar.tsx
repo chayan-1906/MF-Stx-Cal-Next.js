@@ -5,15 +5,38 @@ import {SIPCalenderProps} from "@/types";
 import {cn, formatNumber, getOrdinal, isListEmpty} from "@/lib/utils";
 import {MFSIP} from "@/models/MFSIP";
 import {TbCalendarMonth} from "react-icons/tb";
+import Link from "next/link";
+import routes from "@/lib/routes";
+import {PencilIcon, TrashIcon} from "lucide-react";
+import axios from "axios";
+import {ApiResponse} from "@/types/ApiResponse";
+import apis from "@/lib/apis";
+import {toast} from "react-toastify";
+import {useRouter} from "next/navigation";
 
 function SIPCalendar({investments}: SIPCalenderProps) {
     const [selectedDay, setSelectedDay] = useState<number | null>();
     const [selectedSips, setSelectedSips] = useState<MFSIP[]>([]);
+    const router = useRouter();
 
     const handleDateSelection = useCallback((day: number, sips: MFSIP[]) => {
         setSelectedDay(day);
         setSelectedSips(sips);
     }, []);
+
+    const deleteMfSip = useCallback(async (mfSipId: string | undefined) => {
+        try {
+            const deleteMfSipResponse = (await axios.delete<ApiResponse>(apis.deleteMFSIPByIdApi(mfSipId ?? ''))).data;
+            if (deleteMfSipResponse.success) {
+                toast(deleteMfSipResponse.message, {type: 'success'});
+                router.refresh();
+            } else {
+                toast(deleteMfSipResponse.message, {type: 'error'});
+            }
+        } catch (error) {
+            toast('Something went wrong', {type: 'error'});
+        }
+    }, [router]);
 
     return (
         <div className={'flex flex-col p-6 shadow-lg rounded-lg bg-text-100 gap-4'}>
@@ -25,7 +48,7 @@ function SIPCalendar({investments}: SIPCalenderProps) {
                     <div key={dayOfMonth} onClick={() => handleDateSelection(dayOfMonth, sips)}
                          className={cn('flex flex-col justify-center items-center h-20 p-4 gap-2 rounded-lg bg-text-200 cursor-pointer hover:bg-text-300 hover:transition-all hover:duration-300', selectedDay === dayOfMonth && 'bg-text-300')}>
                         <h1 className={'text-text-900'}>{dayOfMonth}</h1>
-                        <p className={cn('px-2 py-1 rounded-full bg-text text-foreground text-xs', count === 0 && 'hidden')}>{count}</p>
+                        <p className={cn('px-2 py-1 rounded-full bg-secondary text-foreground text-xs', count === 0 && 'hidden')}>{count}</p>
                     </div>
                 ))}
             </div>
@@ -39,7 +62,6 @@ function SIPCalendar({investments}: SIPCalenderProps) {
                             {selectedSips.map(({mfSipId, fundName, schemeName, amount, category, externalId}) => (
                                 <div key={mfSipId} className={'flex flex-1 justify-between items-center border border-text-900 rounded-lg p-4'}>
                                     <div className={'flex gap-4 items-center'}>
-                                        {/*<div className={'px-4 py-3 bg-text rounded-full'}>{dayOfMonth}</div>*/}
                                         <div className={'p-3 bg-text rounded-full'}>
                                             <TbCalendarMonth className={'text-xl'}/>
                                         </div>
@@ -53,13 +75,21 @@ function SIPCalendar({investments}: SIPCalenderProps) {
                                             <h1 className={'text-rose-400 text-xs'}>{externalId}</h1>
                                         </div>
                                     </div>
-                                    <h1 className={'text-secondary font-bold'}>₹{formatNumber(amount)}</h1>
+                                    <div className={'flex flex-col items-center gap-1'}>
+                                        <div className={'flex gap-2'}>
+                                            <Link href={routes.updateMfSipPath(externalId)}>
+                                                <PencilIcon size={20} className={'text-primary-foreground cursor-pointer'}/>
+                                            </Link>
+                                            <TrashIcon size={20} className={'text-destructive cursor-pointer'} onClick={() => deleteMfSip(mfSipId)}/>
+                                        </div>
+                                        <h1 className={'text-secondary font-bold'}>₹{formatNumber(amount)}</h1>
+                                    </div>
                                 </div>
                             ))}
                         </div>
                     </div>
                 ) : (
-                    <h1 className={'text-text-800'}>No SIPs for {getOrdinal(selectedDay)}</h1>
+                    <h1 className={'text-text-800 text-xl text-center'}>No SIPs for {getOrdinal(selectedDay)}</h1>
                 )}
             </div>
         </div>

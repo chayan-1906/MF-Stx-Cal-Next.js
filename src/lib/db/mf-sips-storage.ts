@@ -298,56 +298,92 @@ export async function getMFSIPsByDayOfMonth(year: number, month: number): Promis
         }
 
         const today = new Date();
+        const currentDay = today.getDate();
         // const startOfMonth = new Date(year, month - 1, 1);
         // const endOfMonth = new Date(year, month, 0);
 
         console.time('databaseOperations ⏰');
-        const mfSipsByDates = await MFSIPModel.aggregate([
-            {
-                $match: {
-                    active: true,
-                    // startDate: {$lte: endOfMonth},
-                    $or: [
-                        {endDate: {$gte: today}},
-                        {endDate: null},
-                    ],
-                    userId: new mongoose.Types.ObjectId(token?.userId),
+        const [mfSipsByDates, totals] = await Promise.all([
+            MFSIPModel.aggregate([
+                {
+                    $match: {
+                        active: true,
+                        // startDate: {$lte: endOfMonth},
+                        $or: [
+                            {endDate: {$gte: today}},
+                            {endDate: null},
+                        ],
+                        userId: new mongoose.Types.ObjectId(token?.userId),
+                    },
                 },
-            },
-            {
-                $group: {
-                    _id: '$dayOfMonth',
-                    count: {$sum: 1},
-                    sips: {$push: '$$ROOT'},
+                {
+                    $group: {
+                        _id: '$dayOfMonth',
+                        count: {$sum: 1},
+                        sips: {$push: '$$ROOT'},    // $$ROOT refers to the full document
+                    },
                 },
-            },
-            {$unwind: '$sips'},
-            {
-                $addFields: {
-                    'sips.mfSipId': {$toString: '$sips._id'},
-                    'sips.userId': {$toString: '$sips.userId'},
+                {$unwind: '$sips'}, // ???
+                {
+                    $addFields: {
+                        'sips.mfSipId': {$toString: '$sips._id'},
+                        'sips.userId': {$toString: '$sips.userId'},
+                    },
                 },
-            },
-            {
-                $unset: ['sips._id', 'sips.__v'],
-            },
-            {
-                $group: {
-                    _id: '$_id',
-                    count: {$first: '$count'},
-                    sips: {$push: '$sips'},
+                {
+                    $unset: ['sips._id', 'sips.__v'],
                 },
-            },
-            {$sort: {_id: 1}},
-            {
-                $project: {
-                    dayOfMonth: '$_id',
-                    count: 1,
-                    sips: 1,
-                    _id: 0,
+                {
+                    $group: {   /// ???
+                        _id: '$_id',
+                        count: {$first: '$count'},
+                        sips: {$push: '$sips'},
+                    },
                 },
-            },
-        ]).exec();
+                {$sort: {_id: 1}},
+                {
+                    $project: {
+                        dayOfMonth: '$_id',
+                        count: 1,
+                        sips: 1,
+                        _id: 0,
+                    },
+                },
+            ]).exec(),
+            MFSIPModel.aggregate([
+                {
+                    $match: {
+                        active: true,
+                        $or: [{endDate: {$gte: today}}, {endDate: null}],
+                        userId: new mongoose.Types.ObjectId(token.userId),
+                    },
+                },
+                {
+                    $group: {   /// ???
+                        _id: null,
+                        totalActiveSipAmount: {$sum: '$amount'},
+                        amountPaidThisMonth: {
+                            $sum: {
+                                $cond: [{$lte: ['$dayOfMonth', currentDay]}, '$amount', 0],
+                            },
+                        },
+                        amountRemainingThisMonth: {
+                            $sum: {
+                                $cond: [{$gt: ['$dayOfMonth', currentDay]}, '$amount', 0],
+                            },
+                        },
+                    },
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        totalActiveSipAmount: 1,
+                        amountPaidThisMonth: 1,
+                        amountRemainingThisMonth: 1,
+                    },
+                },
+            ]).exec(),
+        ]);
         console.timeEnd('databaseOperations ⏰');
 
         // Initialize array for all days (1-31)
@@ -370,6 +406,11 @@ export async function getMFSIPsByDayOfMonth(year: number, month: number): Promis
             message: 'MFSIP fetched',
             data: {
                 mfSips: daysInMonth,
+                totals: totals[0] || {
+                    totalActiveSipAmount: 0,
+                    amountPaidThisMonth: 0,
+                    amountRemainingThisMonth: 0,
+                },
             },
         };
     } catch (error: any) {

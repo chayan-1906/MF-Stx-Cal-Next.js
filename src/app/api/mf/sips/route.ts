@@ -361,73 +361,85 @@ export async function PUT(request: Request) {
                 success: false,
                 message: 'mfSipId is required',
             }, {status: 400});
-        } else if (fundName !== undefined && isStringInvalid(fundName)) {
+        }
+        if (fundName !== undefined && isStringInvalid(fundName)) {
             return NextResponse.json(<ApiResponse>{
                 code: 'missingFundName',
                 success: false,
                 message: 'Fund Name is required',
             }, {status: 400});
-        } else if (fundCode !== undefined && typeof fundCode !== 'string') {
+        }
+        if (fundCode !== undefined && typeof fundCode !== 'string') {
             return NextResponse.json<ApiResponse>({
                 code: 'invalidFundCode',
                 success: false,
                 message: 'Fund code must be a string',
             }, {status: 400});
-        } else if (schemeName !== undefined && typeof schemeName !== 'string') {
+        }
+        if (schemeName !== undefined && typeof schemeName !== 'string') {
             return NextResponse.json<ApiResponse>({
                 code: 'invalidSchemeName',
                 success: false,
                 message: 'Scheme name must be a string',
             }, {status: 400});
-        } else if (folioNo !== undefined && typeof folioNo !== 'string') {
+        }
+        if (folioNo !== undefined && typeof folioNo !== 'string') {
             return NextResponse.json<ApiResponse>({
                 code: 'invalidFolioNo',
                 success: false,
                 message: 'Folio no must be a string',
             }, {status: 400});
-        } else if (amount !== undefined && (typeof amount !== 'number' || isNaN(amount) || amount < 1)) {
+        }
+        if (amount !== undefined && (typeof amount !== 'number' || isNaN(amount) || amount < 1)) {
             return NextResponse.json(<ApiResponse>{
                 code: 'invalidAmount',
                 success: false,
                 message: 'Amount is required and must be at least ₹1',
             }, {status: 400});
-        } else if (dayOfMonth !== undefined && (typeof dayOfMonth !== 'number' || isNaN(dayOfMonth) || dayOfMonth < 1 || dayOfMonth > 31)) {
+        }
+        if (dayOfMonth !== undefined && (typeof dayOfMonth !== 'number' || isNaN(dayOfMonth) || dayOfMonth < 1 || dayOfMonth > 31)) {
             return NextResponse.json(<ApiResponse>{
                 code: 'invalidDayOfMonth',
                 success: false,
                 message: 'Day of month must be between 1 and 31',
             }, {status: 400});
-        } else if (active !== undefined && typeof active !== 'boolean') {
+        }
+        if (active !== undefined && typeof active !== 'boolean') {
             return NextResponse.json(<ApiResponse>{
                 code: 'invalidActive',
                 success: false,
                 message: 'Active status must be true or false',
             }, {status: 400});
-        } else if (startDate !== undefined && (isStringInvalid(startDate) || isNaN(Date.parse(startDate)))) {
+        }
+        if (startDate !== undefined && (isStringInvalid(startDate) || isNaN(Date.parse(startDate)))) {
             return NextResponse.json({
                 code: 'missingStartDate',
                 success: false,
                 message: 'Start date must be a valid date',
             }, {status: 400});
-        } else if (endDate !== undefined && endDate !== null && (typeof endDate !== 'string' || isNaN(Date.parse(endDate)))) {
+        }
+        if (endDate !== undefined && endDate !== null && (typeof endDate !== 'string' || isNaN(Date.parse(endDate)))) {
             return NextResponse.json({
                 code: 'invalidEndDate',
                 success: false,
                 message: 'End date must be a valid date',
             }, {status: 400});
-        } else if (startDate && endDate && Date.parse(endDate) <= Date.parse(startDate)) {
+        }
+        if (startDate && endDate && Date.parse(endDate) <= Date.parse(startDate)) {
             return NextResponse.json({
                 code: 'invalidEndDate',
                 success: false,
                 message: 'End date must be after the start date',
             }, {status: 400});
-        } else if (notes !== undefined && notes !== null && typeof notes !== 'string') {
+        }
+        if (notes !== undefined && notes !== null && typeof notes !== 'string') {
             return NextResponse.json<ApiResponse>({
                 code: 'invalidNotes',
                 success: false,
                 message: 'Notes must be a string',
             }, {status: 400});
-        } else if (category !== undefined && !['equity', 'debt', 'liquid', null].includes(category)) {
+        }
+        if (category !== undefined && !['equity', 'debt', 'liquid', null].includes(category)) {
             return NextResponse.json<ApiResponse>({
                 code: 'invalidCategory',
                 success: false,

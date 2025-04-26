@@ -31,7 +31,7 @@ async function sendVerificationEmail(otp: Otp): Promise<ApiResponse> {
                             <style>
                             body {
                                 font-family: Nunito, Arial, sans-serif;
-                                background-color: #f4f4f4;
+                                background-color: #EDEBFE;
                                 margin: 0;
                                 padding: 0;
                             }
@@ -39,7 +39,7 @@ async function sendVerificationEmail(otp: Otp): Promise<ApiResponse> {
                                 width: 100%;
                                 max-width: 600px;
                                 margin: 0 auto;
-                                background-color: #ffffff;
+                                background-color: #EDEBFE;
                                 padding: 20px;
                                 border-radius: 8px;
                                 box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -47,7 +47,7 @@ async function sendVerificationEmail(otp: Otp): Promise<ApiResponse> {
                             .header {
                                 text-align: center;
                                 padding: 20px;
-                                background-color: #DB2777;
+                                background-color: #6366F1;
                                 color: white;
                                 border-radius: 8px 8px 0 0;
                             }
@@ -59,7 +59,7 @@ async function sendVerificationEmail(otp: Otp): Promise<ApiResponse> {
                                 display: inline-block;
                                 font-size: 24px;
                                 letter-spacing: 4px;
-                                background-color: #f3f3f3;
+                                background-color: #C7D2FE;
                                 padding: 12px 20px;
                                 border-radius: 6px;
                                 margin-top: 10px;
@@ -68,7 +68,7 @@ async function sendVerificationEmail(otp: Otp): Promise<ApiResponse> {
                             .footer {
                                 text-align: center;
                                 font-size: 12px;
-                                color: #777;
+                                color: #EDEBFE;
                                 padding: 10px;
                             }
                             /* Explicitly ensure cursor is pointer */
@@ -86,7 +86,7 @@ async function sendVerificationEmail(otp: Otp): Promise<ApiResponse> {
                         <body>
                             <div class="container">
                                 <div class="header">
-                                    <h2>${APP_NAME} Code</h2>
+                                    <h2>${APP_NAME} Verification Code</h2>
                                 </div>
                                 <div class="content">
                                     <p>Hello,</p>

@@ -108,6 +108,14 @@ export interface ServerEditMfSipProps {
 }
 
 /** dashboard components */
+export interface MonthlyOverviewProps {
+    totals: {
+        totalActiveSipAmount: number;
+        amountPaidThisMonth: number;
+        amountRemainingThisMonth: number;
+    };
+}
+
 export interface SIPCalenderProps {
     investments: {
         dayOfMonth: number;

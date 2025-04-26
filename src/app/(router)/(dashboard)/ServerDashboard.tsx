@@ -9,7 +9,6 @@ import Logout from "@/components/Logout";
 import DeleteAccount from "@/components/DeleteAccount";
 import {getMFSIPsByDayOfMonth, getMfSipsByToken} from "@/lib/db/mf-sips-storage";
 import SIPCalendar from "@/components/dashboard/SIPCalendar";
-import TestComp from "@/components/test-comp";
 
 async function ServerDashboard({isLoggedIn, userId, email}: ServerDashboardProps) {
     console.log('ServerDashboard isLoggedIn:', isLoggedIn);
@@ -45,7 +44,7 @@ async function ServerDashboard({isLoggedIn, userId, email}: ServerDashboardProps
         <div className={'flex min-h-screen flex-col items-center justify-center'}>
             <main className={'flex-1 py-6 w-full space-y-4'}>
                 <DashboardHeader userId={userId || null}/>
-                <MonthlyOverview/>
+                <MonthlyOverview totals={getMfSipsByDayOfMonthResponse.data.totals}/>
                 <SIPCalendar investments={getMfSipsByDayOfMonthResponse.data.mfSips}/>
             </main>
 
