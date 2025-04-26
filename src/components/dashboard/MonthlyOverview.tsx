@@ -31,10 +31,10 @@ function MonthlyOverview() {
         <div className={'flex justify-between items-center p-6 shadow-lg rounded-lg bg-text-100'}>
             <h1 className={'font-semibold text-text-900'}>Monthly Overview</h1>
 
-            <div className={'relative w-44 cursor-pointer'} onClick={handleContainerClick}>
-                <Input ref={inputRef} type={'month'} value={displayValue} onChange={handleChange} className={'absolute inset-0 w-full h-full opacity-0'}/>
+            <div className={'relative w-44'} onClick={handleContainerClick}>
+                <Input ref={inputRef} type={'month'} value={displayValue} onChange={handleChange} className={'absolute inset-0 w-full h-full opacity-0 cursor-pointer'}/>
 
-                <div className={'w-full px-3 py-2 border border-input rounded-lg shadow-sm hover:shadow-md transition-all'}>
+                <div className={'w-full px-3 py-2 border border-input rounded-lg shadow-sm hover:shadow-md transition-all cursor-pointer'}>
                     <span className={'flex justify-between items-center text-text-900'}>
                       <span>{formatDisplay(displayValue)}</span>
                       <IoMdArrowDropdown className={'text-2xl'}/>

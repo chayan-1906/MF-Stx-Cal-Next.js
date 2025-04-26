@@ -1,7 +1,7 @@
 'use client';
 
-import {ThemeProvider} from 'next-themes';
 import {ReactNode, useEffect, useState} from 'react';
+import {ThemeProvider} from 'next-themes';
 
 function ThemeWrapper({children}: { children: ReactNode }) {
     const [mounted, setMounted] = useState(false);

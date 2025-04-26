@@ -36,7 +36,7 @@ const LoadingButton = React.forwardRef<HTMLButtonElement, ButtonProps>(({classNa
         return (
             <Comp
                 className={cn(buttonVariants({variant, size, className}))} ref={ref} disabled={loading || disabled}{...props}>
-                {loading && <Loader2 className={'size-5 animate-spin text-text-100 dark:text-text-900'}/>}
+                {loading && <Loader2 className={'size-5 animate-spin text-foreground'}/>}
                 <Slottable>{children}</Slottable>
             </Comp>
         );

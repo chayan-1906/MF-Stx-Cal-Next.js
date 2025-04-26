@@ -6,6 +6,7 @@ import UserModel from "@/models/User";
 import {ApiResponse} from "@/types/ApiResponse";
 import MFSIPModel, {MFSIP} from "@/models/MFSIP";
 import {dbConnect} from "@/lib/db/index";
+import mongoose from "mongoose";
 
 /*export async function getMfSipsByToken(): Promise<ApiResponse> {
     try {
@@ -113,7 +114,7 @@ export async function getMfSipsByToken(): Promise<ApiResponse> {
             };
         }
 
-        console.time('databaseOperations ⏰');
+        /*console.time('databaseOperations - I ⏰');
         const dbUser = await UserModel.findById(token.userId)
             .select('mfSIPIds')
             .lean()
@@ -140,8 +141,15 @@ export async function getMfSipsByToken(): Promise<ApiResponse> {
         const mfSips = await MFSIPModel.find<MFSIP>({_id: {$in: dbUser.mfSIPIds}})
             .lean()
             .exec();
-        console.timeEnd('databaseOperations ⏰');
-        console.log('mfSips:', mfSips.length);
+        console.timeEnd('databaseOperations - I ⏰');
+        console.log('mfSips:', mfSips.length);*/
+
+        console.time('databaseOperations - II ⏰');
+        const mfSips = await MFSIPModel.find({
+            userId: new mongoose.Types.ObjectId(token.userId),
+            // userId: new mongoose.Types.ObjectId('6807d28c0c61b460a607b398'),
+        }).lean().exec();
+        console.timeEnd('databaseOperations - II ⏰');
 
         console.timeEnd('getMfSipsByToken ⏰');
         return {
@@ -258,3 +266,5 @@ export async function getMfSipByExternalId(mfSipExternalId: string): Promise<Api
         };
     }
 }
+
+// await MFSIPModel.aggregate([{$match: {userId}}, {$group: {_id: 'dayOfMonth'}}, {$sort: {'dayOfMonth': 1}}])
