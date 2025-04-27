@@ -188,7 +188,7 @@ function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
                                     <FormItem>
                                         <FormLabel htmlFor={field.name} className={''}>Folio no *</FormLabel>
                                         <FormControl>
-                                            <Input {...field} id={field.name} value={field.value ?? ''} type={'number'} placeholder={'79943003995'}
+                                            <Input {...field} id={field.name} value={field.value ?? ''} placeholder={'79943003995'}
                                                    className={''} onChange={(e) => field.onChange(e)} onWheel={(e) => e.currentTarget.blur()}/>
                                         </FormControl>
                                         <FormMessage/>
