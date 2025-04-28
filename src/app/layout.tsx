@@ -46,11 +46,9 @@ async function RootLayout({children}: Readonly<{ children: React.ReactNode; }>) 
         <html lang={'en'} suppressHydrationWarning>
         <body className={nunitoSans.className}>
         <NuqsAdapter>
-            <div className={'container mx-auto'}>
-                <ThemeWrapper>
-                    {children}
-                </ThemeWrapper>
-            </div>
+            <ThemeWrapper>
+                {children}
+            </ThemeWrapper>
             <ToastContainer position={'bottom-right'} theme={'colored'}/>
         </NuqsAdapter>
         </body>

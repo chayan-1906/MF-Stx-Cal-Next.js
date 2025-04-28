@@ -4,7 +4,10 @@ import React, {useRef, useState} from "react";
 import {Input} from "@/components/ui/input";
 import {IoMdArrowDropdown} from "react-icons/io";
 import {MonthlyOverviewProps} from "@/types";
-import {ArrowUpRight, CreditCard, Target, Wallet} from "lucide-react";
+import {MdOutlineWallet} from "react-icons/md";
+import {TbArrowUpRight} from "react-icons/tb";
+import {FiTarget} from "react-icons/fi";
+import {HiOutlineCreditCard} from "react-icons/hi";
 
 function MonthlyOverview({totals}: MonthlyOverviewProps) {
     const inputRef = useRef<HTMLInputElement>(null);
@@ -31,32 +34,33 @@ function MonthlyOverview({totals}: MonthlyOverviewProps) {
 
     return (
         <div className={'flex flex-col p-6 gap-6 shadow-lg rounded-lg bg-text-100'}>
-            <div className={'flex justify-between items-center'}>
-                <h1 className={'font-semibold text-text-900'}>Monthly Overview</h1>
+            <div className={'flex flex-wrap justify-between items-center gap-2'}>
+                <h1 className={'text-base md:text-lg lg:text-2xl font-semibold text-text-900'}>Monthly Overview</h1>
 
-                <div className={'relative w-44'} onClick={handleContainerClick}>
+                <div className={'relative w-32 md:w-44'} onClick={handleContainerClick}>
                     <Input ref={inputRef} type={'month'} value={displayValue} onChange={handleChange} className={'absolute inset-0 w-full h-full opacity-0 cursor-pointer'}/>
 
-                    <div className={'w-full px-3 py-2 border border-input rounded-lg shadow-sm hover:shadow-md transition-all cursor-pointer'}>
-                    <span className={'flex justify-between items-center text-text-900'}>
-                      <span>{formatDisplay(displayValue)}</span>
-                      <IoMdArrowDropdown className={'text-2xl'}/>
-                    </span>
+                    <div className={'w-full px-2 md:px-3 py-1 md:py-2 border border-input rounded-lg shadow-sm hover:shadow-md transition-all cursor-pointer'}>
+                        <span className={'flex justify-between items-center text-text-900'}>
+                          <span className={'text-sm md:text-base'}>{formatDisplay(displayValue)}</span>
+                          <IoMdArrowDropdown className={'text-lg md:text-2xl'}/>
+                        </span>
                     </div>
                 </div>
             </div>
 
             {/** total invested */}
             <div className={'flex flex-col gap-4 p-4 border rounded-xl text-text-900'}>
-                <div className={'flex justify-between'}>
+                <div className={'flex justify-between gap-2'}>
                     <div className={'flex flex-col'}>
-                        <h1>Total Invested</h1>
-                        <h1 className={'text-xl font-bold'}>₹{totals.amountPaidThisMonth}</h1>
+                        <h1 className={'text-sm md:text-base text-purple-500 md:text-red-600'}>Total Invested</h1>
+                        <h1 className={'text-lg md:text-xl font-bold'}>₹{totals.amountPaidThisMonth}</h1>
                         <h1 className={'text-xs text-rose-400 font-bold'}>SIP: TODO</h1>
                     </div>
+
                     <div className={'flex flex-col items-end justify-center gap-2'}>
                         <div className={'border rounded-full p-2'}>
-                            <Wallet size={16}/>
+                            <MdOutlineWallet className={'text-lg md:text-2xl'}/>
                         </div>
                         <h1 className={'text-xs text-rose-400 font-bold'}>Lumpsum: TODO</h1>
                     </div>
@@ -65,16 +69,16 @@ function MonthlyOverview({totals}: MonthlyOverviewProps) {
 
             {/** total progress */}
             <div className={'flex flex-col gap-4 p-4 border rounded-xl text-text-900'}>
-                <div className={'flex justify-between items-center w-full'}>
+                <div className={'flex justify-between items-center w-full gap-2'}>
                     <div>
-                        <h1>Target Progress</h1>
-                        <h1 className={'text-xl font-bold'}>₹{totals.amountPaidThisMonth} / ₹{totals.totalActiveSipAmount}</h1>
+                        <h1 className={'text-sm md:text-base text-purple-500 md:text-red-600'}>Target Progress</h1>
+                        <h1 className={'text-lg md:text-xl font-bold'}>₹{totals.amountPaidThisMonth} / ₹{totals.totalActiveSipAmount}</h1>
                         <h1 className={'text-xs'}>{Math.round((totals.amountPaidThisMonth / totals.totalActiveSipAmount) * 100)}% of monthly target</h1>
                     </div>
 
                     <div className={'flex flex-col'}>
                         <div className={'border rounded-full p-2'}>
-                            <Target size={16}/>
+                            <FiTarget className={'text-lg md:text-2xl'}/>
                         </div>
                     </div>
                 </div>
@@ -88,16 +92,17 @@ function MonthlyOverview({totals}: MonthlyOverviewProps) {
             <div className={'flex flex-col gap-4 p-4 border rounded-xl text-text-900'}>
                 <div className={'flex justify-between'}>
                     <div className={'flex flex-col'}>
-                        <h1>Pending Amount</h1>
-                        <h1 className={'text-xl font-bold'}>₹{totals.amountRemainingThisMonth}</h1>
-                        <div className={'flex gap-1 text-xs text-rose-400 font-bold'}>
+                        <h1 className={'text-sm md:text-base text-purple-500 md:text-red-600'}>Pending Amount</h1>
+                        <h1 className={'text-lg md:text-xl font-bold'}>₹{totals.amountRemainingThisMonth}</h1>
+                        <div className={'flex flex-wrap gap-1 text-xs text-rose-400 font-bold'}>
                             <span>View upcoming SIPs: TODO</span>
-                            <ArrowUpRight size={16}/>
+                            <TbArrowUpRight className={'text-lg md:text-2xl'}/>
                         </div>
                     </div>
-                    <div className={'flex flex-col items-end justify-center'}>
+
+                    <div className={'flex flex-col items-end justify-center gap-2'}>
                         <div className={'border rounded-full p-2'}>
-                            <CreditCard size={16}/>
+                            <HiOutlineCreditCard className={'text-lg md:text-2xl'}/>
                         </div>
                     </div>
                 </div>

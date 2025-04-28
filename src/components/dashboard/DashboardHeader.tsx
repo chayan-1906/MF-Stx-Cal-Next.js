@@ -10,9 +10,9 @@ import routes from "@/lib/routes";
 
 function DashboardHeader({userId}: DashboardHeaderProps) {
     return (
-        <div className={'flex w-full gap-4 justify-between'}>
+        <div className={'flex w-full gap-4 justify-between items-center'}>
             <AddUpdateMFSIPFormModal mfSipId={''}/>
-            <h1 className={'text-3xl font-bold text-text-900 tracking-wide'}>Investment Dashboard</h1>
+            <h1 className={'text-lg md:text-xl lg:text-3xl font-bold text-text-900 lg:tracking-wide'}>Investment Dashboard</h1>
             <div className={'flex gap-2'}>
                 {/*<Button variant={'outline'} onClick={() => (onOpen(''), setOpenModalKey(modalKeys.addUpdateMFSIP))}>*/}
                 <Button variant={'outline'} asChild>

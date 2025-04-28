@@ -14,7 +14,7 @@ async function AppWrapperLayout({children, className}: AppWrapperLayoutProps) {
     }*/
 
     return (
-        <div>
+        <div className={'flex flex-col min-h-screen overflow-x-hidden px-6 md:px-20 mx-auto '}>
             {isLoggedIn && (
                 <header>
                     <Navbar isLoggedIn={isLoggedIn}/>
