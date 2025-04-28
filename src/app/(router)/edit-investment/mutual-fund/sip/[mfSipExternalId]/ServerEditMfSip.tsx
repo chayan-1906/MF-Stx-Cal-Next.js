@@ -15,8 +15,8 @@ async function ServerEditMfSip({isLoggedIn, userId, mfSipExternalId}: ServerEdit
     }
 
     return (
-        <div className={'flex items-center justify-center p-4 bg-background'}>
-            <div className={'w-full max-w-7xl bg-background rounded-2xl p-6 space-y-6 shadow-[5px_5px_10px_#d1d5db,-5px_-5px_10px_#818CF8] dark:shadow-[5px_5px_10px_#1f2937,-5px_-5px_10px_#4F46E5]'}>
+        <div className={'flex items-center justify-center md:p-4 bg-background'}>
+            <div className={'w-full max-w-7xl bg-background bg-gradient-to-tl from-gradient-tl to-gradient-br rounded-2xl p-3 md:p-6 space-y-6 shadow-2xl shadow-primary'}>
                 <MFSIPForm userId={userId ?? ''} mfSip={getMfSipByExternalIdResponse.data.mfSip}/>
             </div>
         </div>

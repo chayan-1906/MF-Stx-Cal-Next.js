@@ -40,7 +40,7 @@ function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
     const router = useRouter();
 
     const cardWrapperClassNames = 'h-fit rounded-xl overflow-hidden shadow-lg border-3 border-primary-600';
-    const cardHeaderClassNames = 'bg-card-header p-4 text-primary-foreground';
+    const cardHeaderClassNames = 'bg-card-header uppercase font-semibold text-sm sm:text-base p-4 text-primary-foreground';
     const cardBgClassNames = 'bg-card p-6 space-y-5';
 
     const createNewMfSip = async () => {
@@ -100,10 +100,10 @@ function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
     }, [defaultValues, reset]);
 
     return (
-        <div className={'bg-background mx-auto p-6'}>
-            <div className={'mb-8 text-center'}>
-                <h2 className={'mb-2 text-2xl font-bold text-text-900 tracking-wide'}>{mfSip ? 'Update SIP' : 'Create New SIP'}</h2>
-                <p className={'text-text-800'}>
+        <div className={'mx-auto px-4'}>
+            <div className={'mb-2 sm:mb-5 md:mb-8 text-center'}>
+                <h2 className={'sm:mb-2 text-lg sm:text-xl md:text-2xl font-bold text-text-900 tracking-wide'}>{mfSip ? 'Update SIP' : 'Create New SIP'}</h2>
+                <p className={'text-sm sm:text-base md:text-lg text-text-800'}>
                     {mfSip ? 'Update your systematic investment plan details below' : 'Set up a systematic investment plan to grow your wealth consistently'}
                 </p>
             </div>
@@ -116,7 +116,7 @@ function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
                         <div className={cn(cardWrapperClassNames, 'flex-1')}>
                             <div className={cardHeaderClassNames}>
                                 <div className={'flex items-center gap-2 text-primary-foreground'}>
-                                    <FileText className={'size-5'}/>
+                                    <FileText className={'size-4 sm:size-5'}/>
                                     <h3>Fund Information</h3>
                                 </div>
                             </div>
@@ -221,7 +221,7 @@ function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
                             <div className={cardWrapperClassNames}>
                                 <div className={cardHeaderClassNames}>
                                     <div className={'flex items-center gap-2 text-primary-foreground'}>
-                                        <DollarSign className={'size-5'}/>
+                                        <DollarSign className={'size-4 sm:size-5'}/>
                                         <h3>Investment Details</h3>
                                     </div>
                                 </div>
@@ -300,7 +300,7 @@ function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
                             <div className={cardWrapperClassNames}>
                                 <div className={cardHeaderClassNames}>
                                     <div className={'flex items-center gap-2 text-primary-foreground'}>
-                                        <Clock className={'size-5'}/>
+                                        <Clock className={'size-4 sm:size-5'}/>
                                         <h3>Timeline & Notes</h3>
                                     </div>
                                 </div>
@@ -356,7 +356,6 @@ function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
                                 </div>
                             </div>
                         </div>
-
                     </div>
 
                     <div className={'flex gap-4 items-center justify-end'}>
