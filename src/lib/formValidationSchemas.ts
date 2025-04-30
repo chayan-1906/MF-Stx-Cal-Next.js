@@ -27,6 +27,7 @@ type NameFormValues = z.infer<typeof nameSchema>;
 export const mfSipSchema = z.object({
     userId: z.string().min(1, {message: 'Invalid User ID'}),
     mfSipId: z.string().optional(),
+    mfFundId: z.string().min(1, {message: 'Invalid Fund ID'}),
     fundName: z.string().trim().min(2, {message: 'Fund Name must be at least 2 characters'}),
     fundCode: z.string().trim().nullable().optional(),
     schemeName: z.string().trim().min(1, {message: 'Scheme name is required'}),
@@ -37,7 +38,7 @@ export const mfSipSchema = z.object({
     startDate: z.date(),
     endDate: z.date().nullable().optional(),
     notes: z.string().trim().nullable().optional(),
-    category: z.enum(['equity', 'debt', 'liquid'], {message: 'Category must be valid'}),
+    category: z.enum(['equity', 'debt', 'liquid'], {message: 'Category must be valid'}).nullable(),
 }).refine((data) => !data.endDate || (data.endDate && data.endDate > data.startDate), {
     message: 'End date must be after start date',
     path: ['endDate'],

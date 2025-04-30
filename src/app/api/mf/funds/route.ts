@@ -116,7 +116,9 @@ export async function GET(request: Request) {
     console.log('getAllMFFunds called');
 
     const url = new URL(request.url);
-    const searchTerm = url.searchParams.get('searchTerm');
+    const rawSearchTerm = url.searchParams.get('searchTerm');
+    const searchTerm = decodeURIComponent(rawSearchTerm ?? '');
+    console.log('searchTerm:', searchTerm);
 
     console.time('dbConnect ⏰');
     await dbConnect();
@@ -131,7 +133,8 @@ export async function GET(request: Request) {
         console.time('databaseOperations ⏰');
         const query: { userId: mongoose.Types.ObjectId; $or?: Array<any> } = {userId: new mongoose.Types.ObjectId(userId)};
         if (searchTerm) {
-            const regex = new RegExp(searchTerm, 'i'); // case-insensitive "contains"
+            const escaped = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const regex = new RegExp(escaped, 'i');
             query.$or = [
                 {folioNo: regex},
                 {schemeName: regex},
@@ -150,7 +153,7 @@ export async function GET(request: Request) {
             data: {
                 mfFunds: mfFunds?.map(transformMfFund),
             },
-        }, {status: 201});
+        }, {status: 200});
     } catch (error: any) {
         console.error('error in fetching mfFunds:', error);
         return NextResponse.json<ApiResponse>({

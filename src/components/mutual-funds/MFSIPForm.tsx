@@ -155,18 +155,31 @@ function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
 
                             {/** form - Fund Information */}
                             <div className={cardBgClassNames}>
-                                {/*<FormField control={mfSipForm.control} name={'mfFund'} render={({field}) => (
+                                <FormField control={mfSipForm.control} name={'mfFundId'} render={({field}) => (
                                     <FormItem>
                                         <FormLabel>Mutual Fund *</FormLabel>
                                         <FormControl>
-                                            <MFFundsSelect
-                                                value={field.value}
-                                                onChange={(option) => field.onChange(option)}
-                                            />
+                                            <MFFundsSelect value={field.value} onChange={(fund) => {
+                                                if (!fund) {
+                                                    mfSipForm.setValue('mfFundId', '');
+                                                    mfSipForm.setValue('fundName', '');
+                                                    mfSipForm.setValue('fundCode', '');
+                                                    mfSipForm.setValue('schemeName', '');
+                                                    mfSipForm.setValue('folioNo', '');
+                                                    mfSipForm.setValue('category', null);
+                                                } else {
+                                                    mfSipForm.setValue('mfFundId', fund.mfFundId ?? '');
+                                                    mfSipForm.setValue('fundName', fund.schemeName ?? '');
+                                                    mfSipForm.setValue('fundCode', fund.fundCode ?? '');
+                                                    mfSipForm.setValue('schemeName', fund.schemeName ?? '');
+                                                    mfSipForm.setValue('folioNo', fund.folioNo ?? '');
+                                                    mfSipForm.setValue('category', fund.category ?? null);
+                                                }
+                                            }}/>
                                         </FormControl>
                                         <FormMessage/>
                                     </FormItem>
-                                )}/>*/}
+                                )}/>
 
                                 {/** userId */}
                                 <FormField control={mfSipForm.control} name={'userId'} render={({field}) => (
@@ -197,7 +210,7 @@ function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
                                     <FormItem>
                                         <FormLabel htmlFor={field.name} className={''}>Fund name *</FormLabel>
                                         <FormControl>
-                                            <Input {...field} id={field.name} value={field.value ?? ''} type={'text'} autoFocus placeholder={'Mirae Asset Mutual Fund'} className={'uppercase'}
+                                            <Input {...field} id={field.name} value={field.value ?? ''} type={'text'} disabled placeholder={'Mirae Asset Mutual Fund'} className={'uppercase'}
                                                    onChange={(e) => field.onChange(e)}/>
                                         </FormControl>
                                         <FormMessage/>
@@ -209,7 +222,7 @@ function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
                                     <FormItem>
                                         <FormLabel htmlFor={field.name} className={''}>Fund code (Optional)</FormLabel>
                                         <FormControl>
-                                            <Input {...field} id={field.name} value={field.value ?? ''} type={'text'} placeholder={'INF769K01GU0'} className={'uppercase'}
+                                            <Input {...field} id={field.name} value={field.value ?? ''} type={'text'} disabled placeholder={'INF769K01GU0'} className={'uppercase'}
                                                    onChange={(e) => field.onChange(e)}/>
                                         </FormControl>
                                         <FormMessage/>
@@ -233,7 +246,7 @@ function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
                                     <FormItem>
                                         <FormLabel htmlFor={field.name} className={''}>Folio no *</FormLabel>
                                         <FormControl>
-                                            <Input {...field} id={field.name} value={field.value ?? ''} placeholder={'79943003995'}
+                                            <Input {...field} id={field.name} value={field.value ?? ''} disabled placeholder={'79943003995'}
                                                    className={''} onChange={(e) => field.onChange(e)} onWheel={(e) => e.currentTarget.blur()}/>
                                         </FormControl>
                                         <FormMessage/>
@@ -247,7 +260,7 @@ function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
                                         <FormControl>
                                             <div className={'flex flex-wrap gap-4'}>
                                                 {['equity', 'debt', 'liquid'].map(category => (
-                                                    <Button key={category} type={'button'} onClick={() => field.onChange(category)}
+                                                    <Button key={category} type={'button'} disabled onClick={() => field.onChange(category)}
                                                             className={cn('flex flex-1 justify-center items-center capitalize bg-transparent border border-input text-text-900', field.value === category && 'bg-primary border-none text-primary-foreground')}>
                                                         {category}
                                                     </Button>

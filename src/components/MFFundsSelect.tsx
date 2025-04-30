@@ -1,10 +1,11 @@
 import {useEffect, useState} from "react";
 import AsyncSelect from "react-select/async";
-import {components, ControlProps, GroupBase} from "react-select";
+import {components, ControlProps, GroupBase, OptionsOrGroups} from "react-select";
 import useMfFunds from "../lib/hooks/useMfFunds";
 import {reactSelectStyles} from "@/app/styles/react-select-styles";
 import {useTheme} from "next-themes";
 import {MFFundsSelectProps, ReactSelectOptionType} from "@/types";
+import {MFFund} from "@/models/MFFund";
 
 const Control = ({children, ...props}: ControlProps<ReactSelectOptionType, false, GroupBase<ReactSelectOptionType>>) => {
     return (
@@ -22,25 +23,47 @@ function MFFundsSelect({value, onChange}: MFFundsSelectProps) {
     const [hydrated, setHydrated] = useState<boolean>(false);
 
     const getAllMfFunds = async () => {
+        setLoading(true);
         try {
-            setLoading(true);
-            const mfFunds = await fetchAllMfFunds('');
-            if (!mfFunds) return;
-            const formattedMfFunds = mfFunds.map((mfFund) => ({
-                value: mfFund.mfFundId || '',
+            const rawFunds = await fetchAllMfFunds('');
+
+            const formatted = (rawFunds ?? []).map((mfFund) => ({
+                value: mfFund,
                 label: `${mfFund.schemeName} (${mfFund.folioNo})`,
             }));
-            setMfFunds(formattedMfFunds);
-        } catch (e) {
-            console.error('inside catch of getAllMfFunds:', e);
+            setMfFunds(formatted);
+        } catch (err) {
+            console.error('Fetch error:', err);
         } finally {
             setLoading(false);
         }
-    };
+    }
+
+    const searchMfFunds = async (inputValue: string): Promise<OptionsOrGroups<ReactSelectOptionType, GroupBase<ReactSelectOptionType>>> => {
+        setLoading(true);
+        try {
+            const rawFunds = await fetchAllMfFunds(inputValue);
+
+            const formatted = (rawFunds ?? []).map((mfFund) => ({
+                value: mfFund,
+                label: `${mfFund.schemeName} (${mfFund.folioNo})`,
+            }));
+
+            setMfFunds(formatted);
+            return formatted;
+        } catch (err) {
+            console.error('Fetch error:', err);
+            return [];
+        } finally {
+            setLoading(false);
+        }
+    }
 
     useEffect(() => {
         setHydrated(true);
     }, []);
+
+    const selectedOption = mfFunds.find((opt) => opt.value.mfFundId === value) || null;
 
     if (!hydrated) {
         return null;
@@ -49,18 +72,19 @@ function MFFundsSelect({value, onChange}: MFFundsSelectProps) {
     return (
         <div>
             <AsyncSelect
-                value={value}
+                value={selectedOption}
                 onFocus={getAllMfFunds}
+                loadOptions={searchMfFunds}
                 defaultOptions={mfFunds}
                 cacheOptions
                 isClearable
                 backspaceRemovesValue
                 components={{Control}}
-                placeholder="Search for funds..."
+                placeholder={'Search for funds...'}
                 isLoading={loading}
                 loadingMessage={() => 'Fetching funds...'}
                 noOptionsMessage={() => (loading ? 'Fetching funds...' : 'No funds found')}
-                onChange={onChange}
+                onChange={(opt) => onChange(opt?.value ?? null)}
                 styles={reactSelectStyles({isDark: resolvedTheme === 'dark'})}
             />
         </div>

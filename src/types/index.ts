@@ -2,6 +2,7 @@ import {MFSIP} from "@/models/MFSIP";
 import React from "react";
 import type {VariantProps} from "class-variance-authority";
 import {buttonVariants} from "@/components/ui/button";
+import {MFFund} from "@/models/MFFund";
 
 /** metadata */
 export interface MetadataProps {
@@ -69,13 +70,13 @@ export interface NavbarProps {
 }
 
 export interface ReactSelectOptionType {
-    value: string;
+    value: MFFund;
     label: string;
 }
 
 export interface MFFundsSelectProps {
-    value: ReactSelectOptionType | null;
-    onChange: (option: ReactSelectOptionType | null) => void;
+    value: string | null;
+    onChange: (fund: MFFund | null) => void;
 }
 
 

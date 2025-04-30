@@ -398,7 +398,7 @@ export async function getMFSIPsByDayOfMonth(year: number, month: number): Promis
         mfSipsByDates.forEach(mfSip => {
             daysInMonth[mfSip.dayOfMonth - 1] = mfSip;
         });
-        console.log('daysInMonth:', daysInMonth);
+        // console.log('daysInMonth:', daysInMonth);
 
         console.timeEnd('getMFSIPsByDayOfMonth ⏰');
         return {

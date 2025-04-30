@@ -3,6 +3,7 @@ import crypto from 'crypto';
 
 export interface MFSIP extends Document {
     userId: mongoose.Schema.Types.ObjectId;
+    mfFundId: mongoose.Schema.Types.ObjectId;
     mfSipId?: string;
     externalId: string;
     fundName: string;
@@ -23,6 +24,11 @@ const MFSIPSchema: Schema<MFSIP> = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         required: [true, 'User Id is required'],
         ref: 'User',
+    },
+    mfFundId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: [true, 'User Id is required'],
+        ref: 'MFFund',
     },
     mfSipId: {
         type: String,
