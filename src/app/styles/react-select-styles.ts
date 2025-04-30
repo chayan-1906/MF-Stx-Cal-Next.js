@@ -1,15 +1,11 @@
 import {GroupBase, StylesConfig} from 'react-select';
-
-type OptionType = {
-    label: string;
-    value: string;
-};
+import {ReactSelectOptionType} from "@/types";
 
 interface ThemeStyles {
     isDark: boolean;
 }
 
-export const reactSelectStyles = ({isDark}: ThemeStyles): StylesConfig<OptionType, boolean, GroupBase<OptionType>> => ({
+export const reactSelectStyles = ({isDark}: ThemeStyles): StylesConfig<ReactSelectOptionType, false, GroupBase<ReactSelectOptionType>> => ({
     control: (provided, state) => ({
         ...provided,
         // color: isDark ? 'green' : 'red',
