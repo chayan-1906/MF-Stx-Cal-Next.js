@@ -6,6 +6,7 @@ import {ApiResponse} from "@/types/ApiResponse";
 import MFSIPModel, {MFSIP} from "@/models/MFSIP";
 import {dbConnect} from "@/lib/db/index";
 import mongoose from "mongoose";
+import {transformMfSip} from "@/lib/utils";
 
 /*export async function getMfSipsByToken(): Promise<ApiResponse> {
     try {
@@ -156,15 +157,14 @@ export async function getMfSipsByToken(): Promise<ApiResponse> {
             success: true,
             message: 'MFSIPs fetched',
             data: {
-                mfSips: mfSips.map((mfSip) => ({
+                /*mfSips: mfSips.map((mfSip) => ({
                     ...mfSip,
                     mfSipId: mfSip?._id?.toString(),
                     userId: mfSip.userId.toString(),
-                    // startDate: mfSip.startDate.toISOString(),
-                    // endDate: mfSip.endDate ? mfSip.endDate.toISOString() : null,
                     _id: undefined,
                     __v: undefined,
-                })),
+                })),*/
+                mfSips: mfSips.map(transformMfSip),
             },
         };
     } catch (error) {
@@ -243,7 +243,7 @@ export async function getMfSipByExternalId(mfSipExternalId: string): Promise<Api
             success: true,
             message: 'MFSIP fetched',
             data: {
-                mfSip: mfSip
+                /*mfSip: mfSip
                     ? {
                         ...mfSip,
                         mfSipId: mfSip?._id?.toString(),
@@ -251,7 +251,8 @@ export async function getMfSipByExternalId(mfSipExternalId: string): Promise<Api
                         _id: undefined,
                         __v: undefined,
                     }
-                    : null,
+                    : null,*/
+                mfSip: mfSip ? transformMfSip(mfSip) : null,
             },
         };
     } catch (error: any) {

@@ -68,6 +68,16 @@ export interface NavbarProps {
     isLoggedIn: boolean;
 }
 
+export interface ReactSelectOptionType {
+    value: string;
+    label: string;
+}
+
+export interface MFFundsSelectProps {
+    value: ReactSelectOptionType | null;
+    onChange: (option: ReactSelectOptionType | null) => void;
+}
+
 
 /** custom components */
 export interface MFSIPFormProps {

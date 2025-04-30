@@ -5,6 +5,7 @@ export interface User extends Document {
     email: string;
     image?: string; // for oauth
     googleId?: string; // for oauth
+    mfFundIds: mongoose.Schema.Types.ObjectId[];
     mfSIPIds: mongoose.Schema.Types.ObjectId[];
     mfLumpsumIds: mongoose.Schema.Types.ObjectId[];
     stxSIPIds: mongoose.Schema.Types.ObjectId[];
@@ -33,6 +34,11 @@ const UserSchema: Schema<User> = new Schema({
         required: false,
         unique: true,
     },
+    mfFundIds: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'MFFund',
+        default: [],
+    }],
     mfSIPIds: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'MFSIP',

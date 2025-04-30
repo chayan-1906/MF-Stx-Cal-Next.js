@@ -235,3 +235,43 @@ input[type='date']::-webkit-calendar-picker-indicator {
 	right: 0.75rem;
 	cursor: pointer;
 }
+
+.rs__control {
+	@apply bg-transparent border border-white text-white rounded px-3 py-2 cursor-pointer;
+}
+
+.rs__menu {
+	@apply bg-red-400 border border-input z-10 text-white;
+}
+
+.rs__single-value {
+	@apply text-green-400;
+}
+
+.rs__input {
+	@apply text-amber-400;
+}
+
+.rs__placeholder {
+	@apply text-gray-400;
+}
+
+.rs__option {
+	@apply text-teal-500 bg-pink-500 cursor-pointer;
+}
+
+.rs__option--is-focused {
+	@apply bg-purple-400;
+}
+
+.rs__option--is-selected {
+	@apply bg-accent-800;
+}
+
+.rs__multi-value__label {
+	@apply text-white;
+}
+
+.rs__multi-value__remove {
+	@apply hover:bg-secondary hover:text-white;
+}

@@ -20,6 +20,7 @@ import {useRouter} from "next/navigation";
 import {LoadingButton} from "../loading-button";
 import routes from "@/lib/routes";
 import {Textarea} from "@/components/ui/textarea";
+import MFFundsSelect from "@/components/MFFundsSelect";
 
 function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
     const defaultValues = useMemo(() => mfSip
@@ -42,6 +43,36 @@ function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
     const cardWrapperClassNames = 'h-fit rounded-xl overflow-hidden shadow-lg border-3 border-primary-600';
     const cardHeaderClassNames = 'bg-card-header uppercase font-semibold text-sm sm:text-base p-4 text-primary-foreground';
     const cardBgClassNames = 'bg-card p-6 space-y-5';
+
+    // TODO: Move to a new form file - MFFundForm.tsx
+    const addNewMfFund = async () => {
+        // console.log('createNewMfFund:', mfFundForm.getValues());
+        // const formData = mfFundForm.getValues();
+
+        // Format fields
+        // formData.fundName = formData.fundName?.toUpperCase() || '';
+        // formData.fundCode = formData.fundCode?.toUpperCase() || '';
+        // formData.schemeName = capitalizeFirst(formData.schemeName);
+        // console.log('formData:', formData);
+
+        try {
+            const addMfFundApiResponse = (await axios.post<ApiResponse>(apis.addMFFundApi(), {
+                fundName: 'Fund 2',
+                fundCode: 'Fund2Code', schemeName: 'Fund 2 Scheme 1', folioNo: '74927462748', notes: '', category: 'liquid',
+            })).data;
+
+            if (addMfFundApiResponse.success) {
+                toast(addMfFundApiResponse.message, {type: 'success'});
+                reset();
+                // router.refresh();
+                // router.push(routes.homePath());
+            } else {
+                toast(addMfFundApiResponse.message, {type: 'error'});
+            }
+        } catch (error) {
+            toast('Something went wrong', {type: 'error'});
+        }
+    }
 
     const createNewMfSip = async () => {
         console.log('createNewMfSip:', mfSipForm.getValues());
@@ -107,6 +138,7 @@ function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
                     {mfSip ? 'Update your systematic investment plan details below' : 'Set up a systematic investment plan to grow your wealth consistently'}
                 </p>
             </div>
+            <Button variant={'secondary'} onClick={addNewMfFund}>Add Fund</Button>
 
             <Form {...mfSipForm}>
                 <form onSubmit={handleSubmit(mfSip ? updateExistingMfSip : createNewMfSip)} className={'relative space-y-5 overflow-auto'}>
@@ -123,6 +155,19 @@ function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
 
                             {/** form - Fund Information */}
                             <div className={cardBgClassNames}>
+                                {/*<FormField control={mfSipForm.control} name={'mfFund'} render={({field}) => (
+                                    <FormItem>
+                                        <FormLabel>Mutual Fund *</FormLabel>
+                                        <FormControl>
+                                            <MFFundsSelect
+                                                value={field.value}
+                                                onChange={(option) => field.onChange(option)}
+                                            />
+                                        </FormControl>
+                                        <FormMessage/>
+                                    </FormItem>
+                                )}/>*/}
+
                                 {/** userId */}
                                 <FormField control={mfSipForm.control} name={'userId'} render={({field}) => (
                                     <FormItem className={''}>

@@ -61,3 +61,6 @@ Your app is ready to be deployed!
 
 ### Framer Motion - https://www.npmjs.com/package/framer-motion
     npm i framer-motion
+
+### React Select - https://www.npmjs.com/package/react-select
+    npm i react-select

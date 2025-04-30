@@ -47,3 +47,23 @@ export function getOrdinal(n: number | null | undefined): string {
 export function formatNumber(n: number): string {
   return n.toLocaleString('en-US');
 }
+
+
+/** storage functions */
+export function transformMfFund(doc: any) {
+  const {_id, __v, ...rest} = doc;
+  return {
+    ...rest,
+    mfFundId: _id?.toString(),
+    userId: doc.userId?.toString(),
+  };
+}
+
+export function transformMfSip(doc: any) {
+  const {_id, __v, ...rest} = doc;
+  return {
+    ...rest,
+    mfSipId: _id?.toString(),
+    userId: doc.userId?.toString(),
+  };
+}
