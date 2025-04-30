@@ -2,10 +2,11 @@ import {NextResponse} from "next/server";
 import {ApiResponse} from "@/types/ApiResponse";
 import {dbConnect} from "@/lib/db";
 import {getUserDetailsFromToken} from "@/lib/db/user-storage";
-import MFSIPModel from "@/models/MFSIP";
+import MFSIPModel, {MFSIP} from "@/models/MFSIP";
 import UserModel from "@/models/User";
 import {isStringInvalid} from "@/lib/utils";
 import mongoose from "mongoose";
+import {MFFund} from "@/models/MFFund";
 
 /** ADD MFSIP */
 /*export async function POST(request: Request) {
@@ -134,22 +135,23 @@ export async function POST(request: Request) {
     try {
         console.time('parseInput');
         const {
-            fundName,
-            fundCode,
-            schemeName,
-            folioNo,
+            mfFundId,
+            // fundName,
+            // fundCode,
+            // schemeName,
+            // folioNo,
             amount,
             dayOfMonth,
             active,
             startDate,
             endDate,
             notes,
-            category,
+            // category,
         } = await request.json();
         console.timeEnd('parseInput ⏰');
 
         // Validation
-        if (isStringInvalid(fundName)) {
+        /*if (isStringInvalid(fundName)) {
             return NextResponse.json(
                 {code: 'missingFundName', success: false, message: 'Fund Name is required'},
                 {status: 400}
@@ -172,7 +174,7 @@ export async function POST(request: Request) {
                 {code: 'invalidFolioNo', success: false, message: 'Folio no must be a string'},
                 {status: 400}
             );
-        }
+        }*/
         if (typeof amount !== 'number' || isNaN(amount) || amount < 1) {
             return NextResponse.json(
                 {code: 'invalidAmount', success: false, message: 'Amount is required and must be at least ₹1'},
@@ -217,12 +219,12 @@ export async function POST(request: Request) {
                 {status: 400}
             );
         }
-        if (!['equity', 'debt', 'liquid'].includes(category)) {
+        /*if (!['equity', 'debt', 'liquid'].includes(category)) {
             return NextResponse.json(
                 {code: 'invalidCategory', success: false, message: 'Category must be equity, debt, or liquid'},
                 {status: 400}
             );
-        }
+        }*/
 
         console.time('tokenValidation ⏰');
         const {userId} = await getUserDetailsFromToken();
@@ -252,17 +254,18 @@ export async function POST(request: Request) {
         // Create SIP
         const addedSIP = await MFSIPModel.create({
             userId,
-            fundName,
-            fundCode,
-            schemeName,
-            folioNo,
+            mfFundId,
+            // fundName,
+            // fundCode,
+            // schemeName,
+            // folioNo,
             amount,
             dayOfMonth,
             active,
             startDate: new Date(startDate),
             endDate: endDate ? new Date(endDate) : undefined,
             notes,
-            category,
+            // category,
         });
 
         // Update user with SIP ID
@@ -348,11 +351,25 @@ export async function GET(request: Request) {
 /** UPDATE MFSIP */
 export async function PUT(request: Request) {
     console.log('updateMFSIP called');
-
     await dbConnect();
 
     try {
-        const {mfSipId, fundName, fundCode, schemeName, folioNo, amount, dayOfMonth, active, startDate, endDate, notes, category} = await request.json();
+        // const {mfSipId, fundName, fundCode, schemeName, folioNo, amount, dayOfMonth, active, startDate, endDate, notes, category} = await request.json();
+        const {
+            mfSipId,
+            mfFundId,
+            // fundName,
+            // fundCode,
+            // schemeName,
+            // folioNo,
+            amount,
+            dayOfMonth,
+            active,
+            startDate,
+            endDate,
+            notes,
+            // category,
+        } = await request.json();
 
         /** validation */
         if (isStringInvalid(mfSipId)) {
@@ -362,7 +379,14 @@ export async function PUT(request: Request) {
                 message: 'mfSipId is required',
             }, {status: 400});
         }
-        if (fundName !== undefined && isStringInvalid(fundName)) {
+        if (isStringInvalid(mfFundId)) {
+            return NextResponse.json(<ApiResponse>{
+                code: 'missingMfFundId',
+                success: false,
+                message: 'mfFundId is required',
+            }, {status: 400});
+        }
+        /*if (fundName !== undefined && isStringInvalid(fundName)) {
             return NextResponse.json(<ApiResponse>{
                 code: 'missingFundName',
                 success: false,
@@ -389,7 +413,7 @@ export async function PUT(request: Request) {
                 success: false,
                 message: 'Folio no must be a string',
             }, {status: 400});
-        }
+        }*/
         if (amount !== undefined && (typeof amount !== 'number' || isNaN(amount) || amount < 1)) {
             return NextResponse.json(<ApiResponse>{
                 code: 'invalidAmount',
@@ -439,13 +463,13 @@ export async function PUT(request: Request) {
                 message: 'Notes must be a string',
             }, {status: 400});
         }
-        if (category !== undefined && !['equity', 'debt', 'liquid', null].includes(category)) {
+        /*if (category !== undefined && !['equity', 'debt', 'liquid', null].includes(category)) {
             return NextResponse.json<ApiResponse>({
                 code: 'invalidCategory',
                 success: false,
                 message: 'Category must be equity, debt, or liquid',
             }, {status: 400});
-        }
+        }*/
 
         const {userId} = await getUserDetailsFromToken();
         console.log('userId:', userId);
@@ -477,7 +501,10 @@ export async function PUT(request: Request) {
 
         const updateFields: any = {};
 
-        if (fundName !== undefined && fundName !== existingSIP.fundName) {
+        if (mfFundId !== undefined && mfFundId !== existingSIP.mfFundId) {
+            updateFields.mfFundId = mfFundId;
+        }
+        /*if (fundName !== undefined && fundName !== existingSIP.fundName) {
             updateFields.fundName = fundName;
         }
         if (fundCode !== undefined && fundCode !== existingSIP.fundCode) {
@@ -488,7 +515,7 @@ export async function PUT(request: Request) {
         }
         if (folioNo !== undefined && folioNo !== existingSIP.folioNo) {
             updateFields.folioNo = folioNo;
-        }
+        }*/
         if (amount !== undefined && amount !== existingSIP.amount) {
             updateFields.amount = amount;
         }
@@ -507,9 +534,9 @@ export async function PUT(request: Request) {
         if (notes !== undefined && notes !== existingSIP.notes) {
             updateFields.notes = notes;
         }
-        if (category !== undefined && category !== existingSIP.category) {
+        /*if (category !== undefined && category !== existingSIP.category) {
             updateFields.category = category;
-        }
+        }*/
 
         if (Object.keys(updateFields).length === 0) {
             return NextResponse.json<ApiResponse>({

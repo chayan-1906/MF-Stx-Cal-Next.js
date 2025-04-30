@@ -1,9 +1,10 @@
 import axios from "axios";
 import apis from "@/lib/apis";
 import {MFFund} from "@/models/MFFund";
+import {useCallback} from "react";
 
 const useMfFunds = () => {
-    const fetchAllMfFunds = async (searchTerm: string | undefined): Promise<MFFund[] | null> => {
+    const fetchAllMfFunds = useCallback(async (searchTerm: string | undefined): Promise<MFFund[] | null> => {
         try {
             console.log('fetchAllMfFunds:', searchTerm);
             const getMfFundsResponse = (await axios.get(apis.getAllMFFundsApi(searchTerm || ''))).data;
@@ -20,7 +21,7 @@ const useMfFunds = () => {
             console.error('inside catch of fetchAllMfFunds:', error);
             return null;
         }
-    }
+    }, []);
 
     return {fetchAllMfFunds}
 }

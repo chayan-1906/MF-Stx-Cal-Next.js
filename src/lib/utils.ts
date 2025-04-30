@@ -63,7 +63,20 @@ export function transformMfSip(doc: any) {
   const {_id, __v, ...rest} = doc;
   return {
     ...rest,
-    mfSipId: _id?.toString(),
     userId: doc.userId?.toString(),
+    mfFundId: doc.mfFundId?.toString(),
+    mfSipId: _id?.toString(),
+  };
+}
+
+export function flattenMfSip(item: any): any {
+  const fund = item.mfFundId || {};
+  return {
+    ...item,
+    mfFundId: fund._id?.toString?.() || fund.toString?.() || '',
+    fundName: fund.fundName ?? '',
+    schemeName: fund.schemeName ?? '',
+    folioNo: fund.folioNo ?? '',
+    category: fund.category ?? '',
   };
 }

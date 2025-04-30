@@ -6,7 +6,7 @@ import {ApiResponse} from "@/types/ApiResponse";
 import MFSIPModel, {MFSIP} from "@/models/MFSIP";
 import {dbConnect} from "@/lib/db/index";
 import mongoose from "mongoose";
-import {transformMfSip} from "@/lib/utils";
+import {flattenMfSip, transformMfSip} from "@/lib/utils";
 
 /*export async function getMfSipsByToken(): Promise<ApiResponse> {
     try {
@@ -148,7 +148,10 @@ export async function getMfSipsByToken(): Promise<ApiResponse> {
         const mfSips = await MFSIPModel.find({
             userId: new mongoose.Types.ObjectId(token.userId),
             // userId: new mongoose.Types.ObjectId('6807d28c0c61b460a607b398'),
-        }).lean().exec();
+        })
+            .populate('mfFundId', 'fundName schemeName folioNo category')
+            .lean()
+            .exec();
         console.timeEnd('databaseOperations - II ⏰');
 
         console.timeEnd('getMfSipsByToken ⏰');
@@ -164,7 +167,8 @@ export async function getMfSipsByToken(): Promise<ApiResponse> {
                     _id: undefined,
                     __v: undefined,
                 })),*/
-                mfSips: mfSips.map(transformMfSip),
+                // mfSips: mfSips.map(transformMfSip),
+                mfSips: mfSips.map((sip) => transformMfSip(flattenMfSip(sip))),
             },
         };
     } catch (error) {
@@ -217,8 +221,10 @@ export async function getMfSipByExternalId(mfSipExternalId: string): Promise<Api
         }
 
         console.time('databaseOperations ⏰');
-        const mfSip = await MFSIPModel.findOne({externalId: mfSipExternalId}).lean().exec() as MFSIP | null;
-        console.log('mfSip:', mfSip);
+        const mfSip = await MFSIPModel.findOne({externalId: mfSipExternalId})
+            .populate('mfFundId', 'fundName schemeName folioNo category')
+            .lean()
+            .exec() as MFSIP | null;
         console.timeEnd('databaseOperations ⏰');
 
         if (!mfSip) {
@@ -252,7 +258,7 @@ export async function getMfSipByExternalId(mfSipExternalId: string): Promise<Api
                         __v: undefined,
                     }
                     : null,*/
-                mfSip: mfSip ? transformMfSip(mfSip) : null,
+                mfSip: mfSip ? transformMfSip(flattenMfSip(mfSip)) : null,
             },
         };
     } catch (error: any) {
@@ -318,27 +324,41 @@ export async function getMFSIPsByDayOfMonth(year: number, month: number): Promis
                     },
                 },
                 {
+                    $lookup: {
+                        from: 'mffunds', // Ensure this matches your actual collection name
+                        localField: 'mfFundId',
+                        foreignField: '_id',
+                        as: 'mfFundId',
+                    },
+                },
+                {$unwind: '$mfFundId'},
+                {
+                    $addFields: {
+                        'sips.userId': {$toString: '$userId'},
+                        'sips.mfFundId': {$toString: '$mfFundId._id'},
+                        'sips.mfSipId': {$toString: '$_id'},
+                        fundName: '$mfFundId.fundName',
+                        schemeName: '$mfFundId.schemeName',
+                        folioNo: '$mfFundId.folioNo',
+                        category: '$mfFundId.category',
+                    },
+                },
+                {
                     $group: {
                         _id: '$dayOfMonth',
                         count: {$sum: 1},
-                        sips: {$push: '$$ROOT'},    // $$ROOT refers to the full document
-                    },
-                },
-                {$unwind: '$sips'}, // ???
-                {
-                    $addFields: {
-                        'sips.mfSipId': {$toString: '$sips._id'},
-                        'sips.userId': {$toString: '$sips.userId'},
-                    },
-                },
-                {
-                    $unset: ['sips._id', 'sips.__v'],
-                },
-                {
-                    $group: {   /// ???
-                        _id: '$_id',
-                        count: {$first: '$count'},
-                        sips: {$push: '$sips'},
+                        sips: {
+                            $push: {
+                                $mergeObjects: [
+                                    '$$ROOT',
+                                    {
+                                        mfFundId: {$toString: '$mfFundId._id'},
+                                        mfSipId: {$toString: '$_id'},
+                                        userId: {$toString: '$userId'},
+                                    },
+                                ],
+                            },
+                        },
                     },
                 },
                 {$sort: {_id: 1}},
@@ -346,7 +366,21 @@ export async function getMFSIPsByDayOfMonth(year: number, month: number): Promis
                     $project: {
                         dayOfMonth: '$_id',
                         count: 1,
-                        sips: 1,
+                        sips: {
+                            mfSipId: 1,
+                            mfFundId: 1,
+                            userId: 1,
+                            fundName: 1,
+                            schemeName: 1,
+                            folioNo: 1,
+                            category: 1,
+                            amount: 1,
+                            dayOfMonth: 1,
+                            startDate: 1,
+                            endDate: 1,
+                            notes: 1,
+                            externalId: 1,
+                        },
                         _id: 0,
                     },
                 },
@@ -404,7 +438,7 @@ export async function getMFSIPsByDayOfMonth(year: number, month: number): Promis
         return {
             code: 'fetched',
             success: true,
-            message: 'MFSIP fetched',
+            message: 'MFSIPs for month fetched',
             data: {
                 mfSips: daysInMonth,
                 totals: totals[0] || {
@@ -425,5 +459,3 @@ export async function getMFSIPsByDayOfMonth(year: number, month: number): Promis
         };
     }
 }
-
-// await MFSIPModel.aggregate([{$match: {userId}}, {$group: {_id: 'dayOfMonth'}}, {$sort: {'dayOfMonth': 1}}])

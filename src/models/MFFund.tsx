@@ -81,5 +81,6 @@ MFFundSchema.set('toJSON', {
 });
 
 const MFFundModel = mongoose.models.MFFund || mongoose.model<MFFund>('MFFund', MFFundSchema);
+console.log('MFFundModel registered');
 
 export default MFFundModel;

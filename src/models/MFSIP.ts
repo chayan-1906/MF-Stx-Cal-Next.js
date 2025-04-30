@@ -1,5 +1,6 @@
 import mongoose, {Document, Schema} from "mongoose";
 import crypto from 'crypto';
+import '@/models/MFFund';
 
 export interface MFSIP extends Document {
     userId: mongoose.Schema.Types.ObjectId;
@@ -23,17 +24,13 @@ const MFSIPSchema: Schema<MFSIP> = new Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         required: [true, 'User Id is required'],
+        // required: false,
         ref: 'User',
     },
     mfFundId: {
         type: mongoose.Schema.Types.ObjectId,
-        required: [true, 'User Id is required'],
+        required: [true, 'Fund Id is required'],
         ref: 'MFFund',
-    },
-    mfSipId: {
-        type: String,
-        required: false,
-        default: null,
     },
     externalId: {
         type: String,
@@ -41,7 +38,7 @@ const MFSIPSchema: Schema<MFSIP> = new Schema({
         unique: true,
         default: () => crypto.randomUUID(),
     },
-    fundName: {
+    /*fundName: {
         type: String,
         required: [true, 'Fund name is required'],
         trim: true,
@@ -61,7 +58,7 @@ const MFSIPSchema: Schema<MFSIP> = new Schema({
         type: String,
         required: [true, 'Folio no is required'],
         trim: true,
-    },
+    },*/
     amount: {
         type: Number,
         required: [true, 'Amount is required'],
@@ -93,19 +90,31 @@ const MFSIPSchema: Schema<MFSIP> = new Schema({
         trim: true,
         default: null,
     },
-    category: {
+    /*category: {
         type: String,
         required: [true, 'Category is required'],
         enum: ['equity', 'debt', 'liquid'],
-    },
+    },*/
 });
 
 MFSIPSchema.set('toJSON', {
     transform: (doc, ret) => {
-        ret.mfSipId = ret._id.toString();
+        if (ret.mfFundId && typeof ret.mfFundId === 'object') {
+            Object.assign(ret, {
+                fundName: ret.mfFundId.fundName ?? ret.mfFundId._doc?.fundName,
+                schemeName: ret.mfFundId.schemeName ?? ret.mfFundId._doc?.schemeName,
+                folioNo: ret.mfFundId.folioNo ?? ret.mfFundId._doc?.folioNo,
+                category: ret.mfFundId.category ?? ret.mfFundId._doc?.category,
+                mfFundId: (ret.mfFundId._id ?? ret.mfFundId).toString(),
+            });
+        }
+
         ret.userId = ret.userId.toString();
+        ret.mfSipId = ret._id.toString();
+
         delete ret._id;
         delete ret.__v;
+
         return ret;
     },
 });

@@ -1,11 +1,10 @@
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 import AsyncSelect from "react-select/async";
 import {components, ControlProps, GroupBase, OptionsOrGroups} from "react-select";
 import useMfFunds from "../lib/hooks/useMfFunds";
 import {reactSelectStyles} from "@/app/styles/react-select-styles";
 import {useTheme} from "next-themes";
 import {MFFundsSelectProps, ReactSelectOptionType} from "@/types";
-import {MFFund} from "@/models/MFFund";
 
 const Control = ({children, ...props}: ControlProps<ReactSelectOptionType, false, GroupBase<ReactSelectOptionType>>) => {
     return (
@@ -22,7 +21,7 @@ function MFFundsSelect({value, onChange}: MFFundsSelectProps) {
     const [loading, setLoading] = useState<boolean>(false);
     const [hydrated, setHydrated] = useState<boolean>(false);
 
-    const getAllMfFunds = async () => {
+    const getAllMfFunds = useCallback(async () => {
         setLoading(true);
         try {
             const rawFunds = await fetchAllMfFunds('');
@@ -37,7 +36,7 @@ function MFFundsSelect({value, onChange}: MFFundsSelectProps) {
         } finally {
             setLoading(false);
         }
-    }
+    }, [fetchAllMfFunds]);
 
     const searchMfFunds = async (inputValue: string): Promise<OptionsOrGroups<ReactSelectOptionType, GroupBase<ReactSelectOptionType>>> => {
         setLoading(true);
@@ -63,7 +62,11 @@ function MFFundsSelect({value, onChange}: MFFundsSelectProps) {
         setHydrated(true);
     }, []);
 
-    const selectedOption = mfFunds.find((opt) => opt.value.mfFundId === value) || null;
+    useEffect(() => {
+        getAllMfFunds();
+    }, [getAllMfFunds]);
+
+    const selectedOption = useMemo(() => mfFunds.find((opt) => opt.value.mfFundId === value) || null, [mfFunds, value]);
 
     if (!hydrated) {
         return null;

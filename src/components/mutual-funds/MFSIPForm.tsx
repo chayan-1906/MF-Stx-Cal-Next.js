@@ -24,14 +24,14 @@ import MFFundsSelect from "@/components/MFFundsSelect";
 
 function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
     const defaultValues = useMemo(() => mfSip
-                ? mfSipSchema.parse({
-                    ...mfSip,
-                    startDate: new Date(mfSip.startDate),
+            ? mfSipSchema.parse({
+                ...mfSip,
+                startDate: new Date(mfSip.startDate),
                 endDate: mfSip.endDate ? new Date(mfSip.endDate) : null,
-                })
-            : {userId, active: true},
+            }) : {userId, active: true},
         [mfSip, userId],
     );
+    console.log('defaultValues:', defaultValues);
 
     const mfSipForm = useForm<MFSIPFormValues>({
         resolver: zodResolver(mfSipSchema),
@@ -138,7 +138,6 @@ function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
                     {mfSip ? 'Update your systematic investment plan details below' : 'Set up a systematic investment plan to grow your wealth consistently'}
                 </p>
             </div>
-            <Button variant={'secondary'} onClick={addNewMfFund}>Add Fund</Button>
 
             <Form {...mfSipForm}>
                 <form onSubmit={handleSubmit(mfSip ? updateExistingMfSip : createNewMfSip)} className={'relative space-y-5 overflow-auto'}>
@@ -155,31 +154,35 @@ function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
 
                             {/** form - Fund Information */}
                             <div className={cardBgClassNames}>
-                                <FormField control={mfSipForm.control} name={'mfFundId'} render={({field}) => (
-                                    <FormItem>
-                                        <FormLabel>Mutual Fund *</FormLabel>
-                                        <FormControl>
-                                            <MFFundsSelect value={field.value} onChange={(fund) => {
-                                                if (!fund) {
-                                                    mfSipForm.setValue('mfFundId', '');
-                                                    mfSipForm.setValue('fundName', '');
-                                                    mfSipForm.setValue('fundCode', '');
-                                                    mfSipForm.setValue('schemeName', '');
-                                                    mfSipForm.setValue('folioNo', '');
-                                                    mfSipForm.setValue('category', null);
-                                                } else {
-                                                    mfSipForm.setValue('mfFundId', fund.mfFundId ?? '');
-                                                    mfSipForm.setValue('fundName', fund.schemeName ?? '');
-                                                    mfSipForm.setValue('fundCode', fund.fundCode ?? '');
-                                                    mfSipForm.setValue('schemeName', fund.schemeName ?? '');
-                                                    mfSipForm.setValue('folioNo', fund.folioNo ?? '');
-                                                    mfSipForm.setValue('category', fund.category ?? null);
-                                                }
-                                            }}/>
-                                        </FormControl>
-                                        <FormMessage/>
-                                    </FormItem>
-                                )}/>
+                                {/** fund select & add fund */}
+                                <div className={'flex flex-col lg:flex-row gap-4 lg:items-end'}>
+                                    <FormField control={mfSipForm.control} name={'mfFundId'} render={({field}) => (
+                                        <FormItem className={'w-full'}>
+                                            <FormLabel>Mutual Fund *</FormLabel>
+                                            <FormControl>
+                                                <MFFundsSelect value={field.value} onChange={(fund) => {
+                                                    if (!fund) {
+                                                        mfSipForm.setValue('mfFundId', '');
+                                                        mfSipForm.setValue('fundName', '');
+                                                        mfSipForm.setValue('fundCode', '');
+                                                        mfSipForm.setValue('schemeName', '');
+                                                        mfSipForm.setValue('folioNo', '');
+                                                        mfSipForm.setValue('category', null);
+                                                    } else {
+                                                        mfSipForm.setValue('mfFundId', fund.mfFundId ?? '');
+                                                        mfSipForm.setValue('fundName', fund.schemeName ?? '');
+                                                        mfSipForm.setValue('fundCode', fund.fundCode ?? '');
+                                                        mfSipForm.setValue('schemeName', fund.schemeName ?? '');
+                                                        mfSipForm.setValue('folioNo', fund.folioNo ?? '');
+                                                        mfSipForm.setValue('category', fund.category ?? null);
+                                                    }
+                                                }}/>
+                                            </FormControl>
+                                            <FormMessage/>
+                                        </FormItem>
+                                    )}/>
+                                    <Button variant={'secondary'} onClick={addNewMfFund}>Add Fund</Button>
+                                </div>
 
                                 {/** userId */}
                                 <FormField control={mfSipForm.control} name={'userId'} render={({field}) => (
@@ -234,7 +237,7 @@ function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
                                     <FormItem>
                                         <FormLabel htmlFor={field.name} className={''}>Scheme name *</FormLabel>
                                         <FormControl>
-                                            <Input {...field} id={field.name} value={field.value ?? ''} type={'text'} placeholder={'Mirae Asset Large Cap Fund - Direct Plan - Growth'}
+                                            <Input {...field} id={field.name} value={field.value ?? ''} type={'text'} disabled placeholder={'Mirae Asset Large Cap Fund - Direct Plan - Growth'}
                                                    className={'capitalize'} onChange={(e) => field.onChange(e)}/>
                                         </FormControl>
                                         <FormMessage/>
