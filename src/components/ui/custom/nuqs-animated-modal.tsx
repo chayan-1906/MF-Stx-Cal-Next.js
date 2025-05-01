@@ -1,3 +1,4 @@
+/*
 import {AnimatePresence, motion} from "framer-motion";
 import {cn} from "@/lib/utils";
 import React, {useRef} from "react";
@@ -50,3 +51,4 @@ const NuqsAnimatedModal: React.FC<NuqsAnimatedModalProps> = ({isOpen, onClose, c
 }
 
 export default NuqsAnimatedModal;
+*/

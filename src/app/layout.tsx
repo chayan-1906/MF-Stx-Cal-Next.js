@@ -7,6 +7,7 @@ import {ToastContainer} from "react-toastify";
 import {APP_LOGO_URL, APP_NAME, APP_TAGLINE, BASE_URL} from "@/lib/config";
 import {NuqsAdapter} from "nuqs/adapters/react";
 import ThemeWrapper from "@/components/ThemeWrapper";
+import {ModalProvider} from "@/components/ui/custom-modal";
 
 const nunitoSans = Nunito_Sans({subsets: ['latin']});
 
@@ -45,12 +46,14 @@ async function RootLayout({children}: Readonly<{ children: React.ReactNode; }>) 
     return (
         <html lang={'en'} suppressHydrationWarning>
         <body className={nunitoSans.className}>
-        <NuqsAdapter>
-            <ThemeWrapper>
-                {children}
-            </ThemeWrapper>
-            <ToastContainer position={'bottom-right'} theme={'colored'}/>
-        </NuqsAdapter>
+        <ModalProvider>
+            <NuqsAdapter>
+                <ThemeWrapper>
+                    {children}
+                </ThemeWrapper>
+                <ToastContainer position={'bottom-right'} theme={'colored'}/>
+            </NuqsAdapter>
+        </ModalProvider>
         </body>
         </html>
     );

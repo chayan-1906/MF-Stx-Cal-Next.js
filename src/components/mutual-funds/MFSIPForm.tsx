@@ -21,6 +21,9 @@ import {LoadingButton} from "../loading-button";
 import routes from "@/lib/routes";
 import {Textarea} from "@/components/ui/textarea";
 import MFFundsSelect from "@/components/MFFundsSelect";
+import {useModal} from "@/components/ui/custom-modal";
+import {modalKeys} from "@/lib/modalKeys";
+import AddUpdateMFFundForm from "@/components/mutual-funds/modals/AddUpdateMFFundForm";
 
 function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
     const defaultValues = useMemo(() => mfSip
@@ -40,39 +43,11 @@ function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
     const {register: register, handleSubmit, formState: {errors, isValid, isSubmitting}, reset} = mfSipForm;
     const router = useRouter();
 
+    const {onOpen: onAddFundModalOpen, openModalKey, setOpenModalKey} = useModal();
+
     const cardWrapperClassNames = 'h-fit rounded-xl overflow-hidden shadow-lg border-3 border-primary-600';
     const cardHeaderClassNames = 'bg-card-header uppercase font-semibold text-sm sm:text-base p-4 text-primary-foreground';
     const cardBgClassNames = 'bg-card p-6 space-y-5';
-
-    // TODO: Move to a new form file - MFFundForm.tsx
-    const addNewMfFund = async () => {
-        // console.log('createNewMfFund:', mfFundForm.getValues());
-        // const formData = mfFundForm.getValues();
-
-        // Format fields
-        // formData.fundName = formData.fundName?.toUpperCase() || '';
-        // formData.fundCode = formData.fundCode?.toUpperCase() || '';
-        // formData.schemeName = capitalizeFirst(formData.schemeName);
-        // console.log('formData:', formData);
-
-        try {
-            const addMfFundApiResponse = (await axios.post<ApiResponse>(apis.addMFFundApi(), {
-                fundName: 'Fund 2',
-                fundCode: 'Fund2Code', schemeName: 'Fund 2 Scheme 1', folioNo: '74927462748', notes: '', category: 'liquid',
-            })).data;
-
-            if (addMfFundApiResponse.success) {
-                toast(addMfFundApiResponse.message, {type: 'success'});
-                reset();
-                // router.refresh();
-                // router.push(routes.homePath());
-            } else {
-                toast(addMfFundApiResponse.message, {type: 'error'});
-            }
-        } catch (error) {
-            toast('Something went wrong', {type: 'error'});
-        }
-    }
 
     const createNewMfSip = async () => {
         console.log('createNewMfSip:', mfSipForm.getValues());
@@ -139,8 +114,11 @@ function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
                 </p>
             </div>
 
+            <AddUpdateMFFundForm userId={userId} openModalKey={openModalKey} mfSipForm={mfSipForm}/>
+
             <Form {...mfSipForm}>
                 <form onSubmit={handleSubmit(mfSip ? updateExistingMfSip : createNewMfSip)} className={'relative space-y-5 overflow-auto'}>
+
                     {/** cards */}
                     <div className={'flex flex-col md:flex-row gap-5'}>
                         {/** Card 1: Fund Details */}
@@ -181,7 +159,10 @@ function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
                                             <FormMessage/>
                                         </FormItem>
                                     )}/>
-                                    <Button variant={'secondary'} onClick={addNewMfFund}>Add Fund</Button>
+                                    <Button type={'button'} variant={'secondary'} onClick={() => {
+                                        onAddFundModalOpen();
+                                        setOpenModalKey(modalKeys.addUpdateMfFund)
+                                    }}>Add Fund</Button>
                                 </div>
 
                                 {/** userId */}

@@ -1,7 +1,7 @@
 'use client';
 
 import React, {useCallback, useRef, useState} from "react";
-import {SIPCalenderProps} from "@/types";
+import {SIPCalenderViewProps} from "@/types";
 import {cn, formatNumber, getOrdinal, isListEmpty} from "@/lib/utils";
 import {MFSIP} from "@/models/MFSIP";
 import {TbCalendarMonth} from "react-icons/tb";
@@ -16,7 +16,7 @@ import {useRouter} from "next/navigation";
 import CategoryBadge from "@/components/CategoryBadge";
 import {Button} from "@/components/ui/button";
 
-function SIPCalendar({investments}: SIPCalenderProps) {
+function SIPCalendarView({investments}: SIPCalenderViewProps) {
     const [selectedDay, setSelectedDay] = useState<number | null>();
     const [selectedSips, setSelectedSips] = useState<MFSIP[]>([]);
     const detailViewRef = useRef<HTMLDivElement>(null);
@@ -32,7 +32,8 @@ function SIPCalendar({investments}: SIPCalenderProps) {
         setTimeout(() => {
             const element = detailViewRef.current;
             if (element) {
-                const offset = isListEmpty(sips) ? 200 : 100;
+                // const offset = isListEmpty(sips) ? 200 : 200;
+                const offset = 200;
                 const top = element.getBoundingClientRect().top + window.scrollY - offset;
                 window.scrollTo({top, behavior: 'smooth'});
             }
@@ -152,4 +153,4 @@ function SIPCalendar({investments}: SIPCalenderProps) {
     );
 }
 
-export default SIPCalendar;
+export default SIPCalendarView;

@@ -1,13 +1,14 @@
 'use client';
 
-import {cn} from "@/lib/utils";
-import {AnimatePresence, motion} from "framer-motion";
-import React, {createContext, useContext, useEffect, useRef, useState} from "react";
+import {cn, isStringInvalid} from "@/lib/utils";
+import React, {createContext, useCallback, useContext, useEffect, useRef, useState} from "react";
 import {useOutsideClick} from "@/lib/hooks/useOutsideClick";
+import {Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
+import {Button} from "@/components/ui/button";
 
 interface ModalContextType {
     openModalId: string | null;
-    onOpen: (eventId: string) => void;
+    onOpen: (eventId?: string) => void;
     onClose: () => void;
     openModalKey: string | null;
     setOpenModalKey: (key: string | null) => void;
@@ -31,11 +32,11 @@ export function ModalProvider({children}: ModalProviderProps) {
     const [openModalId, setOpenModalId] = useState<string | null>(null);
     const [openModalKey, setOpenModalKey] = useState<string | null>(null);
 
-    const onOpen = (eventId: string) => setOpenModalId(eventId);
+    const onOpen = (eventId: string | null = null) => setOpenModalId(eventId);
     const onClose = () => {
         setOpenModalId(null);
         setOpenModalKey(null);
-    };
+    }
 
     return (
         <ModalContext.Provider value={{openModalId, onOpen, onClose, openModalKey, setOpenModalKey}}>
@@ -45,15 +46,20 @@ export function ModalProvider({children}: ModalProviderProps) {
 }
 
 interface ModalBodyProps {
-    id: string;
-    modalKey: string;
+    id?: string;
+    modalKey: string | null;
+    title?: string;
+    description?: string;
     children: React.ReactNode;
+    showClose: boolean;
+    onCloseAction?: () => void;
     className?: string;
 }
 
-export const ModalBody = ({id, modalKey, children, className}: ModalBodyProps) => {
-    const {openModalId, openModalKey, onClose} = useModal();
+export const Modal = ({id, modalKey, title, description, children, showClose = true, onCloseAction, className}: ModalBodyProps) => {
+    const {openModalId, openModalKey, onClose: onModalClose} = useModal();
     const modalRef = useRef<HTMLDivElement>(null);
+    const isOpen = !isStringInvalid(modalKey) && !isStringInvalid(openModalKey) && modalKey === openModalKey;
 
     useEffect(() => {
         if (openModalId) {
@@ -63,41 +69,41 @@ export const ModalBody = ({id, modalKey, children, className}: ModalBodyProps) =
         }
     }, [openModalId]);
 
-    useOutsideClick(modalRef, onClose);
+    useOutsideClick(modalRef, onModalClose);
+
+    const handleCloseModal = useCallback(() => {
+        if (onCloseAction) {
+            onCloseAction();
+        }
+        onModalClose();
+    }, [onCloseAction, onModalClose]);
 
     console.log('inside ModalBody:', {id, openModalId, openModalKey, modalKey});
 
     return (
-        <AnimatePresence>
-            {openModalId === id && openModalKey === modalKey && (
-                <motion.div
-                    initial={{opacity: 0}}
-                    animate={{opacity: 1, backdropFilter: 'blur(12px)'}}
-                    exit={{opacity: 0, backdropFilter: 'blur(0px)'}}
-                    className="fixed [perspective:800px] [transform-style:preserve-3d] inset-0 h-full w-full flex items-center justify-center z-50"
-                >
-                    <Overlay/>
+        <Dialog open={isOpen}>
+            <DialogContent className={cn(className, 'max-h-[calc(100vh-4rem)] flex flex-col')} onClose={handleCloseModal}>
+                {/** header */}
+                <DialogHeader>
+                    <DialogTitle>{title}</DialogTitle>
+                    <DialogDescription>{description}</DialogDescription>
+                </DialogHeader>
 
-                    <motion.div
-                        ref={modalRef}
-                        className={cn(
-                            'flex flex-col flex-1 max-h-[90%] max-w-[90%] sm:max-w-lg md:max-w-xl bg-black rounded-2xl sm:rounded-3xl relative z-50 overflow-hidden shadow-secondary-800 shadow-[30px_30px_100px]',
-                            className
-                        )}
-                        initial={{opacity: 0, scale: 0.5, rotateX: 40, y: 40}}
-                        animate={{opacity: 1, scale: 1, rotateX: 0, y: 0}}
-                        exit={{opacity: 0, scale: 0.8, rotateX: 10}}
-                        transition={{type: 'spring', stiffness: 260, damping: 15}}
-                    >
-                        <CloseIcon/>
-                        {children}
-                    </motion.div>
-                </motion.div>
-            )}
-        </AnimatePresence>
+                {/** content */}
+                <div className={'overflow-y-auto flex-1'}>{children}</div>
+
+                {/** footer */}
+                <DialogFooter>
+                    <DialogClose asChild className={showClose ? 'block' : 'hidden'}>
+                        <Button onClick={handleCloseModal}>Close</Button>
+                    </DialogClose>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     );
-};
+}
 
+/*
 interface ModalContentProps {
     children: React.ReactNode;
     className?: string;
@@ -156,3 +162,4 @@ const CloseIcon = () => {
         </button>
     );
 }
+*/

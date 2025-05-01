@@ -3,6 +3,8 @@ import React from "react";
 import type {VariantProps} from "class-variance-authority";
 import {buttonVariants} from "@/components/ui/button";
 import {MFFund} from "@/models/MFFund";
+import {UseFormReturn} from "react-hook-form";
+import {MFSIPFormValues} from "@/lib/formValidationSchemas";
 
 /** metadata */
 export interface MetadataProps {
@@ -81,6 +83,12 @@ export interface MFFundsSelectProps {
 
 
 /** custom components */
+export interface MFFundFormProps {
+    userId: string | null;
+    mfFund?: MFFund | null;
+    mfSipForm: UseFormReturn<MFSIPFormValues>;
+}
+
 export interface MFSIPFormProps {
     userId: string;
     mfSip?: MFSIP | null;
@@ -89,6 +97,14 @@ export interface MFSIPFormProps {
 export interface DashboardHeaderProps {
     userId: string | null;
 }
+
+export interface AddUpdateMFFundFormProps {
+    userId: string | null;
+    openModalKey: string | null;
+    mfSipForm: UseFormReturn<MFSIPFormValues>;
+}
+
+
 
 
 /** page components */
@@ -118,6 +134,7 @@ export interface ServerEditMfSipProps {
     mfSipExternalId: string;
 }
 
+
 /** dashboard components */
 export interface MonthlyOverviewProps {
     totals: {
@@ -127,10 +144,28 @@ export interface MonthlyOverviewProps {
     };
 }
 
-export interface SIPCalenderProps {
+export interface SIPViewProps {
+    mfSipsByDate: {
+        dayOfMonth: number;
+        count: number;
+        sips: MFSIP[];
+    }[];
+    allMfSips: MFSIP[];
+}
+
+export interface ToggleSIPViewProps {
+    sipViewMode: 'calendar' | 'list';
+    setSipViewMode: React.Dispatch<React.SetStateAction<'calendar' | 'list'>>;
+}
+
+export interface SIPCalenderViewProps {
     investments: {
         dayOfMonth: number;
         count: number;
         sips: MFSIP[];
     }[];
+}
+
+export interface SIPListViewProps {
+    investments: MFSIP[];
 }

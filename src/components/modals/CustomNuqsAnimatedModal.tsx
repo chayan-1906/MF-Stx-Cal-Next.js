@@ -1,3 +1,4 @@
+/*
 'use client';
 
 import {Button} from "@/components/ui/button";
@@ -94,3 +95,4 @@ const CustomNuqsAnimatedModal: React.FC<CustomNuqsAnimatedModalProps> = ({
 }
 
 export default CustomNuqsAnimatedModal;
+*/

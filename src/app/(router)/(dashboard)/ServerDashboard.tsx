@@ -8,7 +8,7 @@ import MFSIPTemporary from "@/components/MFSIPTemporary";
 import Logout from "@/components/Logout";
 import DeleteAccount from "@/components/DeleteAccount";
 import {getMFSIPsByDayOfMonth, getMfSipsByToken} from "@/lib/db/mf-sips-storage";
-import SIPCalendar from "@/components/dashboard/SIPCalendar";
+import SIPView from "@/components/dashboard/SIPView";
 
 async function ServerDashboard({isLoggedIn, userId, email}: ServerDashboardProps) {
     console.log('ServerDashboard isLoggedIn:', isLoggedIn);
@@ -17,7 +17,7 @@ async function ServerDashboard({isLoggedIn, userId, email}: ServerDashboardProps
         redirect(routes.loginPath());
     }
 
-    const getMfSipsResponse = await getMfSipsByToken();
+    /*const getMfSipsResponse = await getMfSipsByToken();
     if (!getMfSipsResponse.success) {
         // TODO: Something went wrong - need to copy
 
@@ -38,14 +38,30 @@ async function ServerDashboard({isLoggedIn, userId, email}: ServerDashboardProps
                 Something went wrong - {JSON.stringify(getMfSipsResponse.data)}
             </div>
         )
+    }*/
+
+    const today = new Date();
+
+    const [getMfSipsResponse, getMfSipsByDayOfMonthResponse] = await Promise.all([
+        getMfSipsByToken(),
+        getMFSIPsByDayOfMonth(today.getFullYear(), today.getMonth())
+    ]);
+
+    if (!getMfSipsResponse.success || !getMfSipsByDayOfMonthResponse.success) {
+        return (
+            <div className={'bg-rose-400'}>
+                Something went wrong - {JSON.stringify(!getMfSipsResponse.success ? getMfSipsResponse.data : getMfSipsByDayOfMonthResponse.data)}
+            </div>
+        );
     }
+
 
     return (
         <div className={'flex min-h-screen flex-col items-center justify-center'}>
             <main className={'flex-1 py-6 w-full space-y-4'}>
                 <DashboardHeader userId={userId || null}/>
                 <MonthlyOverview totals={getMfSipsByDayOfMonthResponse.data.totals}/>
-                <SIPCalendar investments={getMfSipsByDayOfMonthResponse.data.mfSips}/>
+                <SIPView mfSipsByDate={getMfSipsByDayOfMonthResponse.data.mfSips} allMfSips={getMfSipsResponse.data.mfSips}/>
             </main>
 
             <div className={'mb-96'}/>
