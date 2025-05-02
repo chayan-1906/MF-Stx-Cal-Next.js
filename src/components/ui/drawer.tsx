@@ -1,38 +1,29 @@
 "use client"
 
 import * as React from "react"
-import { Drawer as DrawerPrimitive } from "vaul"
+import {Drawer as DrawerPrimitive} from "vaul"
 
-import { cn } from "@/lib/utils"
+import {cn} from "@/lib/utils"
+import {XIcon} from "lucide-react";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
 
-function Drawer({
-  ...props
-}: React.ComponentProps<typeof DrawerPrimitive.Root>) {
+function Drawer({...props}: React.ComponentProps<typeof DrawerPrimitive.Root>) {
   return <DrawerPrimitive.Root data-slot="drawer" {...props} />
 }
 
-function DrawerTrigger({
-  ...props
-}: React.ComponentProps<typeof DrawerPrimitive.Trigger>) {
+function DrawerTrigger({...props}: React.ComponentProps<typeof DrawerPrimitive.Trigger>) {
   return <DrawerPrimitive.Trigger data-slot="drawer-trigger" {...props} />
 }
 
-function DrawerPortal({
-  ...props
-}: React.ComponentProps<typeof DrawerPrimitive.Portal>) {
+function DrawerPortal({...props}: React.ComponentProps<typeof DrawerPrimitive.Portal>) {
   return <DrawerPrimitive.Portal data-slot="drawer-portal" {...props} />
 }
 
-function DrawerClose({
-  ...props
-}: React.ComponentProps<typeof DrawerPrimitive.Close>) {
+function DrawerClose({...props}: React.ComponentProps<typeof DrawerPrimitive.Close>) {
   return <DrawerPrimitive.Close data-slot="drawer-close" {...props} />
 }
 
-function DrawerOverlay({
-  className,
-  ...props
-}: React.ComponentProps<typeof DrawerPrimitive.Overlay>) {
+function DrawerOverlay({className, ...props}: React.ComponentProps<typeof DrawerPrimitive.Overlay>) {
   return (
     <DrawerPrimitive.Overlay
       data-slot="drawer-overlay"
@@ -45,11 +36,7 @@ function DrawerOverlay({
   )
 }
 
-function DrawerContent({
-  className,
-  children,
-  ...props
-}: React.ComponentProps<typeof DrawerPrimitive.Content>) {
+function DrawerContent({className, children, onClose, ...props}: React.ComponentProps<typeof DrawerPrimitive.Content> & { onClose: () => void }) {
   return (
     <DrawerPortal data-slot="drawer-portal">
       <DrawerOverlay />
@@ -62,11 +49,16 @@ function DrawerContent({
           "data-[vaul-drawer-direction=right]:inset-y-0 data-[vaul-drawer-direction=right]:right-0 data-[vaul-drawer-direction=right]:w-3/4 data-[vaul-drawer-direction=right]:border-l data-[vaul-drawer-direction=right]:sm:max-w-sm",
           "data-[vaul-drawer-direction=left]:inset-y-0 data-[vaul-drawer-direction=left]:left-0 data-[vaul-drawer-direction=left]:w-3/4 data-[vaul-drawer-direction=left]:border-r data-[vaul-drawer-direction=left]:sm:max-w-sm",
           className
-        )}
-        {...props}
+        )} {...props}
       >
         <div className="bg-muted mx-auto mt-4 hidden h-2 w-[100px] shrink-0 rounded-full group-data-[vaul-drawer-direction=bottom]/drawer-content:block" />
         {children}
+        <DrawerPrimitive.Close
+            className="cursor-pointer hover:scale-110 ring-offset-background data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute top-3 sm:top-6 right-3 sm:right-6 rounded-xs opacity-70 transition-opacity hover:opacity-100 disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+            onClick={onClose}>
+          <XIcon className={'text-text-900'}/>
+          <span className="sr-only">Close</span>
+        </DrawerPrimitive.Close>
       </DrawerPrimitive.Content>
     </DrawerPortal>
   )
@@ -92,10 +84,7 @@ function DrawerFooter({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
-function DrawerTitle({
-  className,
-  ...props
-}: React.ComponentProps<typeof DrawerPrimitive.Title>) {
+function DrawerTitle({className, ...props}: React.ComponentProps<typeof DrawerPrimitive.Title>) {
   return (
     <DrawerPrimitive.Title
       data-slot="drawer-title"
@@ -105,10 +94,7 @@ function DrawerTitle({
   )
 }
 
-function DrawerDescription({
-  className,
-  ...props
-}: React.ComponentProps<typeof DrawerPrimitive.Description>) {
+function DrawerDescription({className, ...props}: React.ComponentProps<typeof DrawerPrimitive.Description>) {
   return (
     <DrawerPrimitive.Description
       data-slot="drawer-description"

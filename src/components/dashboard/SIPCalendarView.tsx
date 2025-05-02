@@ -7,14 +7,14 @@ import {MFSIP} from "@/models/MFSIP";
 import {TbCalendarMonth} from "react-icons/tb";
 import Link from "next/link";
 import routes from "@/lib/routes";
-import {PencilIcon, TrashIcon} from "lucide-react";
-import axios from "axios";
-import {ApiResponse} from "@/types/ApiResponse";
-import apis from "@/lib/apis";
-import {toast} from "react-toastify";
 import {useRouter} from "next/navigation";
 import CategoryBadge from "@/components/CategoryBadge";
 import {Button} from "@/components/ui/button";
+import {MdOutlineModeEditOutline} from "react-icons/md";
+import DeleteMFSIPModal from "@/components/dashboard/modals/DeleteMFSIPModal";
+import {nuqsModalKeys} from "@/lib/modalKeys";
+import {IoMdTrash} from "react-icons/io";
+import {useModal} from "@/components/ui/custom/custom-modal";
 
 function SIPCalendarView({investments}: SIPCalenderViewProps) {
     const [selectedDay, setSelectedDay] = useState<number | null>();
@@ -25,6 +25,8 @@ function SIPCalendarView({investments}: SIPCalenderViewProps) {
     const trClasses = '';
     const tdHeadingClasses = 'pr-2 font-semibold text-text-900 text-sm';
     const tdValueClasses = 'text-primary font-medium text-sm';
+
+    const {openModalId, onOpen, openModalKey, setOpenModalKey} = useModal();
 
     const handleDateSelection = useCallback((day: number, sips: MFSIP[]) => {
         setSelectedDay(day);
@@ -39,20 +41,6 @@ function SIPCalendarView({investments}: SIPCalenderViewProps) {
             }
         }, 0);
     }, []);
-
-    const deleteMfSip = useCallback(async (mfSipId: string | undefined) => {
-        try {
-            const deleteMfSipResponse = (await axios.delete<ApiResponse>(apis.deleteMFSIPByIdApi(mfSipId ?? ''))).data;
-            if (deleteMfSipResponse.success) {
-                toast(deleteMfSipResponse.message, {type: 'success'});
-                router.refresh();
-            } else {
-                toast(deleteMfSipResponse.message, {type: 'error'});
-            }
-        } catch (error) {
-            toast('Something went wrong', {type: 'error'});
-        }
-    }, [router]);
 
     return (
         <div className={'flex flex-col p-6 shadow-lg rounded-lg bg-text-100 gap-4'}>
@@ -96,9 +84,13 @@ function SIPCalendarView({investments}: SIPCalenderViewProps) {
                                         <div className={'flex flex-col items-center gap-2'}>
                                             <div className={'flex gap-2'}>
                                                 <Link href={routes.updateMfSipPath(externalId)}>
-                                                    <PencilIcon size={20} className={'text-text-900 cursor-pointer'}/>
+                                                    <MdOutlineModeEditOutline className={'size-5 text-text-900 cursor-pointer'}/>
                                                 </Link>
-                                                <TrashIcon size={20} className={'text-destructive cursor-pointer'} onClick={() => deleteMfSip(mfSipId)}/>
+                                                <DeleteMFSIPModal mfSipId={mfSipId || ''} openModalKey={nuqsModalKeys.deleteMfFund} selectedSips={selectedSips} setSelectedSips={setSelectedSips}/>
+                                                <IoMdTrash className={'size-5 text-destructive cursor-pointer'} onClick={() => {
+                                                    onOpen(mfSipId);
+                                                    setOpenModalKey(nuqsModalKeys.deleteMfFund);
+                                                }}/>
                                             </div>
                                             <h1 className={'text-secondary font-bold'}>₹{formatNumber(amount)}</h1>
                                         </div>
@@ -138,7 +130,10 @@ function SIPCalendarView({investments}: SIPCalenderViewProps) {
                                             <Link href={routes.updateMfSipPath(externalId)}>
                                                 <Button variant={'secondary'}>Update</Button>
                                             </Link>
-                                            <Button variant={'destructive'} onClick={() => deleteMfSip(mfSipId)}>Delete</Button>
+                                            <Button variant={'destructive'} onClick={() => {
+                                                onOpen(mfSipId);
+                                                setOpenModalKey(nuqsModalKeys.deleteMfFund);
+                                            }}>Delete</Button>
                                         </div>
                                     </div>
                                 </div>

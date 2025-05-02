@@ -7,7 +7,7 @@ import SIPListView from "@/components/dashboard/SIPListView";
 import {SIPViewProps} from "@/types";
 
 function SIPView({mfSipsByDate, allMfSips}: SIPViewProps) {
-    const [sipViewMode, setSipViewMode] = useState<'calendar' | 'list'>('list');
+    const [sipViewMode, setSipViewMode] = useState<'calendar' | 'list'>('calendar');
 
     return (
         <div className={'space-y-4'}>

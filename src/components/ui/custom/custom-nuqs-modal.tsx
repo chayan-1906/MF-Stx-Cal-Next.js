@@ -6,6 +6,8 @@ import {useOutsideClick} from "@/lib/hooks/useOutsideClick";
 import {Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {useModal} from "@/components/ui/custom/custom-modal";
+import {Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle} from "@/components/ui/drawer";
+import {useMediaQuery} from "usehooks-ts";
 
 /*interface ModalContextType {
     openModalId: string | null;
@@ -66,6 +68,7 @@ export const NuqsModal = ({
                               onAction, className, titleClassName,
                           }: NuqsModalProps) => {
     const {openModalId, openModalKey, onClose: onModalClose} = useModal();
+    const isDesktop = useMediaQuery('(min-width: 768px)');
     const modalRef = useRef<HTMLDivElement>(null);
     const isOpen = (!isStringInvalid(id) && !isStringInvalid(openModalId) && id === openModalId) &&
         (!isStringInvalid(modalKey) && !isStringInvalid(openModalKey) && modalKey === openModalKey);
@@ -89,26 +92,50 @@ export const NuqsModal = ({
 
     console.log('inside ModalBody:', {id, openModalId, openModalKey, modalKey});
 
+    if (isDesktop) {
+        return (
+            <Dialog open={isOpen}>
+                <DialogContent className={cn(className, 'max-h-[calc(100vh-4rem)] flex flex-col pt-8')} onClose={handleCloseModal}>
+                    {/** header */}
+                    <DialogHeader>
+                        <DialogTitle className={cn('text-center font-bold text-text-900 text-2xl', titleClassName)}>{title}</DialogTitle>
+                        <DialogDescription className={'text-center font-medium text-text-800'}>{description}</DialogDescription>
+                    </DialogHeader>
+
+                    {/** content */}
+                    <div className={'overflow-y-auto flex-1'}>{children}</div>
+
+                    {/** footer */}
+                    <DialogFooter>
+                        <DialogClose asChild className={showClose ? 'block' : 'hidden'}>
+                            <Button variant={'outline'} onClick={handleCloseModal}>Close</Button>
+                        </DialogClose>
+                        <Button variant={actionButtonVariant} onClick={onAction} className={cn(!isStringInvalid(actionButtonLabel) && onAction ? 'flex' : 'hidden')}>{actionButtonLabel}</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+        );
+    }
+
     return (
-        <Dialog open={isOpen}>
-            <DialogContent className={cn(className, 'max-h-[calc(100vh-4rem)] flex flex-col pt-8')} onClose={handleCloseModal}>
+        <Drawer open={isOpen}>
+            <DrawerContent onClose={handleCloseModal}>
                 {/** header */}
-                <DialogHeader>
-                    <DialogTitle className={cn('text-center font-bold text-text-900 text-2xl', titleClassName)}>{title}</DialogTitle>
-                    <DialogDescription className={'text-center font-medium text-text-800'}>{description}</DialogDescription>
-                </DialogHeader>
+                <DrawerHeader>
+                    <DrawerTitle className={cn('text-center font-bold text-text-900 text-2xl', titleClassName)}>{title}</DrawerTitle>
+                    <DrawerDescription className={'text-center font-medium text-text-800'}>{description}</DrawerDescription>
+                </DrawerHeader>
 
                 {/** content */}
                 <div className={'overflow-y-auto flex-1'}>{children}</div>
 
-                {/** footer */}
-                <DialogFooter>
-                    <DialogClose asChild className={showClose ? 'block' : 'hidden'}>
+                <DrawerFooter>
+                    <DrawerClose asChild className={showClose ? 'block' : 'hidden'}>
                         <Button variant={'outline'} onClick={handleCloseModal}>Close</Button>
-                    </DialogClose>
+                    </DrawerClose>
                     <Button variant={actionButtonVariant} onClick={onAction} className={cn(!isStringInvalid(actionButtonLabel) && onAction ? 'flex' : 'hidden')}>{actionButtonLabel}</Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
+                </DrawerFooter>
+            </DrawerContent>
+        </Drawer>
     );
 }

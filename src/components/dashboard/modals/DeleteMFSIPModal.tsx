@@ -7,7 +7,7 @@ import {toast} from "react-toastify";
 import {useRouter} from "next/navigation";
 import {DeleteMFSIPProps} from "@/types";
 
-function DeleteMFSIPModal({mfSipId, openModalKey: rawOpenModalKey}: DeleteMFSIPProps) {
+function DeleteMFSIPModal({mfSipId, openModalKey: rawOpenModalKey, selectedSips, setSelectedSips}: DeleteMFSIPProps) {
     const {onClose: onDeleteMFSIPModalClose, openModalId, openModalKey} = useModal();
     const router = useRouter();
 
@@ -17,6 +17,11 @@ function DeleteMFSIPModal({mfSipId, openModalKey: rawOpenModalKey}: DeleteMFSIPP
             if (deleteMfSipResponse.success) {
                 toast(deleteMfSipResponse.message, {type: 'success'});
                 router.refresh();
+                setTimeout(() => {
+                    if (selectedSips && setSelectedSips) {
+                        setSelectedSips(selectedSips.filter((sip) => sip.mfSipId !== mfSipId));
+                    }
+                }, 500);
             } else {
                 toast(deleteMfSipResponse.message, {type: 'error'});
             }
@@ -25,7 +30,7 @@ function DeleteMFSIPModal({mfSipId, openModalKey: rawOpenModalKey}: DeleteMFSIPP
         } finally {
             onDeleteMFSIPModalClose();
         }
-    }, [mfSipId, onDeleteMFSIPModalClose, router]);
+    }, [mfSipId, onDeleteMFSIPModalClose, router, selectedSips, setSelectedSips]);
 
     return (
         <Modal id={mfSipId} modalKey={rawOpenModalKey} className={'p-2'} title={'Delete SIP'} description={'Are you sure you want to delete this SIP?'} titleClassName={'text-destructive'}

@@ -5,7 +5,6 @@ import {buttonVariants} from "@/components/ui/button";
 import {MFFund} from "@/models/MFFund";
 import {UseFormReturn} from "react-hook-form";
 import {MFSIPFormValues} from "@/lib/formValidationSchemas";
-import DeleteMFSIPModal from "@/components/dashboard/modals/DeleteMFSIPModal";
 
 /** metadata */
 export interface MetadataProps {
@@ -108,6 +107,8 @@ export interface AddUpdateMFFundProps {
 export interface DeleteMFSIPProps {
     mfSipId: string;
     openModalKey: string | null;
+    selectedSips?: MFSIP[];
+    setSelectedSips?: React.Dispatch<React.SetStateAction<MFSIP[]>>;
 }
 
 

@@ -43,9 +43,9 @@ function SIPListView({investments}: SIPListViewProps) {
                             <TableCell>
                                 <div className={'flex justify-center items-center gap-8'}>
                                     <Link href={routes.updateMfSipPath(externalId)}>
-                                        <MdOutlineModeEditOutline className={'size-5 cursor-pointer'}/>
+                                        <MdOutlineModeEditOutline className={'size-5 text-text-900 cursor-pointer'}/>
                                     </Link>
-                                    <DeleteMFSIPModal mfSipId={mfSipId} openModalKey={nuqsModalKeys.deleteMfFund}/>
+                                    <DeleteMFSIPModal mfSipId={mfSipId || ''} openModalKey={nuqsModalKeys.deleteMfFund}/>
                                     <IoMdTrash className={'size-5 text-destructive cursor-pointer'} onClick={() => {
                                         onOpen(mfSipId);
                                         setOpenModalKey(nuqsModalKeys.deleteMfFund);
