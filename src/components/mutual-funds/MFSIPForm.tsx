@@ -21,9 +21,9 @@ import {LoadingButton} from "../loading-button";
 import routes from "@/lib/routes";
 import {Textarea} from "@/components/ui/textarea";
 import MFFundsSelect from "@/components/MFFundsSelect";
-import {useModal} from "@/components/ui/custom-modal";
+import {useModal} from "@/components/ui/custom/custom-modal";
 import {modalKeys} from "@/lib/modalKeys";
-import AddUpdateMFFundForm from "@/components/mutual-funds/modals/AddUpdateMFFundForm";
+import AddUpdateMFFundModal from "@/components/mutual-funds/modals/AddUpdateMFFundModal";
 
 function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
     const defaultValues = useMemo(() => mfSip
@@ -114,7 +114,7 @@ function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
                 </p>
             </div>
 
-            <AddUpdateMFFundForm userId={userId} openModalKey={openModalKey} mfSipForm={mfSipForm}/>
+            <AddUpdateMFFundModal userId={userId} openModalKey={openModalKey} mfSipForm={mfSipForm}/>
 
             <Form {...mfSipForm}>
                 <form onSubmit={handleSubmit(mfSip ? updateExistingMfSip : createNewMfSip)} className={'relative space-y-5 overflow-auto'}>

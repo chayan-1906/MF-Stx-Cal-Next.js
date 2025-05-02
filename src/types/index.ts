@@ -5,6 +5,7 @@ import {buttonVariants} from "@/components/ui/button";
 import {MFFund} from "@/models/MFFund";
 import {UseFormReturn} from "react-hook-form";
 import {MFSIPFormValues} from "@/lib/formValidationSchemas";
+import DeleteMFSIPModal from "@/components/dashboard/modals/DeleteMFSIPModal";
 
 /** metadata */
 export interface MetadataProps {
@@ -98,10 +99,15 @@ export interface DashboardHeaderProps {
     userId: string | null;
 }
 
-export interface AddUpdateMFFundFormProps {
+export interface AddUpdateMFFundProps {
     userId: string | null;
     openModalKey: string | null;
     mfSipForm: UseFormReturn<MFSIPFormValues>;
+}
+
+export interface DeleteMFSIPProps {
+    mfSipId: string;
+    openModalKey: string | null;
 }
 
 

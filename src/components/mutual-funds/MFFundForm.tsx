@@ -13,7 +13,7 @@ import {Button} from "@/components/ui/button";
 import React, {useEffect} from "react";
 import {LoadingButton} from "@/components/loading-button";
 import {PencilIcon, PlusIcon} from "lucide-react";
-import {useModal} from "@/components/ui/custom-modal";
+import {useModal} from "@/components/ui/custom/custom-modal";
 import {useRouter} from "next/navigation";
 
 function MFFundForm({userId, mfFund, mfSipForm}: MFFundFormProps) {

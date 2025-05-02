@@ -1,14 +1,15 @@
 'use client';
 
 import {cn, isStringInvalid} from "@/lib/utils";
-import React, {createContext, useCallback, useContext, useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useRef} from "react";
 import {useOutsideClick} from "@/lib/hooks/useOutsideClick";
 import {Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
+import {useModal} from "@/components/ui/custom/custom-modal";
 
-interface ModalContextType {
+/*interface ModalContextType {
     openModalId: string | null;
-    onOpen: (eventId?: string) => void;
+    onOpen: (id?: string) => void;
     onClose: () => void;
     openModalKey: string | null;
     setOpenModalKey: (key: string | null) => void;
@@ -32,7 +33,7 @@ export function ModalProvider({children}: ModalProviderProps) {
     const [openModalId, setOpenModalId] = useState<string | null>(null);
     const [openModalKey, setOpenModalKey] = useState<string | null>(null);
 
-    const onOpen = (eventId: string | null = null) => setOpenModalId(eventId);
+    const onOpen = (id: string | null = null) => setOpenModalId(id);
     const onClose = () => {
         setOpenModalId(null);
         setOpenModalKey(null);
@@ -43,23 +44,31 @@ export function ModalProvider({children}: ModalProviderProps) {
             {children}
         </ModalContext.Provider>
     );
-}
+}*/
 
-interface ModalBodyProps {
+interface NuqsModalProps {
     id?: string;
     modalKey: string | null;
     title?: string;
     description?: string;
     children: React.ReactNode;
-    showClose: boolean;
+    showClose?: boolean;
     onCloseAction?: () => void;
+    actionButtonLabel?: string;
+    actionButtonVariant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+    onAction?: () => Promise<void>;
     className?: string;
+    titleClassName?: string;
 }
 
-export const Modal = ({id, modalKey, title, description, children, showClose = true, onCloseAction, className}: ModalBodyProps) => {
+export const NuqsModal = ({
+                              id, modalKey, title, description, children, showClose = true, onCloseAction, actionButtonLabel, actionButtonVariant,
+                              onAction, className, titleClassName,
+                          }: NuqsModalProps) => {
     const {openModalId, openModalKey, onClose: onModalClose} = useModal();
     const modalRef = useRef<HTMLDivElement>(null);
-    const isOpen = !isStringInvalid(modalKey) && !isStringInvalid(openModalKey) && modalKey === openModalKey;
+    const isOpen = (!isStringInvalid(id) && !isStringInvalid(openModalId) && id === openModalId) &&
+        (!isStringInvalid(modalKey) && !isStringInvalid(openModalKey) && modalKey === openModalKey);
 
     useEffect(() => {
         if (openModalId) {
@@ -82,11 +91,11 @@ export const Modal = ({id, modalKey, title, description, children, showClose = t
 
     return (
         <Dialog open={isOpen}>
-            <DialogContent className={cn(className, 'max-h-[calc(100vh-4rem)] flex flex-col')} onClose={handleCloseModal}>
+            <DialogContent className={cn(className, 'max-h-[calc(100vh-4rem)] flex flex-col pt-8')} onClose={handleCloseModal}>
                 {/** header */}
                 <DialogHeader>
-                    <DialogTitle>{title}</DialogTitle>
-                    <DialogDescription>{description}</DialogDescription>
+                    <DialogTitle className={cn('text-center font-bold text-text-900 text-2xl', titleClassName)}>{title}</DialogTitle>
+                    <DialogDescription className={'text-center font-medium text-text-800'}>{description}</DialogDescription>
                 </DialogHeader>
 
                 {/** content */}
@@ -95,71 +104,11 @@ export const Modal = ({id, modalKey, title, description, children, showClose = t
                 {/** footer */}
                 <DialogFooter>
                     <DialogClose asChild className={showClose ? 'block' : 'hidden'}>
-                        <Button onClick={handleCloseModal}>Close</Button>
+                        <Button variant={'outline'} onClick={handleCloseModal}>Close</Button>
                     </DialogClose>
+                    <Button variant={actionButtonVariant} onClick={onAction} className={cn(!isStringInvalid(actionButtonLabel) && onAction ? 'flex' : 'hidden')}>{actionButtonLabel}</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
     );
 }
-
-/*
-interface ModalContentProps {
-    children: React.ReactNode;
-    className?: string;
-}
-
-export const ModalContent = ({children, className}: ModalContentProps) => (
-    <div className={cn('flex flex-col flex-1 p-8 md:p-10', className)}>{children}</div>
-);
-
-interface ModalFooterProps {
-    children: React.ReactNode;
-    className?: string;
-}
-
-export const ModalFooter = ({children, className}: ModalFooterProps) => (
-    <div className={cn('flex justify-end', className)}>{children}</div>
-);
-
-interface OverlayProps {
-    className?: string;
-}
-
-export const Overlay = ({className}: OverlayProps) => (
-    <motion.div
-        initial={{opacity: 0}}
-        animate={{opacity: 1, backdropFilter: 'blur(12px)'}}
-        exit={{opacity: 0, backdropFilter: 'blur(0px)'}}
-        className={`fixed inset-0 h-full w-full bg-black/20 z-50 ${className || ''}`}
-    />
-);
-
-const CloseIcon = () => {
-    const {onClose} = useModal();
-
-    return (
-        <button
-            onClick={onClose}
-            className="absolute top-6 sm:top-8 right-6 sm:right-8 group"
-        >
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="h-4 w-4 group-hover:scale-125 group-hover:rotate-3 transition duration-200"
-            >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                <path d="M18 6l-12 12"/>
-                <path d="M6 6l12 12"/>
-            </svg>
-        </button>
-    );
-}
-*/

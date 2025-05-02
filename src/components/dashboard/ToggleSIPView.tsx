@@ -16,7 +16,7 @@ function ToggleSIPView({sipViewMode, setSipViewMode}: ToggleSIPViewProps) {
     }, [setSipViewMode]);
 
     return (
-        <div className={'flex items-center p-6 gap-6 shadow-lg rounded-lg bg-text-100'}>
+        <div className={'flex items-center p-6 gap-1 shadow-lg rounded-lg bg-text-100'}>
             <div className={cn(commonClasses, sipViewMode === 'calendar' && 'bg-primary', !isDarkMode && sipViewMode !== 'calendar' && 'text-text-900')} onClick={() => toggleViewMode('calendar')}>
                 <FiCalendar className={'size-5'}/>
                 <span>Calendar View</span>

@@ -50,10 +50,6 @@ const MFFundSchema: Schema<MFFund> = new Schema({
         type: String,
         required: [true, 'Folio no is required'],
         trim: true,
-        validate: {
-            validator: (value: string) => /^[A-Za-z0-9/-]{8,20}$/.test(value),
-            message: 'Invalid folio number format',
-        },
     },
     notes: {
         type: String,

@@ -5,6 +5,7 @@ const modalKeys = {
 
 const nuqsModalKeys = {
     addUpdateMFSIP: 'add-update-mfsip',
+    deleteMfFund: 'delete-mffund',
 }
 
 export {modalKeys, nuqsModalKeys};
