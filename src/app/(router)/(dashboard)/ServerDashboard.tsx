@@ -55,7 +55,6 @@ async function ServerDashboard({isLoggedIn, userId, email}: ServerDashboardProps
         );
     }
 
-
     return (
         <div className={'flex min-h-screen flex-col items-center justify-center'}>
             <main className={'flex-1 py-6 w-full space-y-4'}>
@@ -64,15 +63,7 @@ async function ServerDashboard({isLoggedIn, userId, email}: ServerDashboardProps
                 <SIPView mfSipsByDate={getMfSipsByDayOfMonthResponse.data.mfSips} allMfSips={getMfSipsResponse.data.mfSips}/>
             </main>
 
-            <div className={'mb-96'}/>
-            <div className={'mb-96'}/>
-            {/*<MFSIP userId={user.id} mfSips={getMfSipsResponse.data.mfSips}/>*/}
-            <MFSIPTemporary userId={userId ?? ''} mfSips={getMfSipsResponse.data.mfSips}/>
-
-            {/*<MFStxCalDashboard/>*/}
-
-            <Logout/>
-            <DeleteAccount/>
+            {/*<DeleteAccount/>*/}
         </div>
     );
 }

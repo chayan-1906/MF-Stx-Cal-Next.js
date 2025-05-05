@@ -45,9 +45,9 @@ function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
 
     const {onOpen: onAddFundModalOpen, openModalKey, setOpenModalKey} = useModal();
 
-    const cardWrapperClassNames = 'h-fit rounded-xl overflow-hidden shadow-lg border-3 border-primary-600';
-    const cardHeaderClassNames = 'bg-card-header uppercase font-semibold text-sm sm:text-base p-4 text-primary-foreground';
-    const cardBgClassNames = 'bg-card p-6 space-y-5';
+    const cardWrapperClassNames = 'rounded-xl overflow-hidden shadow-lg border-3 border-primary-600 flex-1';
+    const cardHeaderClassNames = 'bg-card-header uppercase font-semibold text-sm sm:text-base p-4 text-primary-foreground rounded-t-xl';
+    const cardBgClassNames = 'h-full bg-background/40 p-6 space-y-5 rounded-b-xl';
 
     const createNewMfSip = async () => {
         console.log('createNewMfSip:', mfSipForm.getValues());
@@ -120,9 +120,9 @@ function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
                 <form onSubmit={handleSubmit(mfSip ? updateExistingMfSip : createNewMfSip)} className={'relative space-y-5 overflow-auto'}>
 
                     {/** cards */}
-                    <div className={'flex flex-col md:flex-row gap-5'}>
+                    <div className={'flex flex-col gap-5'}>
                         {/** Card 1: Fund Details */}
-                        <div className={cn(cardWrapperClassNames, 'flex-1')}>
+                        <div className={cn(cardWrapperClassNames, 'flex-1 overflow-visible')}>
                             <div className={cardHeaderClassNames}>
                                 <div className={'flex items-center gap-2 text-primary-foreground'}>
                                     <FileText className={'size-4 sm:size-5'}/>
@@ -165,100 +165,102 @@ function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
                                     }}>Add Fund</Button>
                                 </div>
 
-                                {/** userId */}
-                                <FormField control={mfSipForm.control} name={'userId'} render={({field}) => (
-                                    <FormItem className={''}>
-                                        <FormLabel htmlFor={field.name} className={''}>UserId *</FormLabel>
-                                        <FormControl>
-                                            <Input {...field} id={field.name} value={field.value ?? ''} type={'text'} disabled placeholder={'UserId...'}
-                                                   className={''} onChange={(e) => field.onChange(e)}/>
-                                        </FormControl>
-                                        <FormMessage/>
-                                    </FormItem>
-                                )}/>
+                                <div className={'hidden'}>
+                                    {/** userId */}
+                                    <FormField control={mfSipForm.control} name={'userId'} render={({field}) => (
+                                        <FormItem className={''}>
+                                            <FormLabel htmlFor={field.name} className={''}>UserId *</FormLabel>
+                                            <FormControl>
+                                                <Input {...field} id={field.name} value={field.value ?? ''} type={'text'} disabled placeholder={'UserId...'}
+                                                       className={''} onChange={(e) => field.onChange(e)}/>
+                                            </FormControl>
+                                            <FormMessage/>
+                                        </FormItem>
+                                    )}/>
 
-                                {/** sipId */}
-                                <FormField control={mfSipForm.control} name={'mfSipId'} render={({field}) => (
-                                    <FormItem className={cn('', mfSip ? 'block' : 'hidden')}>
-                                        <FormLabel htmlFor={field.name} className={''}>MfSipId *</FormLabel>
-                                        <FormControl>
-                                            <Input {...field} id={field.name} value={field.value ?? ''} type={'text'} disabled placeholder={'MfSipId...'}
-                                                   className={''} onChange={(e) => field.onChange(e)}/>
-                                        </FormControl>
-                                        <FormMessage/>
-                                    </FormItem>
-                                )}/>
+                                    {/** sipId */}
+                                    <FormField control={mfSipForm.control} name={'mfSipId'} render={({field}) => (
+                                        <FormItem className={cn('', mfSip ? 'block' : 'hidden')}>
+                                            <FormLabel htmlFor={field.name} className={''}>MfSipId *</FormLabel>
+                                            <FormControl>
+                                                <Input {...field} id={field.name} value={field.value ?? ''} type={'text'} disabled placeholder={'MfSipId...'}
+                                                       className={''} onChange={(e) => field.onChange(e)}/>
+                                            </FormControl>
+                                            <FormMessage/>
+                                        </FormItem>
+                                    )}/>
 
-                                {/** fund name */}
-                                <FormField control={mfSipForm.control} name={'fundName'} render={({field}) => (
-                                    <FormItem>
-                                        <FormLabel htmlFor={field.name} className={''}>Fund name *</FormLabel>
-                                        <FormControl>
-                                            <Input {...field} id={field.name} value={field.value ?? ''} type={'text'} disabled placeholder={'Mirae Asset Mutual Fund'} className={'uppercase'}
-                                                   onChange={(e) => field.onChange(e)}/>
-                                        </FormControl>
-                                        <FormMessage/>
-                                    </FormItem>
-                                )}/>
+                                    {/** fund name */}
+                                    <FormField control={mfSipForm.control} name={'fundName'} render={({field}) => (
+                                        <FormItem>
+                                            <FormLabel htmlFor={field.name} className={''}>Fund name *</FormLabel>
+                                            <FormControl>
+                                                <Input {...field} id={field.name} value={field.value ?? ''} type={'text'} disabled placeholder={'Mirae Asset Mutual Fund'} className={'uppercase'}
+                                                       onChange={(e) => field.onChange(e)}/>
+                                            </FormControl>
+                                            <FormMessage/>
+                                        </FormItem>
+                                    )}/>
 
-                                {/** fund code */}
-                                <FormField control={mfSipForm.control} name={'fundCode'} render={({field}) => (
-                                    <FormItem>
-                                        <FormLabel htmlFor={field.name} className={''}>Fund code (Optional)</FormLabel>
-                                        <FormControl>
-                                            <Input {...field} id={field.name} value={field.value ?? ''} type={'text'} disabled placeholder={'INF769K01GU0'} className={'uppercase'}
-                                                   onChange={(e) => field.onChange(e)}/>
-                                        </FormControl>
-                                        <FormMessage/>
-                                    </FormItem>
-                                )}/>
+                                    {/** fund code */}
+                                    <FormField control={mfSipForm.control} name={'fundCode'} render={({field}) => (
+                                        <FormItem>
+                                            <FormLabel htmlFor={field.name} className={''}>Fund code (Optional)</FormLabel>
+                                            <FormControl>
+                                                <Input {...field} id={field.name} value={field.value ?? ''} type={'text'} disabled placeholder={'INF769K01GU0'} className={'uppercase'}
+                                                       onChange={(e) => field.onChange(e)}/>
+                                            </FormControl>
+                                            <FormMessage/>
+                                        </FormItem>
+                                    )}/>
 
-                                {/** scheme name */}
-                                <FormField control={mfSipForm.control} name={'schemeName'} render={({field}) => (
-                                    <FormItem>
-                                        <FormLabel htmlFor={field.name} className={''}>Scheme name *</FormLabel>
-                                        <FormControl>
-                                            <Input {...field} id={field.name} value={field.value ?? ''} type={'text'} disabled placeholder={'Mirae Asset Large Cap Fund - Direct Plan - Growth'}
-                                                   className={'capitalize'} onChange={(e) => field.onChange(e)}/>
-                                        </FormControl>
-                                        <FormMessage/>
-                                    </FormItem>
-                                )}/>
+                                    {/** scheme name */}
+                                    <FormField control={mfSipForm.control} name={'schemeName'} render={({field}) => (
+                                        <FormItem>
+                                            <FormLabel htmlFor={field.name} className={''}>Scheme name *</FormLabel>
+                                            <FormControl>
+                                                <Input {...field} id={field.name} value={field.value ?? ''} type={'text'} disabled placeholder={'Mirae Asset Large Cap Fund - Direct Plan - Growth'}
+                                                       className={'capitalize'} onChange={(e) => field.onChange(e)}/>
+                                            </FormControl>
+                                            <FormMessage/>
+                                        </FormItem>
+                                    )}/>
 
-                                {/** folio no */}
-                                <FormField control={mfSipForm.control} name={'folioNo'} render={({field}) => (
-                                    <FormItem>
-                                        <FormLabel htmlFor={field.name} className={''}>Folio no *</FormLabel>
-                                        <FormControl>
-                                            <Input {...field} id={field.name} value={field.value ?? ''} disabled placeholder={'79943003995'}
-                                                   className={''} onChange={(e) => field.onChange(e)} onWheel={(e) => e.currentTarget.blur()}/>
-                                        </FormControl>
-                                        <FormMessage/>
-                                    </FormItem>
-                                )}/>
+                                    {/** folio no */}
+                                    <FormField control={mfSipForm.control} name={'folioNo'} render={({field}) => (
+                                        <FormItem>
+                                            <FormLabel htmlFor={field.name} className={''}>Folio no *</FormLabel>
+                                            <FormControl>
+                                                <Input {...field} id={field.name} value={field.value ?? ''} disabled placeholder={'79943003995'}
+                                                       className={''} onChange={(e) => field.onChange(e)} onWheel={(e) => e.currentTarget.blur()}/>
+                                            </FormControl>
+                                            <FormMessage/>
+                                        </FormItem>
+                                    )}/>
 
-                                {/** category */}
-                                <FormField control={mfSipForm.control} name={'category'} render={({field}) => (
-                                    <FormItem>
-                                        <FormLabel htmlFor={field.name} className={''}>Category *</FormLabel>
-                                        <FormControl>
-                                            <div className={'flex flex-wrap gap-4'}>
-                                                {['equity', 'debt', 'liquid'].map(category => (
-                                                    <Button key={category} type={'button'} disabled onClick={() => field.onChange(category)}
-                                                            className={cn('flex flex-1 justify-center items-center capitalize bg-transparent border border-input text-text-900', field.value === category && 'bg-primary border-none text-primary-foreground')}>
-                                                        {category}
-                                                    </Button>
-                                                ))}
-                                            </div>
-                                        </FormControl>
-                                        <FormMessage/>
-                                    </FormItem>
-                                )}/>
+                                    {/** category */}
+                                    <FormField control={mfSipForm.control} name={'category'} render={({field}) => (
+                                        <FormItem>
+                                            <FormLabel htmlFor={field.name} className={''}>Category *</FormLabel>
+                                            <FormControl>
+                                                <div className={'flex flex-wrap gap-4'}>
+                                                    {['equity', 'debt', 'liquid'].map(category => (
+                                                        <Button key={category} type={'button'} disabled onClick={() => field.onChange(category)}
+                                                                className={cn('flex flex-1 justify-center items-center capitalize bg-transparent border border-input text-text-900', field.value === category && 'bg-primary border-none text-primary-foreground')}>
+                                                            {category}
+                                                        </Button>
+                                                    ))}
+                                                </div>
+                                            </FormControl>
+                                            <FormMessage/>
+                                        </FormItem>
+                                    )}/>
+                                </div>
                             </div>
                         </div>
 
                         {/** Card 2: Amount & Schedule & Card 3: Dates & Notes */}
-                        <div className={'flex flex-col flex-1 gap-4'}>
+                        <div className={'flex flex-col md:flex-row flex-1 gap-4'}>
                             {/** Card 2: Amount & Schedule */}
                             <div className={cardWrapperClassNames}>
                                 <div className={cardHeaderClassNames}>

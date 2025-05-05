@@ -18,19 +18,19 @@ function SIPListView({investments}: SIPListViewProps) {
         <div className={'flex flex-col p-6 shadow-lg rounded-lg bg-text-100 gap-4'}>
             <Table className={''}>
                 <TableHeader className={''}>
-                    <TableRow className={'uppercase'}>
-                        <TableHead className={'bg-accent-600'}>Scheme Name</TableHead>
-                        <TableHead className={cn('bg-teal-400', 'hidden sm:flex items-center')}>Folio No</TableHead>
-                        <TableHead className={'bg-purple-800'}>Amount</TableHead>
-                        <TableHead className={' bg-rose-700'}>Day</TableHead>
-                        <TableHead className={cn(' bg-slate-600', 'hidden sm:flex items-center')}>Status</TableHead>
-                        <TableHead className={' bg-emerald-500 text-center'}>Actions</TableHead>
+                    <TableRow className={'uppercase text-text-900'}>
+                        <TableHead className={'font-bold'}>Scheme Name</TableHead>
+                        <TableHead className={cn('font-bold', 'hidden sm:flex items-center')}>Folio No</TableHead>
+                        <TableHead className={'font-bold'}>Amount</TableHead>
+                        <TableHead className={'font-bold'}>Day</TableHead>
+                        <TableHead className={cn('font-bold', 'hidden sm:flex items-center')}>Status</TableHead>
+                        <TableHead className={'font-bold text-center'}>Actions</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                     {investments.map(({mfFundId, mfSipId, externalId, fundName, schemeName, folioNo, amount, dayOfMonth, active, category}, index) => (
-                        <TableRow key={index} className={'text-text-900 hover:bg-card hover:text-text-900'}>
-                            <TableCell>{mfSipId}</TableCell>
+                        <TableRow key={index} className={cn('text-text-900 hover:bg-card hover:text-text-900 border-0', index % 2 === 0 ? 'bg-text-200' : '')}>
+                            {/*<TableCell>{mfSipId}</TableCell>*/}
                             <TableCell className={'font-medium'}>{schemeName}</TableCell>
                             <TableCell className={'hidden sm:table-cell'}>{folioNo}</TableCell>
                             <TableCell>₹{amount}</TableCell>

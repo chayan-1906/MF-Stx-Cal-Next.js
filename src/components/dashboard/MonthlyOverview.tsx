@@ -37,7 +37,7 @@ function MonthlyOverview({totals}: MonthlyOverviewProps) {
             <div className={'flex flex-wrap justify-between items-center gap-2'}>
                 <h1 className={'text-base md:text-lg lg:text-2xl font-semibold text-text-900'}>Monthly Overview</h1>
 
-                <div className={'relative w-32 md:w-44'} onClick={handleContainerClick}>
+                {/*<div className={'relative w-32 md:w-44'} onClick={handleContainerClick}>
                     <Input ref={inputRef} type={'month'} value={displayValue} onChange={handleChange} className={'absolute inset-0 w-full h-full opacity-0 cursor-pointer'}/>
 
                     <div className={'w-full px-2 md:px-3 py-1 md:py-2 border border-input rounded-lg shadow-sm hover:shadow-md transition-all cursor-pointer'}>
@@ -46,7 +46,7 @@ function MonthlyOverview({totals}: MonthlyOverviewProps) {
                           <IoMdArrowDropdown className={'text-lg md:text-2xl'}/>
                         </span>
                     </div>
-                </div>
+                </div>*/}
             </div>
 
             {/** total invested */}
@@ -55,14 +55,12 @@ function MonthlyOverview({totals}: MonthlyOverviewProps) {
                     <div className={'flex flex-col'}>
                         <h1 className={'text-sm md:text-base text-purple-500 md:text-red-600'}>Total Invested</h1>
                         <h1 className={'text-lg md:text-xl font-bold'}>₹{totals.amountPaidThisMonth}</h1>
-                        <h1 className={'text-xs text-rose-400 font-bold'}>SIP: TODO</h1>
                     </div>
 
                     <div className={'flex flex-col items-end justify-center gap-2'}>
                         <div className={'border rounded-full p-2'}>
                             <MdOutlineWallet className={'text-lg md:text-2xl'}/>
                         </div>
-                        <h1 className={'text-xs text-rose-400 font-bold'}>Lumpsum: TODO</h1>
                     </div>
                 </div>
             </div>
@@ -94,10 +92,6 @@ function MonthlyOverview({totals}: MonthlyOverviewProps) {
                     <div className={'flex flex-col'}>
                         <h1 className={'text-sm md:text-base text-purple-500 md:text-red-600'}>Pending Amount</h1>
                         <h1 className={'text-lg md:text-xl font-bold'}>₹{totals.amountRemainingThisMonth}</h1>
-                        <div className={'flex flex-wrap gap-1 text-xs text-rose-400 font-bold'}>
-                            <span>View upcoming SIPs: TODO</span>
-                            <TbArrowUpRight className={'text-lg md:text-2xl'}/>
-                        </div>
                     </div>
 
                     <div className={'flex flex-col items-end justify-center gap-2'}>

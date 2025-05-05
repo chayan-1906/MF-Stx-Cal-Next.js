@@ -1,8 +1,11 @@
 'use client';
 
 import {useTheme} from "next-themes";
-import {Moon, Sun} from "lucide-react";
-import {Button} from "@/components/ui/button";
+import {Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {capitalize} from "@/lib/utils";
+import {MdComputer} from "react-icons/md";
+import {TiWeatherSunny} from "react-icons/ti";
+import {AiOutlineMoon} from "react-icons/ai";
 
 function ThemeSwitcher() {
     const {theme, setTheme} = useTheme();
@@ -13,15 +16,25 @@ function ThemeSwitcher() {
 
     return (
         <div className={'flex items-center'}>
-            <h1>{theme}</h1>
-            <Button variant={'ghost'} onClick={toggleLightDark}>
-                {theme === 'dark' ? (
-                    <span className="flex items-center gap-3"><Sun/> Light Mode</span>
-                ) : (
-                    <span className="flex items-center gap-3"><Moon/> Dark Mode</span>
-                )}
-            </Button>
-            <Button variant={'default'} onClick={() => setTheme('system')}>Use System Theme</Button>
+            <Select value={theme} onValueChange={(key) => setTheme(key)}>
+                <SelectTrigger className={'w-32 text-text-900'}>
+                    <SelectValue placeholder={capitalize(theme)}/>
+                </SelectTrigger>
+                <SelectContent className={'bg-background'}>
+                    <SelectGroup>
+                        <SelectLabel>Theme</SelectLabel>
+                        <SelectSeparator/>
+                        <SelectItem value={'system'}>
+                            <MdComputer className={'text-text-900 group-hover:text-primary-foreground'}/> System
+                        </SelectItem>
+                        <SelectItem value={'light'}>
+                            <TiWeatherSunny className={'text-text-900 group-hover:text-primary-foreground'}/> Light
+                        </SelectItem>
+                        <SelectItem value={'dark'}>
+                            <AiOutlineMoon className={'text-text-900 group-hover:text-primary-foreground'}/> Dark</SelectItem>
+                    </SelectGroup>
+                </SelectContent>
+            </Select>
         </div>
     );
 }

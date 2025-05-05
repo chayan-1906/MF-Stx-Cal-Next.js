@@ -18,7 +18,8 @@ export const reactSelectStyles = ({isDark}: ThemeStyles): StylesConfig<ReactSele
         ...provided,
         backgroundColor: isDark ? '#343962' : '#C7D2FE',
         border: `1px solid ${isDark ? '#A5AAF9' : '#818CF8'}`,
-        zIndex: 1,
+        position: 'absolute',
+        zIndex: 9999,
     }),
     singleValue: (provided) => ({
         ...provided,

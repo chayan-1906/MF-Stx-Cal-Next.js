@@ -16,13 +16,13 @@ function ToggleSIPView({sipViewMode, setSipViewMode}: ToggleSIPViewProps) {
     }, [setSipViewMode]);
 
     return (
-        <div className={'flex items-center p-6 gap-1 shadow-lg rounded-lg bg-text-100'}>
-            <div className={cn(commonClasses, sipViewMode === 'calendar' && 'bg-primary', !isDarkMode && sipViewMode !== 'calendar' && 'text-text-900')} onClick={() => toggleViewMode('calendar')}>
+        <div className={'flex items-center p-6 gap-1 shadow-lg rounded-lg bg-text-100 select-none'}>
+            <div className={cn(commonClasses, sipViewMode === 'calendar' && 'bg-accent', !isDarkMode && sipViewMode !== 'calendar' && 'text-text-900')} onClick={() => toggleViewMode('calendar')}>
                 <FiCalendar className={'size-5'}/>
                 <span>Calendar View</span>
             </div>
 
-            <div className={cn(commonClasses, sipViewMode === 'list' && 'bg-primary', !isDarkMode && sipViewMode !== 'list' && 'text-text-900')} onClick={() => toggleViewMode('list')}>
+            <div className={cn(commonClasses, sipViewMode === 'list' && 'bg-accent', !isDarkMode && sipViewMode !== 'list' && 'text-text-900')} onClick={() => toggleViewMode('list')}>
                 <CiFilter className={'size-6'}/>
                 <span>List View</span>
             </div>

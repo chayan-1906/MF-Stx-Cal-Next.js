@@ -47,12 +47,12 @@ function SIPCalendarView({investments}: SIPCalenderViewProps) {
             <h1 className={'text-base md:text-lg lg:text-2xl font-semibold text-text-900'}>SIP Calendar</h1>
 
             {/** calendar view */}
-            <div className={'grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7 gap-4 select-none'}>
+            <div className={'grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 lg:grid-cols-10 gap-4 select-none'}>
                 {investments.map(({dayOfMonth, count, sips}) => (
                     <div key={dayOfMonth} onClick={() => handleDateSelection(dayOfMonth, sips)}
-                         className={cn('flex flex-col justify-center items-center h-20 p-4 gap-2 rounded-lg bg-text-200 cursor-pointer hover:bg-text-300 hover:transition-all hover:duration-300', selectedDay === dayOfMonth && 'bg-text-300')}>
+                         className={cn('relative flex flex-col justify-center items-center min-h-20 p-4 gap-2 rounded-lg bg-text-200 cursor-pointer hover:bg-text-300 hover:transition-all hover:duration-300', selectedDay === dayOfMonth && 'bg-text-300')}>
                         <h1 className={'text-text-900'}>{dayOfMonth}</h1>
-                        <p className={cn('px-2 py-1 rounded-full bg-secondary text-foreground text-xs', count === 0 && 'hidden')}>{count}</p>
+                        <p className={cn('absolute top-2 left-2 px-2 py-1 rounded-full bg-secondary text-xs font-bold', count === 0 && 'hidden')}>{count}</p>
                     </div>
                 ))}
             </div>
