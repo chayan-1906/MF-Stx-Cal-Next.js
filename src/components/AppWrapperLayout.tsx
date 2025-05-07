@@ -6,7 +6,7 @@ import {getIsLoggedIn} from "@/app/actions";
 import {isStringInvalid} from "@/lib/utils";
 
 async function AppWrapperLayout({children, className}: AppWrapperLayoutProps) {
-    const {userId, email} = await getUserDetailsFromToken();
+    const {userId, email, name, picture} = await getUserDetailsFromToken();
     const isLoggedIn = await getIsLoggedIn(userId, email);
 
     /*if (!isLoggedIn) {
@@ -17,7 +17,7 @@ async function AppWrapperLayout({children, className}: AppWrapperLayoutProps) {
         <div className={'flex flex-col min-h-screen overflow-x-hidden px-6 md:px-20 mx-auto '}>
             {isLoggedIn && (
                 <header>
-                    <Navbar isLoggedIn={isLoggedIn}/>
+                    <Navbar isLoggedIn={isLoggedIn} name={name} picture={picture}/>
                 </header>
             )}
             <main className={'mt-24'}>

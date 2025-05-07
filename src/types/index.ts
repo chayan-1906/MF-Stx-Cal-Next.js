@@ -4,7 +4,8 @@ import type {VariantProps} from "class-variance-authority";
 import {buttonVariants} from "@/components/ui/button";
 import {MFFund} from "@/models/MFFund";
 import {UseFormReturn} from "react-hook-form";
-import {MFSIPFormValues} from "@/lib/formValidationSchemas";
+import {MFLumpsumFormValues, MFSIPFormValues} from "@/lib/formValidationSchemas";
+import {MFLumpsum} from "@/models/MFLumpsum";
 
 /** metadata */
 export interface MetadataProps {
@@ -69,6 +70,8 @@ export interface NavbarProps {
     // userId: string | undefined;
     // email: string | undefined;
     isLoggedIn: boolean;
+    name: string;
+    picture: string;
 }
 
 export interface ReactSelectOptionType {
@@ -86,12 +89,18 @@ export interface MFFundsSelectProps {
 export interface MFFundFormProps {
     userId: string | null;
     mfFund?: MFFund | null;
-    mfSipForm: UseFormReturn<MFSIPFormValues>;
+    mfSipForm?: UseFormReturn<MFSIPFormValues>;
+    mfLumpsumForm?: UseFormReturn<MFLumpsumFormValues>;
 }
 
 export interface MFSIPFormProps {
     userId: string;
     mfSip?: MFSIP | null;
+}
+
+export interface MFLumpsumFormProps {
+    userId: string;
+    mfLumpsum?: MFLumpsum | null;
 }
 
 export interface DashboardHeaderProps {
@@ -101,7 +110,8 @@ export interface DashboardHeaderProps {
 export interface AddUpdateMFFundProps {
     userId: string | null;
     openModalKey: string | null;
-    mfSipForm: UseFormReturn<MFSIPFormValues>;
+    mfSipForm?: UseFormReturn<MFSIPFormValues>;
+    mfLumpsumForm?: UseFormReturn<MFLumpsumFormValues>;
 }
 
 export interface DeleteMFSIPProps {
@@ -144,11 +154,12 @@ export interface ServerEditMfSipProps {
 
 /** dashboard components */
 export interface MonthlyOverviewProps {
-    totals: {
+    sipTotals: {
         totalActiveSipAmount: number;
         amountPaidThisMonth: number;
         amountRemainingThisMonth: number;
     };
+    lumpsums: MFLumpsum[];
 }
 
 export interface SIPViewProps {

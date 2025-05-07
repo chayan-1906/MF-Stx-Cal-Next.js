@@ -10,13 +10,13 @@ import {toast} from "react-toastify";
 import {Input} from "@/components/ui/input";
 import {capitalizeFirst, cn} from "@/lib/utils";
 import {Button} from "@/components/ui/button";
-import React, {useEffect} from "react";
+import React from "react";
 import {LoadingButton} from "@/components/loading-button";
 import {PencilIcon, PlusIcon} from "lucide-react";
 import {useModal} from "@/components/ui/custom/custom-modal";
 import {useRouter} from "next/navigation";
 
-function MFFundForm({userId, mfFund, mfSipForm}: MFFundFormProps) {
+function MFFundForm({userId, mfFund, mfSipForm, mfLumpsumForm}: MFFundFormProps) {
     const defaultValues: Partial<MFFundFormValues> = {userId: userId || ''};
     const mfFundForm = useForm<MFFundFormValues>({
         resolver: zodResolver(mfFundSchema),
@@ -45,7 +45,11 @@ function MFFundForm({userId, mfFund, mfSipForm}: MFFundFormProps) {
                 reset();
                 router.refresh();
                 onClose();
-                mfSipForm.setValue('mfFundId', addMfFundApiResponse.data.mfFundId);
+                if (mfSipForm) {
+                    mfSipForm.setValue('mfFundId', addMfFundApiResponse.data.mfFundId);
+                } else if (mfLumpsumForm) {
+                    mfLumpsumForm.setValue('mfFundId', addMfFundApiResponse.data.mfFundId);
+                }
             } else {
                 toast(addMfFundApiResponse.message, {type: 'error'});
             }

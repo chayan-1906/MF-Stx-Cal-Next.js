@@ -15,13 +15,13 @@ function DashboardHeader({userId}: DashboardHeaderProps) {
                 {/*<Button variant={'outline'} onClick={() => (onOpen(''), setOpenModalKey(modalKeys.addUpdateMFSIP))}>*/}
                 <Button variant={'outline'} asChild>
                     <Link href={routes.addMfSipPath()}>
-                        <PlusCircle/>
-                        Add SIP
+                        <PlusCircle/> Add SIP
                     </Link>
                 </Button>
-                <Button>
-                    <PlusCircle/>
-                    Add Lumpsum
+                <Button asChild>
+                    <Link href={routes.addMfLumpsumPath()}>
+                        <PlusCircle/> Add Lumpsum
+                    </Link>
                 </Button>
             </div>
         </div>

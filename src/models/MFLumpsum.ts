@@ -3,6 +3,7 @@ import crypto from 'crypto';
 
 export interface MFLumpsum extends Document {
     userId: mongoose.Schema.Types.ObjectId;
+    mfFundId: mongoose.Schema.Types.ObjectId;
     mfLumpsumId?: string;
     externalId: string;
     fundName: string;
@@ -21,37 +22,16 @@ const MFLumpsumSchema: Schema<MFLumpsum> = new Schema({
         required: [true, 'User Id is required'],
         ref: 'User',
     },
-    mfLumpsumId: {
-        type: String,
-        required: false,
-        default: null,
+    mfFundId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: [true, 'Fund Id is required'],
+        ref: 'MFFund',
     },
     externalId: {
         type: String,
         required: true,
         unique: true,
         default: () => crypto.randomUUID(),
-    },
-    fundName: {
-        type: String,
-        required: [true, 'Fund name is required'],
-        trim: true,
-    },
-    fundCode: {
-        type: String,
-        required: false,
-        trim: true,
-        default: null,
-    },
-    schemeName: {
-        type: String,
-        required: [true, 'Scheme name is required'],
-        trim: true,
-    },
-    folioNo: {
-        type: String,
-        required: [true, 'Folio no is required'],
-        trim: true,
     },
     amount: {
         type: Number,
@@ -68,16 +48,11 @@ const MFLumpsumSchema: Schema<MFLumpsum> = new Schema({
         trim: true,
         default: null,
     },
-    category: {
-        type: String,
-        required: [true, 'Category is required'],
-        enum: ['equity', 'debt', 'liquid'],
-    },
 });
 
 MFLumpsumSchema.set('toJSON', {
     transform: (doc, ret) => {
-        ret.mfSipId = ret._id.toString();
+        ret.mfLumpsumId = ret._id.toString();
         ret.userId = ret.userId.toString();
         delete ret._id;
         delete ret.__v;
@@ -85,6 +60,6 @@ MFLumpsumSchema.set('toJSON', {
     },
 });
 
-const MFLumpsumModel = mongoose.models.MFSIP || mongoose.model<MFLumpsum>('MFSIP', MFLumpsumSchema);
+const MFLumpsumModel = mongoose.models.MFLumpsum || mongoose.model<MFLumpsum>('MFLumpsum', MFLumpsumSchema);
 
 export default MFLumpsumModel;

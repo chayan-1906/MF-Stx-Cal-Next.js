@@ -6,147 +6,16 @@ import MFSIPModel from "@/models/MFSIP";
 import UserModel from "@/models/User";
 import {isStringInvalid} from "@/lib/utils";
 import mongoose from "mongoose";
+import MFLumpsumModel from "@/models/MFLumpsum";
 
-/** ADD MFSIP */
-/*export async function POST(request: Request) {
-    console.log('addMFSIP called');
-
-    await dbConnect();
-
-    try {
-        const {fundName, fundCode, schemeName, folioNo, amount, dayOfMonth, active, startDate, endDate, notes, category} = await request.json();
-
-        /!** validation *!/
-        if (isStringInvalid(fundName)) {
-            return NextResponse.json(<ApiResponse>{
-                code: 'missingFundName',
-                success: false,
-                message: 'Fund Name is required',
-            }, {status: 400});
-        } else if (fundCode && typeof fundCode !== 'string') {
-            return NextResponse.json<ApiResponse>({
-                code: 'invalidFundCode',
-                success: false,
-                message: 'Fund code must be a string',
-            }, {status: 400});
-        } else if (isStringInvalid(schemeName)) {
-            return NextResponse.json<ApiResponse>({
-                code: 'invalidSchemeName',
-                success: false,
-                message: 'Scheme name must be a string',
-            }, {status: 400});
-        } else if (isStringInvalid(folioNo)) {
-            return NextResponse.json<ApiResponse>({
-                code: 'invalidFolioNo',
-                success: false,
-                message: 'Folio no must be a string',
-            }, {status: 400});
-        } else if (typeof amount !== 'number' || isNaN(amount) || amount < 1) {
-            return NextResponse.json(<ApiResponse>{
-                code: 'invalidAmount',
-                success: false,
-                message: 'Amount is required and must be at least ₹1',
-            }, {status: 400});
-        } else if (typeof dayOfMonth !== 'number' || isNaN(dayOfMonth) || dayOfMonth < 1 || dayOfMonth > 31) {
-            return NextResponse.json(<ApiResponse>{
-                code: 'invalidDayOfMonth',
-                success: false,
-                message: 'Day of month must be between 1 and 31',
-            }, {status: 400});
-        } else if (typeof active !== 'boolean') {
-            return NextResponse.json(<ApiResponse>{
-                code: 'invalidActive',
-                success: false,
-                message: 'Active status must be true or false',
-            }, {status: 400});
-        } else if (!startDate || isNaN(Date.parse(startDate))) {
-            return NextResponse.json(<ApiResponse>{
-                code: 'missingStartDate',
-                success: false,
-                message: 'Start date must be a valid date',
-            }, {status: 400});
-        } else if ((endDate && isNaN(Date.parse(endDate))) || Date.parse(endDate) <= Date.parse(startDate)) {
-            return NextResponse.json<ApiResponse>({
-                code: 'invalidEndDate',
-                success: false,
-                message: 'End date must be a valid date and after the start date',
-            }, {status: 400});
-        } else if (notes && typeof notes !== 'string') {
-            return NextResponse.json<ApiResponse>({
-                code: 'invalidNotes',
-                success: false,
-                message: 'Notes must be a string',
-            }, {status: 400});
-        } else if (!['equity', 'debt', 'liquid'].includes(category)) {
-            return NextResponse.json<ApiResponse>({
-                code: 'invalidCategory',
-                success: false,
-                message: 'Category must be equity, debt, or liquid',
-            }, {status: 400});
-        }
-
-        const {userId} = await getUserDetailsFromToken();
-        console.log('userId:', userId);
-
-        const dbUser = await UserModel.findById(userId);
-        if (!dbUser) {
-            return NextResponse.json<ApiResponse>({
-                code: 'userNotFound',
-                success: false,
-                message: 'User not found',
-            }, {status: 404});
-        }
-
-        const addedSIP = await MFSIPModel.create({
-            userId, fundName, fundCode, schemeName, folioNo, amount, dayOfMonth, active,
-            startDate: new Date(startDate),
-            endDate: endDate ? new Date(endDate) : undefined,
-            notes, category,
-        });
-
-        await UserModel.findByIdAndUpdate(userId, {
-            $push: {mfSIPIds: addedSIP._id},
-        });
-
-        return NextResponse.json(<ApiResponse>{
-            code: 'added',
-            success: true,
-            message: 'SIP added successfully',
-            data: {
-                sip: addedSIP,
-            },
-        }, {status: 201});
-    } catch (error: any) {
-        console.error('error in adding sip:', error);
-        return NextResponse.json<ApiResponse>({
-            code: 'unknownError',
-            success: false,
-            message: 'Something went wrong',
-            error,
-        }, {status: 500});
-    }
-}*/
-
+/** ADD MFLUMPSUM */
 export async function POST(request: Request) {
-    console.time('addMFSIP ⏰'); // Log total execution time
+    console.time('addMFLumpsum ⏰'); // Log total execution time
     await dbConnect();
 
     try {
         console.time('parseInput');
-        const {
-            mfFundId,
-            // fundName,
-            // fundCode,
-            // schemeName,
-            // folioNo,
-            amount,
-            dayOfMonth,
-            active,
-            startDate,
-            endDate,
-            notes,
-            // category,
-        } = await request.json();
+        const {mfFundId, amount, date, notes} = await request.json();
         console.timeEnd('parseInput ⏰');
 
         // Validation
@@ -162,35 +31,9 @@ export async function POST(request: Request) {
                 {status: 400}
             );
         }
-        if (typeof dayOfMonth !== 'number' || isNaN(dayOfMonth) || dayOfMonth < 1 || dayOfMonth > 31) {
+        if (!date || isNaN(Date.parse(date))) {
             return NextResponse.json(
-                {
-                    code: 'invalidDayOfMonth',
-                    success: false,
-                    message: 'Day of month must be between 1 and 31',
-                },
-                {status: 400}
-            );
-        }
-        if (typeof active !== 'boolean') {
-            return NextResponse.json(
-                {code: 'invalidActive', success: false, message: 'Active status must be true or false'},
-                {status: 400}
-            );
-        }
-        if (!startDate || isNaN(Date.parse(startDate))) {
-            return NextResponse.json(
-                {code: 'missingStartDate', success: false, message: 'Start date must be a valid date'},
-                {status: 400}
-            );
-        }
-        if (endDate && (isNaN(Date.parse(endDate)) || Date.parse(endDate) <= Date.parse(startDate))) {
-            return NextResponse.json(
-                {
-                    code: 'invalidEndDate',
-                    success: false,
-                    message: 'End date must be a valid date and after the start date',
-                },
+                {code: 'missingDate', success: false, message: 'Date must be a valid'},
                 {status: 400}
             );
         }
@@ -200,12 +43,6 @@ export async function POST(request: Request) {
                 {status: 400}
             );
         }
-        /*if (!['equity', 'debt', 'liquid'].includes(category)) {
-            return NextResponse.json(
-                {code: 'invalidCategory', success: false, message: 'Category must be equity, debt, or liquid'},
-                {status: 400}
-            );
-        }*/
 
         console.time('tokenValidation ⏰');
         const {userId} = await getUserDetailsFromToken();
@@ -221,7 +58,7 @@ export async function POST(request: Request) {
         // Combine user check and update
         const user = await UserModel.findOneAndUpdate(
             {_id: userId},
-            {$push: {mfSIPIds: {$each: []}}},
+            {$push: {mfLumpsumIds: {$each: []}}},
             {lean: true, select: '_id'}
         );
         if (!user) {
@@ -232,43 +69,29 @@ export async function POST(request: Request) {
             );
         }
 
-        // Create SIP
-        const addedSIP = await MFSIPModel.create({
-            userId,
-            mfFundId,
-            // fundName,
-            // fundCode,
-            // schemeName,
-            // folioNo,
-            amount,
-            dayOfMonth,
-            active,
-            startDate: new Date(startDate),
-            endDate: endDate ? new Date(endDate) : undefined,
-            notes,
-            // category,
-        });
+        // Create Lumpsum
+        const addedLumpsum = await MFLumpsumModel.create({userId, mfFundId, amount, date, notes});
 
-        // Update user with SIP ID
+        // Update user with lumpsum ID
         await UserModel.updateOne(
             {_id: userId},
-            {$push: {mfSIPIds: addedSIP._id}}
+            {$push: {mfLumpsumIds: addedLumpsum._id}}
         );
         console.timeEnd('databaseOperations ⏰');
 
-        console.timeEnd('addMFSIP ⏰');
+        console.timeEnd('addMFLumpsum ⏰');
         return NextResponse.json(
             {
                 code: 'added',
                 success: true,
-                message: 'SIP added successfully',
-                data: {sip: addedSIP},
+                message: 'Lumpsum added successfully',
+                data: {lumpsum: addedLumpsum},
             },
             {status: 201}
         );
     } catch (error) {
-        console.error('Error in adding SIP:', error);
-        console.timeEnd('addMFSIP ⏰');
+        console.error('Error in adding lumpsum:', error);
+        console.timeEnd('addMFLumpsum ⏰');
         return NextResponse.json(
             {code: 'unknownError', success: false, message: 'Something went wrong', error},
             {status: 500}
@@ -276,7 +99,7 @@ export async function POST(request: Request) {
     }
 }
 
-/** GET ALL MFSIPs */
+/** GET ALL MFLUMPSUMS -- NOT YET DONE */
 export async function GET(request: Request) {
     console.log('getAllMFSIPs called');
 
@@ -329,7 +152,7 @@ export async function GET(request: Request) {
     }
 }
 
-/** UPDATE MFSIP */
+/** UPDATE MFLUMPSUMS -- NOT YET DONE */
 export async function PUT(request: Request) {
     console.log('updateMFSIP called');
     await dbConnect();
@@ -562,7 +385,7 @@ export async function PUT(request: Request) {
     }
 }
 
-/** DELETE MFSIP */
+/** DELETE MFLUMPSUMS -- NOT YET DONE */
 export async function DELETE(request: Request) {
     console.log('deleteMFSIPById called');
 

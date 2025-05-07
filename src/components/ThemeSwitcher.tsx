@@ -10,10 +10,6 @@ import {AiOutlineMoon} from "react-icons/ai";
 function ThemeSwitcher() {
     const {theme, setTheme} = useTheme();
 
-    const toggleLightDark = () => {
-        setTheme(theme === 'dark' ? 'light' : 'dark');
-    }
-
     return (
         <div className={'flex items-center'}>
             <Select value={theme} onValueChange={(key) => setTheme(key)}>

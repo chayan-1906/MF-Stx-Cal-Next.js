@@ -7,6 +7,7 @@ import MFSIPModel, {MFSIP} from "@/models/MFSIP";
 import {dbConnect} from "@/lib/db/index";
 import mongoose from "mongoose";
 import {flattenMfSip, transformMfSip} from "@/lib/utils";
+import MFLumpsumModel from "@/models/MFLumpsum";
 
 /*export async function getMfSipsByToken(): Promise<ApiResponse> {
     try {
@@ -160,14 +161,6 @@ export async function getMfSipsByToken(): Promise<ApiResponse> {
             success: true,
             message: 'MFSIPs fetched',
             data: {
-                /*mfSips: mfSips.map((mfSip) => ({
-                    ...mfSip,
-                    mfSipId: mfSip?._id?.toString(),
-                    userId: mfSip.userId.toString(),
-                    _id: undefined,
-                    __v: undefined,
-                })),*/
-                // mfSips: mfSips.map(transformMfSip),
                 mfSips: mfSips.map((sip) => transformMfSip(flattenMfSip(sip))),
             },
         };
@@ -451,6 +444,99 @@ export async function getMFSIPsByDayOfMonth(year: number, month: number): Promis
     } catch (error: any) {
         console.error('error in fetching mfSipsByDayOfMonth:', error);
         console.timeEnd('getMFSIPsByDayOfMonth ⏰');
+        return {
+            code: 'unknownError',
+            success: false,
+            message: 'Something went wrong',
+            error,
+        };
+    }
+}
+
+export async function getMfLumpsumsByToken(): Promise<ApiResponse> {
+    console.log('Function invoked at ⏰:', new Date().toISOString());
+    console.time('getMfLumpsumsByToken ⏰');
+
+    try {
+        console.time('dbConnect ⏰');
+        await dbConnect();
+        console.timeEnd('dbConnect ⏰');
+
+        console.time('tokenValidation ⏰');
+        const cookieHeader = (await headers()).get('cookie') ?? '';
+        const token =
+            (await getToken({
+                req: {headers: {cookie: cookieHeader}} as any,
+                secret: process.env.NEXTAUTH_SECRET,
+                cookieName: deployedCookieName,
+            })) ||
+            (await getToken({
+                req: {headers: {cookie: cookieHeader}} as any,
+                secret: process.env.NEXTAUTH_SECRET,
+                cookieName: localhostCookieName,
+            }));
+        console.timeEnd('tokenValidation ⏰');
+
+        if (!token?.userId) {
+            return {
+                code: 'unauthorized',
+                success: false,
+                message: 'Invalid or missing token',
+            };
+        }
+
+        /*console.time('databaseOperations - I ⏰');
+        const dbUser = await UserModel.findById(token.userId)
+            .select('mfSIPIds')
+            .lean()
+            .exec();
+
+        if (!dbUser) {
+            console.timeEnd('databaseOperations ⏰');
+            return {
+                code: 'userNotFound',
+                success: false,
+                message: 'User not found',
+            };
+        }
+
+        if (!dbUser.mfSIPIds || dbUser.mfSIPIds.length === 0) {
+            console.timeEnd('databaseOperations ⏰');
+            return {
+                code: 'noSIPs',
+                success: true,
+                message: 'No SIPs found for this user',
+            };
+        }
+
+        const mfSips = await MFSIPModel.find<MFSIP>({_id: {$in: dbUser.mfSIPIds}})
+            .lean()
+            .exec();
+        console.timeEnd('databaseOperations - I ⏰');
+        console.log('mfSips:', mfSips.length);*/
+
+        console.time('databaseOperations - II ⏰');
+        const mfLumpsums = await MFLumpsumModel.find({
+            userId: new mongoose.Types.ObjectId(token.userId),
+            // userId: new mongoose.Types.ObjectId('6807d28c0c61b460a607b398'),
+        })
+            .populate('mfFundId', 'fundName schemeName folioNo category')
+            .lean()
+            .exec();
+        console.timeEnd('databaseOperations - II ⏰');
+
+        console.timeEnd('getMfLumpsumsByToken ⏰');
+        return {
+            code: 'fetched',
+            success: true,
+            message: 'MFSIPs fetched',
+            data: {
+                mfLumpsums: mfLumpsums.map((lumpsum) => transformMfSip(flattenMfSip(lumpsum))),
+            },
+        };
+    } catch (error) {
+        console.error('Error in fetching MFSIPs:', error);
+        console.timeEnd('getMfSipsByToken ⏰');
         return {
             code: 'unknownError',
             success: false,

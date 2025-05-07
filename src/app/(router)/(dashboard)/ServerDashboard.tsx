@@ -4,10 +4,7 @@ import routes from "@/lib/routes";
 import {ServerDashboardProps} from "@/types";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import MonthlyOverview from "@/components/dashboard/MonthlyOverview";
-import MFSIPTemporary from "@/components/MFSIPTemporary";
-import Logout from "@/components/Logout";
-import DeleteAccount from "@/components/DeleteAccount";
-import {getMFSIPsByDayOfMonth, getMfSipsByToken} from "@/lib/db/mf-sips-storage";
+import {getMfLumpsumsByToken, getMFSIPsByDayOfMonth, getMfSipsByToken} from "@/lib/db/mf-sips-storage";
 import SIPView from "@/components/dashboard/SIPView";
 
 async function ServerDashboard({isLoggedIn, userId, email}: ServerDashboardProps) {
@@ -17,37 +14,15 @@ async function ServerDashboard({isLoggedIn, userId, email}: ServerDashboardProps
         redirect(routes.loginPath());
     }
 
-    /*const getMfSipsResponse = await getMfSipsByToken();
-    if (!getMfSipsResponse.success) {
-        // TODO: Something went wrong - need to copy
-
-        return (
-            <div className={'bg-rose-400'}>
-                Something went wrong - {JSON.stringify(getMfSipsResponse.data)}
-            </div>
-        )
-    }
-
-    const today = new Date();
-    const getMfSipsByDayOfMonthResponse = await getMFSIPsByDayOfMonth(today.getFullYear(), today.getMonth());
-    if (!getMfSipsByDayOfMonthResponse.success) {
-        // TODO: Something went wrong - need to copy
-
-        return (
-            <div className={'bg-rose-400'}>
-                Something went wrong - {JSON.stringify(getMfSipsResponse.data)}
-            </div>
-        )
-    }*/
-
     const today = new Date();
 
-    const [getMfSipsResponse, getMfSipsByDayOfMonthResponse] = await Promise.all([
+    const [getMfSipsResponse, getMfSipsByDayOfMonthResponse, getMfLumpsumsResponse] = await Promise.all([
         getMfSipsByToken(),
-        getMFSIPsByDayOfMonth(today.getFullYear(), today.getMonth())
+        getMFSIPsByDayOfMonth(today.getFullYear(), today.getMonth()),
+        getMfLumpsumsByToken(),
     ]);
 
-    if (!getMfSipsResponse.success || !getMfSipsByDayOfMonthResponse.success) {
+    if (!getMfSipsResponse.success || !getMfSipsByDayOfMonthResponse.success || !getMfLumpsumsResponse.success) {
         return (
             <div className={'bg-rose-400'}>
                 Something went wrong - {JSON.stringify(!getMfSipsResponse.success ? getMfSipsResponse.data : getMfSipsByDayOfMonthResponse.data)}
@@ -59,11 +34,9 @@ async function ServerDashboard({isLoggedIn, userId, email}: ServerDashboardProps
         <div className={'flex min-h-screen flex-col items-center justify-center'}>
             <main className={'flex-1 py-6 w-full space-y-4'}>
                 <DashboardHeader userId={userId || null}/>
-                <MonthlyOverview totals={getMfSipsByDayOfMonthResponse.data.totals}/>
+                <MonthlyOverview sipTotals={getMfSipsByDayOfMonthResponse.data.totals} lumpsums={getMfLumpsumsResponse.data.mfLumpsums}/>
                 <SIPView mfSipsByDate={getMfSipsByDayOfMonthResponse.data.mfSips} allMfSips={getMfSipsResponse.data.mfSips}/>
             </main>
-
-            {/*<DeleteAccount/>*/}
         </div>
     );
 }

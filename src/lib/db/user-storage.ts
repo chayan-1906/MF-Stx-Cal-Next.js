@@ -58,7 +58,7 @@ export async function getUserDetailsFromToken() {
         }));
     console.log('token in getUserIdFromToken:', token);
     // if (!token?.id) return null;
-    return {userId: token?.userId, email: token?.email};
+    return {userId: token?.userId, email: token?.email, name: token?.name || '', picture: token?.picture || ''};
 }
 
 async function getUserFromDb(): Promise<User | null> {

@@ -1,17 +1,20 @@
 'use client';
 
 import React, {useRef, useState} from "react";
-import {Input} from "@/components/ui/input";
-import {IoMdArrowDropdown} from "react-icons/io";
 import {MonthlyOverviewProps} from "@/types";
 import {MdOutlineWallet} from "react-icons/md";
-import {TbArrowUpRight} from "react-icons/tb";
 import {FiTarget} from "react-icons/fi";
 import {HiOutlineCreditCard} from "react-icons/hi";
 
-function MonthlyOverview({totals}: MonthlyOverviewProps) {
+function MonthlyOverview({sipTotals, lumpsums}: MonthlyOverviewProps) {
     const inputRef = useRef<HTMLInputElement>(null);
     const [displayValue, setDisplayValue] = useState<string>('');
+    console.log('lumpsums: ', lumpsums);
+
+    const getTotalInvestedAmount = () => {
+        const totalLumpsumInvested = lumpsums.reduce((sum, item) => sum + item.amount, 0);
+        return sipTotals.amountPaidThisMonth + totalLumpsumInvested;
+    }
 
     const handleContainerClick = () => inputRef.current?.showPicker();
 
@@ -53,8 +56,8 @@ function MonthlyOverview({totals}: MonthlyOverviewProps) {
             <div className={'flex flex-col gap-4 p-4 border rounded-xl text-text-900'}>
                 <div className={'flex justify-between gap-2'}>
                     <div className={'flex flex-col'}>
-                        <h1 className={'text-sm md:text-base text-purple-500 md:text-red-600'}>Total Invested</h1>
-                        <h1 className={'text-lg md:text-xl font-bold'}>₹{totals.amountPaidThisMonth}</h1>
+                        <h1 className={'text-sm md:text-base text-text-900'}>Total Invested</h1>
+                        <h1 className={'text-lg md:text-xl font-bold'}>₹{getTotalInvestedAmount()}</h1>
                     </div>
 
                     <div className={'flex flex-col items-end justify-center gap-2'}>
@@ -69,9 +72,9 @@ function MonthlyOverview({totals}: MonthlyOverviewProps) {
             <div className={'flex flex-col gap-4 p-4 border rounded-xl text-text-900'}>
                 <div className={'flex justify-between items-center w-full gap-2'}>
                     <div>
-                        <h1 className={'text-sm md:text-base text-purple-500 md:text-red-600'}>Target Progress</h1>
-                        <h1 className={'text-lg md:text-xl font-bold'}>₹{totals.amountPaidThisMonth} / ₹{totals.totalActiveSipAmount}</h1>
-                        <h1 className={'text-xs'}>{Math.round((totals.amountPaidThisMonth / totals.totalActiveSipAmount) * 100)}% of monthly target</h1>
+                        <h1 className={'text-sm md:text-base text-text-900'}>Target Progress</h1>
+                        <h1 className={'text-lg md:text-xl font-bold'}>₹{sipTotals.amountPaidThisMonth} / ₹{sipTotals.totalActiveSipAmount}</h1>
+                        <h1 className={'text-xs'}>{Math.round((sipTotals.amountPaidThisMonth / sipTotals.totalActiveSipAmount) * 100)}% of monthly target</h1>
                     </div>
 
                     <div className={'flex flex-col'}>
@@ -82,7 +85,7 @@ function MonthlyOverview({totals}: MonthlyOverviewProps) {
                 </div>
 
                 <div className={'bg-secondary-200 rounded-full'}>
-                    <div className={'bg-secondary h-2.5 rounded-full'} style={{width: `${(totals.amountPaidThisMonth / totals.totalActiveSipAmount) * 100}%`}}/>
+                    <div className={'bg-secondary h-2.5 rounded-full'} style={{width: `${(sipTotals.amountPaidThisMonth / sipTotals.totalActiveSipAmount) * 100}%`}}/>
                 </div>
             </div>
 
@@ -90,8 +93,8 @@ function MonthlyOverview({totals}: MonthlyOverviewProps) {
             <div className={'flex flex-col gap-4 p-4 border rounded-xl text-text-900'}>
                 <div className={'flex justify-between'}>
                     <div className={'flex flex-col'}>
-                        <h1 className={'text-sm md:text-base text-purple-500 md:text-red-600'}>Pending Amount</h1>
-                        <h1 className={'text-lg md:text-xl font-bold'}>₹{totals.amountRemainingThisMonth}</h1>
+                        <h1 className={'text-sm md:text-base text-text-900'}>Pending Amount</h1>
+                        <h1 className={'text-lg md:text-xl font-bold'}>₹{sipTotals.amountRemainingThisMonth}</h1>
                     </div>
 
                     <div className={'flex flex-col items-end justify-center gap-2'}>

@@ -64,3 +64,15 @@ Your app is ready to be deployed!
 
 ### React Select - https://www.npmjs.com/package/react-select
     npm i react-select
+
+
+
+
+### Not yet done
+1. APIs to getAllMfLumpsums, updateMfLumpsum, deleteMfLumpsum
+2. List of all mfLumpsums
+3. Update  Mf Lumpsum functionality: Need to create route - /edit-investment/mutual-fund/lumpsum/{mfLumpsumExternalId}
+4.
+
+### TODO immediately
+1. Modal for Sign Out & Delete Account

@@ -30,6 +30,10 @@ const apis = {
     deleteMFSIPByIdApi: (mfSipId: string) => `/api/mf/sips?mfSipId=${mfSipId}`,
 
     /** MF Lumpsums */
+    addMFLumpsumApi: () => '/api/mf/lumpsums',
+    getAllMFLumpsumsApi: () => '/api/mf/lumpsums',
+    updateMFLumpsumApi: () => '/api/mf/lumpsums',
+    deleteMFLumpsumByIdApi: (mfLumpsumId: string) => `/api/mf/lumpsums?mfLumpsumId=${mfLumpsumId}`,
 }
 
 export default apis;

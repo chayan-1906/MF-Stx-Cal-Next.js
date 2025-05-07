@@ -17,7 +17,7 @@ import Image from "next/image";
 import {FaArrowRight} from "react-icons/fa";
 import {LoadingButton} from "@/components/loading-button";
 import {cn} from "@/lib/utils";
-import {Button} from "./ui/button";
+import {Button} from "../ui/button";
 import {MdAccountCircle} from "react-icons/md";
 import {useRouter} from "next/navigation";
 import routes from "@/lib/routes";
