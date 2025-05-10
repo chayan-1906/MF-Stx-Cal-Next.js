@@ -1,8 +1,14 @@
 import MFSIPForm from "@/components/mutual-funds/MFSIPForm";
 import {ServerEditMfSipProps} from "@/types";
 import {getMfSipByExternalId} from "@/lib/db/mf-sips-storage";
+import {redirect} from "next/navigation";
+import routes from "@/lib/routes";
 
 async function ServerEditMfSip({isLoggedIn, userId, mfSipExternalId}: ServerEditMfSipProps) {
+    if (!isLoggedIn) {
+        redirect(routes.loginPath());
+    }
+
     const getMfSipByExternalIdResponse = await getMfSipByExternalId(mfSipExternalId);
     if (!getMfSipByExternalIdResponse.success) {
         // TODO: Something went wrong - need to copy

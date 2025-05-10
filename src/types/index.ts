@@ -19,42 +19,6 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
     loading?: boolean;
 }
 
-export interface CustomResponsiveModalProps {
-    id?: string;
-    modalKey: string;
-    title: string;
-    titleColor?: string;
-    body: React.ReactNode;
-    onAction?: () => void;
-    actionLabel?: string;
-    actionBgColor?: 'default' | 'secondary' | 'destructive' | 'link' | 'outline' | 'ghost';
-    onSecondaryAction?: () => void;
-    secondaryActionLabel?: string;
-    footer?: React.ReactNode;
-    isDisabled?: boolean;
-    isLoading?: boolean;
-    className?: string;
-}
-
-export interface CustomResponsiveModalFooterProps {
-    onAction?: () => void;
-    actionLabel?: string;
-    actionBgColor?: 'default' | 'secondary' | 'destructive' | 'link' | 'outline' | 'ghost';
-    onSecondaryAction?: () => void;
-    secondaryActionLabel?: string;
-    footer?: React.ReactNode;
-    isDisabled?: boolean;
-    isLoading?: boolean;
-}
-
-export interface MFSIPFormModalProps {
-    userId: string;
-    openModalKey: string;
-    // isOpen: boolean;
-    // onOpenChange: (open: boolean) => void;
-    mfSip?: MFSIP | null;
-}
-
 export interface AppWrapperLayoutChildProps {
     isLoggedIn?: boolean;
     userId: string | undefined;
@@ -70,6 +34,11 @@ export interface NavbarProps {
     // userId: string | undefined;
     // email: string | undefined;
     isLoggedIn: boolean;
+    name: string;
+    picture: string;
+}
+
+export interface ProfileAvatarProps {
     name: string;
     picture: string;
 }
@@ -121,7 +90,13 @@ export interface DeleteMFSIPProps {
     setSelectedSips?: React.Dispatch<React.SetStateAction<MFSIP[]>>;
 }
 
+export interface LogoutModalProps {
+    openModalKey: string | null;
+}
 
+export interface DeleteAccountModalProps {
+    openModalKey: string | null;
+}
 
 
 /** page components */

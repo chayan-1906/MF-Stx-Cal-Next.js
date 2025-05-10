@@ -3,7 +3,7 @@ import {AddUpdateMFFundProps} from "@/types";
 import MFFundForm from "@/components/mutual-funds/MFFundForm";
 
 function AddUpdateMFFundModal({userId, openModalKey: rawOpenModalKey, mfSipForm, mfLumpsumForm}: AddUpdateMFFundProps) {
-    const {onClose: onAddFundModalClose, openModalKey} = useModal();
+    const {onClose: onAddFundModalClose} = useModal();
     // const isEditing = mfSipForm.getValues().mfFundId;    // wrong condition
     const isEditing = false;
 

@@ -72,7 +72,4 @@ Your app is ready to be deployed!
 1. APIs to getAllMfLumpsums, updateMfLumpsum, deleteMfLumpsum
 2. List of all mfLumpsums
 3. Update  Mf Lumpsum functionality: Need to create route - /edit-investment/mutual-fund/lumpsum/{mfLumpsumExternalId}
-4.
-
-### TODO immediately
-1. Modal for Sign Out & Delete Account
+4. Update, Delete MFFunds

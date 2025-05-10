@@ -57,7 +57,7 @@ interface ModalProps {
     onCloseAction?: () => void;
     actionButtonLabel?: string;
     actionButtonVariant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
-    onAction?: () => Promise<void>;
+    onAction?: () => void;
     className?: string;
     titleClassName?: string;
 }

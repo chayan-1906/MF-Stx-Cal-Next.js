@@ -114,7 +114,7 @@ function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
                 </p>
             </div>
 
-            <AddUpdateMFFundModal userId={userId} openModalKey={openModalKey} mfSipForm={mfSipForm}/>
+            <AddUpdateMFFundModal userId={userId} openModalKey={modalKeys.addUpdateMfFund} mfSipForm={mfSipForm}/>
 
             <Form {...mfSipForm}>
                 <form onSubmit={handleSubmit(mfSip ? updateExistingMfSip : createNewMfSip)} className={'relative space-y-5 overflow-auto'}>
@@ -161,7 +161,7 @@ function MFSIPForm({userId, mfSip}: MFSIPFormProps) {
                                     )}/>
                                     <Button type={'button'} variant={'secondary'} onClick={() => {
                                         onAddFundModalOpen();
-                                        setOpenModalKey(modalKeys.addUpdateMfFund)
+                                        setOpenModalKey(modalKeys.addUpdateMfFund);
                                     }}>Add Fund</Button>
                                 </div>
 
