@@ -5,6 +5,11 @@ export interface User extends Document {
     email: string;
     image?: string; // for oauth
     googleId?: string; // for oauth
+    mfFundIds: mongoose.Schema.Types.ObjectId[];
+    mfSIPIds: mongoose.Schema.Types.ObjectId[];
+    mfLumpsumIds: mongoose.Schema.Types.ObjectId[];
+    stxSIPIds: mongoose.Schema.Types.ObjectId[];
+    stxLumpsumIds: mongoose.Schema.Types.ObjectId[];
     createdAt: Date;
 }
 
@@ -28,8 +33,32 @@ const UserSchema: Schema<User> = new Schema({
         type: String,
         required: false,
         unique: true,
-        sparse: true,
     },
+    mfFundIds: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'MFFund',
+        default: [],
+    }],
+    mfSIPIds: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'MFSIP',
+        default: [],
+    }],
+    mfLumpsumIds: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'MFLumpsum',
+        default: [],
+    }],
+    stxSIPIds: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'StxSIP',
+        default: [],
+    }],
+    stxLumpsumIds: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'StxLumpsum',
+        default: [],
+    }],
     createdAt: {
         type: Date,
         required: true,

@@ -1,6 +1,6 @@
 # 🎓 MFStxCal
 
-**A full-stack production-ready Next.js app with authentication, investment dashboard, SIP/Lumpsum tracking, and MongoDB integration for seamless mutual fund and stock portfolio management.**
+**A full-stack production-ready Next.js app with authentication, investment dashboard, MFSIP/Lumpsum tracking, and MongoDB integration for seamless mutual fund and stock portfolio management.**
 
 ## 🚀 Tech Stack
 
@@ -55,3 +55,21 @@ Your app is ready to be deployed!
 
 ### Axios - https://www.npmjs.com/package/axios
     npm i axios
+
+### Nuqs - https://www.npmjs.com/package/nuqs
+    npm i nuqs
+
+### Framer Motion - https://www.npmjs.com/package/framer-motion
+    npm i framer-motion
+
+### React Select - https://www.npmjs.com/package/react-select
+    npm i react-select
+
+
+
+
+### Not yet done
+1. APIs to getAllMfLumpsums, updateMfLumpsum, deleteMfLumpsum
+2. List of all mfLumpsums
+3. Update  Mf Lumpsum functionality: Need to create route - /edit-investment/mutual-fund/lumpsum/{mfLumpsumExternalId}
+4. Update, Delete MFFunds

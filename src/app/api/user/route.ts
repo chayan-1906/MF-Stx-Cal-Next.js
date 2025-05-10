@@ -3,7 +3,7 @@ import {ApiResponse} from "@/types/ApiResponse";
 import {NextResponse} from "next/server";
 import UserModel from "@/models/User";
 import {isStringInvalid} from "@/lib/utils";
-import {getToken} from "@auth/core/jwt";
+import {getEmailFromToken} from "@/lib/db/user-storage";
 
 /** UPDATE USER */
 export async function PUT(request: Request) {
@@ -21,16 +21,17 @@ export async function PUT(request: Request) {
         }
 
         // Get the JWT token
-        const token = await getToken({req: request, secret: process.env.NEXTAUTH_SECRET});
-        console.log('token:', token);
+        // const token = await getToken({req: request, secret: NEXTAUTH_SECRET});
+        const emailFromToken = await getEmailFromToken();
+        console.log('email:', email);
 
         // Check if token exists and compare emails
-        if (!token || !token.email || token.email !== email) {
+        if (!emailFromToken || emailFromToken !== email) {
             return NextResponse.json<ApiResponse>({
                 code: 'unauthorized',
                 success: false,
                 message: 'Email does not match authenticated user',
-            }, {status: 403});
+            }, {status: 401});
         }
 
         const dbUser = await UserModel.findOne({email});

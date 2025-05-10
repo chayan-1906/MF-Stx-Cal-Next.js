@@ -11,7 +11,8 @@ export async function dbConnect(): Promise<void> {
     }
 
     try {
-        const db = await mongoose.connect(MONGODB_URI || '', {});
+        // mongoose.set('debug', true);
+        const db = await mongoose.connect(MONGODB_URI || '');
         connection.isConnected = db.connections[0].readyState;
         console.log('DB connected successfully ✅✅✅');
     } catch (error: any) {

@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import {useForm} from 'react-hook-form';
 import {EmailFormValues, emailSchema, NameFormValues, nameSchema, OtpFormValues, otpSchema} from "@/lib/formValidationSchemas";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -17,7 +17,7 @@ import Image from "next/image";
 import {FaArrowRight} from "react-icons/fa";
 import {LoadingButton} from "@/components/loading-button";
 import {cn} from "@/lib/utils";
-import {Button} from "./ui/button";
+import {Button} from "../ui/button";
 import {MdAccountCircle} from "react-icons/md";
 import {useRouter} from "next/navigation";
 import routes from "@/lib/routes";
@@ -26,8 +26,10 @@ type AuthMethod = 'email' | 'otp' | 'name';
 
 function LoginForm() {
     const [authMethod, setAuthMethod] = useState<AuthMethod>('email');
-    const [loading, setLoading] = useState(false);
-    const [countdown, setCountdown] = useState(0);
+    const [isLoading, setIsLoading] = useState(false);
+    const firstInputRef = useRef<HTMLInputElement>(null);
+    const [showCode, setShowCode] = useState(false);
+    const nameInputRef = useRef<HTMLInputElement>(null);
     const router = useRouter();
 
     const emailForm = useForm<EmailFormValues>({
@@ -53,10 +55,11 @@ function LoginForm() {
     const name = nameForm.watch('name');
 
     const sendVerificationCode = async () => {
-        setLoading(true);
+        setIsLoading(true);
+        otpForm.reset({otp: ['', '', '', '', '', '']});
         const sendCodeResponse = await axios.post<ApiResponse>(apis.sendCodeApi(), {email});
 
-        setLoading(false);
+        setIsLoading(false);
         if (sendCodeResponse.data.success) {
             setAuthMethod('otp');
             toast('Code sent to your email', {type: 'success'});
@@ -115,8 +118,8 @@ function LoginForm() {
         }
     }
 
-    const onOtpSubmit = async () => {
-        setLoading(true);
+    const onOtpSubmit = useCallback(async () => {
+        setIsLoading(true);
         try {
             const result = await doCredentialLogin({email, code});
             if (result.response.success) {
@@ -137,27 +140,15 @@ function LoginForm() {
             console.log('error in verifying code:', error);
             toast('Something went wrong', {type: 'error'});
         } finally {
-            setLoading(false);
+            setIsLoading(false);
         }
-    }
-
-    const resendVerificationCode = () => {
-        setLoading(true);
-
-        // TODO: think
-        // Simulating API call
-        setTimeout(() => {
-            setLoading(false);
-            setCountdown(60);
-            console.log(`Resending verification code to ${email}`);
-        }, 1500);
-    }
+    }, [code, email, router]);
 
     const onNameSubmit = async () => {
-        setLoading(true);
+        setIsLoading(true);
         const updateUserResponse = await axios.put<ApiResponse>(apis.updateUserApi(), {name, email});
 
-        setLoading(false);
+        setIsLoading(false);
         if (updateUserResponse.data.success) {
             await fetch('/api/auth/session', {credentials: 'include'});
             console.log('User updated and session refreshed');
@@ -167,17 +158,37 @@ function LoginForm() {
         }
     }
 
+    /** autoFocus in 1st otp input * name input field */
+    useEffect(() => {
+        console.log('authMethod:', authMethod);
+        if (authMethod === 'otp') {
+            firstInputRef.current?.focus();
+        } else if (authMethod === 'name') {
+            nameInputRef.current?.focus();
+        }
+
+        if (authMethod !== 'otp') {
+            otpForm.reset({otp: ['', '', '', '', '', '']});
+        }
+    }, [authMethod, otpForm]);
+
+    useEffect(() => {
+        if (authMethod === 'otp' && code.length === 6) {
+            onOtpSubmit();
+        }
+    }, [authMethod, code, onOtpSubmit]);
+
     return (
-        <div className={'flex items-center justify-center p-4 fixed inset-0 bg-primary-200 dark:bg-primary-900'}>
+        <div className={'flex items-center justify-center p-4 fixed inset-0 bg-background'}>
             <div
-                className={'flex flex-col gap-4 w-full max-w-md bg-background rounded-xl overflow-hidden shadow-2xl shadow-primary-400 dark:shadow-black dark:drop-shadow-2xl drop-shadow-primary-400'}>
+                className={'flex flex-col gap-4 w-full max-w-md bg-card rounded-xl overflow-hidden shadow-2xl shadow-shadow'}>
                 {/** header */}
-                <div className={'flex items-center justify-center mt-2 gap-1 sm:gap-2 px-3'}>
+                <div className={'flex items-center justify-center mt-2 gap-1 sm:gap-2 px-3 select-none'}>
                     <Image src={'/assets/images/logo.svg'} alt={'logo'} height={32} width={32}/>
-                    <h2 className={'mt-3 text-xl font-bold text-center text-text tracking-wide'}>Welcome to {APP_NAME}</h2>
+                    <h2 className={'mt-3 text-xl font-bold text-center text-text-900 tracking-wide'}>Welcome to {APP_NAME}</h2>
                 </div>
 
-                <hr className={'flex-1 border-slate-200 dark:border-slate-700'}/>
+                <hr className={'flex-1 border-separator'}/>
 
                 {/** email form */}
                 <Form {...emailForm}>
@@ -186,14 +197,14 @@ function LoginForm() {
                         <FormField control={emailForm.control} name={'email'}
                                    render={({field}) => (
                                        <FormItem>
-                                           <FormLabel htmlFor={field.name} className={'text-text'}>Email address</FormLabel>
+                                           <FormLabel htmlFor={field.name} className={''}>Email address</FormLabel>
                                            <FormControl>
                                                <div className={'relative'}>
                                                    <div className={'absolute inset-y-0 left-0 pl-3 flex items-center'}>
                                                        <Mail className={'size-5 text-gray-400'}/>
                                                    </div>
-                                                   <Input {...field} id={field.name} value={field.value ?? ''} type={'email'} autoFocus placeholder={'john.doe@gmail.com'}
-                                                          className={'pl-10 text-text'} onChange={(e) => field.onChange(e)}/>
+                                                   <Input {...field} id={field.name} value={field.value ?? ''} type={'email'} autoFocus placeholder={'john.doe@gmail.com'} className={'pl-10'}
+                                                          onChange={(e) => field.onChange(e)}/>
                                                </div>
                                            </FormControl>
                                            <FormMessage/>
@@ -201,7 +212,7 @@ function LoginForm() {
                                    )}
                         />
 
-                        <LoadingButton variant={'default'} loading={loading} type={'submit'} className={'flex gap-2 hover:gap-4 transition-all duration-300'}>
+                        <LoadingButton variant={'default'} loading={isLoading} type={'submit'} className={'flex gap-2 hover:gap-4 transition-all duration-300'}>
                             Send Verification Code
                             <FaArrowRight/>
                         </LoadingButton>
@@ -214,46 +225,47 @@ function LoginForm() {
                         <FormField control={otpForm.control} name={'otp'}
                                    render={({field}) => (
                                        <FormItem>
-                                           <div className={'flex justify-between mb-2 text-text text-sm'}>
+                                           <div className={'flex justify-between mb-2 text-sm'}>
                                                <FormLabel>Verification code</FormLabel>
                                                <FormLabel>Sent to {email}</FormLabel>
                                            </div>
 
                                            <FormControl>
-                                               <div className="flex gap-2 justify-between mb-2">
+                                               <div className={'flex gap-2 justify-between mb-2'}>
                                                    {Array.from({length: 6}).map((_, index) => (
                                                        <Input
                                                            key={index}
                                                            id={`otp-${index}`}
-                                                           type={'text'}
+                                                           ref={index === 0 ? firstInputRef : null}
+                                                           type={showCode ? 'text' : 'password'}
                                                            maxLength={6}
                                                            value={field.value[index]}
-                                                           placeholder={(index + 1).toString()}
+                                                           placeholder={!showCode ? '•' : (index + 1).toString()}
                                                            onChange={(e) => handleOtpChange(index, e.target.value)}
                                                            onKeyDown={(e) => handleKeyDown(index, e)}
-                                                           className={'text-center text-text text-xl font-bold p-2'}
+                                                           className={'text-center text-xl font-bold p-2'}
                                                        />
                                                    ))}
                                                </div>
                                            </FormControl>
                                            {errorsOtp.otp?.length && (
-                                               <p className={'mt-1 text-sm font-medium text-destructive'}>
-                                                   {errorsOtp.otp[0]?.message}
-                                               </p>
+                                               <p className={'mt-1 text-sm font-medium text-destructive-text'}>{errorsOtp.otp[0]?.message}</p>
                                            )}
 
-                                           <div className={'text-sm text-gray-600 mt-2'}>
-                                               {countdown > 0 ? (
-                                                   <p>Resend code in {countdown}s</p>
-                                               ) : (
-                                                   <Button type={'button'} variant={'link'} disabled={loading} className={'p-0 h-auto'} onClick={resendVerificationCode}>Resend code</Button>
-                                               )}
+                                           <div className={'flex justify-between gap-4 mt-2'}>
+                                               <Button type={'button'} variant={'link'} disabled={isLoading} className={'p-0 h-auto'} onClick={sendVerificationCode}>
+                                                   Resend code
+                                               </Button>
+                                               <Button type={'button'} variant={'link'} className={'p-0 h-auto hover:no-underline'}
+                                                       onClick={() => setShowCode(!showCode)}>
+                                                   {showCode ? 'Hide' : 'Show'} Code
+                                               </Button>
                                            </div>
                                        </FormItem>
                                    )}
                         />
 
-                        <LoadingButton variant={'default'} loading={loading} type={'submit'} className={'flex gap-2 hover:gap-4 transition-all duration-300'}>
+                        <LoadingButton variant={'default'} loading={isLoading} type={'submit'} className={'flex gap-2 hover:gap-4 transition-all duration-300'}>
                             Verify
                             <FaArrowRight/>
                         </LoadingButton>
@@ -269,14 +281,14 @@ function LoginForm() {
                         <FormField control={nameForm.control} name={'name'}
                                    render={({field}) => (
                                        <FormItem>
-                                           <FormLabel htmlFor={field.name} className={'text-text'}>Name</FormLabel>
+                                           <FormLabel htmlFor={field.name} className={''}>Name</FormLabel>
                                            <FormControl>
                                                <div className={'relative'}>
                                                    <div className={'absolute inset-y-0 left-0 pl-3 flex items-center'}>
-                                                       <MdAccountCircle className={'size-5 text-gray-400'}/>
+                                                       <MdAccountCircle className={'size-5 text-text'}/>
                                                    </div>
-                                                   <Input {...field} id={field.name} value={field.value ?? ''} autoFocus placeholder={'John Doe'}
-                                                          className={'pl-10 text-text'} onChange={(e) => field.onChange(e)}/>
+                                                   <Input {...field} id={field.name} ref={nameInputRef} value={field.value ?? ''} autoFocus placeholder={'John Doe'}
+                                                          className={'pl-10'} onChange={(e) => field.onChange(e)}/>
                                                </div>
                                            </FormControl>
                                            <FormMessage/>
@@ -284,7 +296,7 @@ function LoginForm() {
                                    )}
                         />
 
-                        <LoadingButton variant={'default'} loading={loading} type={'submit'} className={'flex gap-2 hover:gap-4 transition-all duration-300'}>
+                        <LoadingButton variant={'default'} loading={isLoading} type={'submit'} className={'flex gap-2 hover:gap-4 transition-all duration-300'}>
                             Let's get started
                             <FaArrowRight/>
                         </LoadingButton>
@@ -295,9 +307,9 @@ function LoginForm() {
 
                 {/** or continue with */}
                 <div className={'flex items-center gap-4 px-6'}>
-                    <hr className={'flex-1 border-text'}/>
-                    <p className={'text-text'}>Or continue with</p>
-                    <hr className={'flex-1 border-text'}/>
+                    <hr className={'flex-1 border-separator'}/>
+                    <p className={'text-text-800'}>Or continue with</p>
+                    <hr className={'flex-1 border-separator'}/>
                 </div>
 
                 {/** oauths */}

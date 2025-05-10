@@ -1,35 +1,84 @@
+import {getToken} from "@auth/core/jwt";
 import {dbConnect} from "@/lib/db/index";
-import {ApiResponse} from "@/types/ApiResponse";
-import UserModel from "@/models/User";
+import UserModel, {User} from "@/models/User";
+import {cookies, headers} from "next/headers";
+import {NODE_ENV} from "@/lib/config";
 
-async function getUserFromDb(email: string): Promise<ApiResponse> {
+export const localhostCookieName = 'authjs.session-token';
+export const deployedCookieName = '__Secure-authjs.session-token';
+
+export async function getRawToken() {
+    const cookieStore = await cookies();
+    const token = cookieStore.get(deployedCookieName)?.value || cookieStore.get(localhostCookieName)?.value;
+    console.log('rawToken:', token);
+    return token;
+}
+
+export async function getEmailFromToken() {
+    if (NODE_ENV === 'development') {
+        await getRawToken();
+    }
+
+    // const token = await getToken({req: {headers: {cookie: (await cookies()).toString()}} as any, secret: NEXTAUTH_SECRET});
+    const cookieHeader = (await headers()).get("cookie") ?? "";
+
+    const token =
+        (await getToken({
+            req: {headers: {cookie: cookieHeader}} as any,
+            secret: process.env.NEXTAUTH_SECRET,
+            cookieName: deployedCookieName,
+        })) ||
+        (await getToken({
+            req: {headers: {cookie: cookieHeader}} as any,
+            secret: process.env.NEXTAUTH_SECRET,
+            cookieName: localhostCookieName,
+        }));
+    console.log('token in getEmailFromToken:', token);
+    if (!token?.email) return null;
+    return token.email;
+}
+
+export async function getUserDetailsFromToken() {
+    if (NODE_ENV === 'development') {
+        await getRawToken();
+    }
+
+    const cookieHeader = (await headers()).get('cookie') ?? '';
+
+    const token =
+        (await getToken({
+            req: {headers: {cookie: cookieHeader}} as any,
+            secret: process.env.NEXTAUTH_SECRET,
+            cookieName: deployedCookieName,
+        })) ||
+        (await getToken({
+            req: {headers: {cookie: cookieHeader}} as any,
+            secret: process.env.NEXTAUTH_SECRET,
+            cookieName: localhostCookieName,
+        }));
+    console.log('token in getUserIdFromToken:', token);
+    // if (!token?.id) return null;
+    return {userId: token?.userId, email: token?.email, name: token?.name || '', picture: token?.picture || ''};
+}
+
+async function getUserFromDb(): Promise<User | null> {
     await dbConnect();
 
     try {
-        const user = await UserModel.findOne({email: 'hello'});
-        if (!user) {
-            return {
-                code: 'userNotFound',
-                success: false,
-                message: 'No user found with this email',
-            };
+        const {email} = await getUserDetailsFromToken();
+        if (!email) {
+            return null;
         }
 
-        return {
-            code: 'userFound',
-            success: true,
-            message: 'User found with this email',
-            data: {
-                user,
-            },
-        };
+        const user = await UserModel.findOne({email});
+        if (!user) {
+            return null;
+        }
+
+        return user;
     } catch (error: any) {
-        console.error('error in getUserFromDb:', error);
-        return {
-            code: 'unknownError',
-            success: false,
-            message: 'Something went wrong',
-        };
+        console.log('error in getUserFromDb:', error);
+        return null;
     }
 }
 
