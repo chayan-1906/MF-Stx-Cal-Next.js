@@ -64,7 +64,7 @@ const MFFundSchema: Schema<MFFund> = new Schema({
     },
 }, {timestamps: true});
 
-MFFundSchema.index({fundName: 1, schemeName: 1}, {unique: true});
+MFFundSchema.index({fundName: 1, schemeName: 1, folioNo: 1}, {unique: true});
 
 MFFundSchema.set('toJSON', {
     transform: (doc, ret) => {
