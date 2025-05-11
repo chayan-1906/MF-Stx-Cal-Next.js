@@ -78,3 +78,4 @@ Your app is ready to be deployed!
 1. Remove Apple SignIn
 2. No. of Installments (Optional Field in MFSIP schema)
 3. Sort ListView by dayOfMonth
+4. loader.tsx
