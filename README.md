@@ -73,6 +73,7 @@ Your app is ready to be deployed!
 2. List of all mfLumpsums
 3. Update  Mf Lumpsum functionality: Need to create route - /edit-investment/mutual-fund/lumpsum/{mfLumpsumExternalId}
 4. Update, Delete MFFunds
+5. Make Cancel button functional in MFSIPForm
 
 ### TODOs
 1. Remove Apple SignIn
